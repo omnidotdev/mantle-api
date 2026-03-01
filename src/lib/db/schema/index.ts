@@ -1,5 +1,9 @@
-// Tables
-// export * from "./example.table";
-
-// Placeholder export to make this a valid module
-export {};
+export * from "./company.table";
+export * from "./companyMember.table";
+export * from "./inventoryAdjustment.table";
+export * from "./invoice.table";
+export * from "./invoiceLineItem.table";
+export * from "./person.table";
+export * from "./product.table";
+export * from "./quote.table";
+export * from "./quoteLineItem.table";
