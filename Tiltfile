@@ -4,7 +4,7 @@ load('ext://dotenv_values', 'dotenv_values')
 
 env_local = dotenv_values(".env.local")
 project_name = "mantle-api"
-port = 4001
+port = 4000
 
 local_resource(
     "install-deps-%s" % project_name,
