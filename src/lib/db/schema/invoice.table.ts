@@ -21,8 +21,7 @@ export const invoiceStatuses = [
 	"viewed",
 	"paid",
 	"overdue",
-	"cancelled",
-	"refunded",
+	"void",
 ] as const;
 
 export type InvoiceStatus = (typeof invoiceStatuses)[number];
