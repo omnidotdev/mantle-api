@@ -18,6 +18,7 @@ import {
 import { dbPool, pgPool } from "lib/db/db";
 import createGraphqlContext from "lib/graphql/createGraphqlContext";
 import { armorPlugin, authenticationPlugin } from "lib/graphql/plugins";
+import { maintenanceMiddleware } from "lib/middleware/maintenance";
 
 // Dynamic import for generated schema (run `bun graphql:generate` to create)
 const loadSchema = async () => {
@@ -44,6 +45,7 @@ const app = new Elysia()
 		set.headers["X-XSS-Protection"] = "1; mode=block";
 		set.headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
 	})
+	.use(maintenanceMiddleware)
 	.use(
 		cors({
 			origin: CORS_ALLOWED_ORIGINS?.split(",") ?? [],
