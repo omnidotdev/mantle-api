@@ -1,6 +1,7 @@
 import type { ResolveUserFn } from "@envelop/generic-auth";
 import { useGenericAuth } from "@envelop/generic-auth";
-import { AUTH_BASE_URL } from "lib/config/env.config";
+import { createRemoteJWKSet, jwtVerify } from "jose";
+import { AUTH_JWKS_URL } from "lib/config/env.config";
 import type { GraphQLContext } from "lib/graphql/createGraphqlContext";
 
 /**
@@ -12,8 +13,10 @@ export interface Observer {
 	name?: string;
 }
 
+const jwks = AUTH_JWKS_URL ? createRemoteJWKSet(new URL(AUTH_JWKS_URL)) : null;
+
 /**
- * Validate user session via token introspection.
+ * Validate user session via JWKS token verification.
  * @see https://the-guild.dev/graphql/envelop/plugins/use-generic-auth#getting-started
  */
 const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
@@ -21,31 +24,17 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
 		.get("authorization")
 		?.split("Bearer ")[1];
 
-	if (!accessToken) {
+	if (!accessToken || !jwks) {
 		return null;
 	}
 
 	try {
-		const response = await fetch(`${AUTH_BASE_URL}/oauth/userinfo`, {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		if (!response.ok) {
-			return null;
-		}
-
-		const userInfo = (await response.json()) as {
-			sub: string;
-			email?: string;
-			name?: string;
-		};
+		const { payload } = await jwtVerify(accessToken, jwks);
 
 		return {
-			id: userInfo.sub,
-			email: userInfo.email,
-			name: userInfo.name,
+			id: payload.sub as string,
+			email: payload.email as string | undefined,
+			name: payload.name as string | undefined,
 		};
 	} catch {
 		return null;

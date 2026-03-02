@@ -10,7 +10,15 @@ const drizzleConfig = defineConfig({
 	out: "src/generated/drizzle",
 	casing: "snake_case",
 	dbCredentials: {
-		url: process.env.DATABASE_URL ?? "",
+		url: (() => {
+			const url = process.env.DATABASE_URL;
+
+			if (!url) {
+				throw new Error("DATABASE_URL environment variable is required");
+			}
+
+			return url;
+		})(),
 	},
 });
 
