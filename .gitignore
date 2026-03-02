@@ -1,6 +1,7 @@
 node_modules
 build
-generated
+src/generated/*
+!src/generated/drizzle
 
 # environment
 *.env*
