@@ -1349,7 +1349,7 @@ const spec_invoice = {
     due_date: {
       description: undefined,
       codec: TYPES.date,
-      notNull: true,
+      notNull: false,
       hasDefault: false,
       extensions: {
         tags: {},
@@ -5375,7 +5375,7 @@ type Invoice implements Node {
   contactId: UUID
   status: String!
   issueDate: Date!
-  dueDate: Date!
+  dueDate: Date
   notes: String
   subtotal: BigFloat
   taxRate: BigFloat
@@ -6863,7 +6863,7 @@ input InvoiceInput {
   contactId: UUID
   status: String
   issueDate: Date!
-  dueDate: Date!
+  dueDate: Date
   notes: String
   subtotal: BigFloat
   taxRate: BigFloat

@@ -40,7 +40,7 @@ export const invoiceTable = pgTable(
 			.default("draft")
 			.notNull(),
 		issueDate: date("issue_date").notNull(),
-		dueDate: date("due_date").notNull(),
+		dueDate: date("due_date"),
 		notes: text(),
 		subtotal: numeric({ precision: 12, scale: 2 }).default("0"),
 		taxRate: numeric("tax_rate", { precision: 5, scale: 2 }),
