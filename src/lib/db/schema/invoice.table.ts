@@ -32,10 +32,9 @@ export const invoiceTable = pgTable(
 		id: generateDefaultId(),
 		organizationId: text("organization_id").notNull(),
 		invoiceNumber: text("invoice_number").notNull(),
-		companyId: uuid("company_id")
-			.notNull()
-			.references(() => companyTable.id),
+		companyId: uuid("company_id").references(() => companyTable.id),
 		contactId: uuid("contact_id").references(() => personTable.id),
+		billTo: text("bill_to"),
 		status: varchar({ length: 20 })
 			.$type<InvoiceStatus>()
 			.default("draft")
