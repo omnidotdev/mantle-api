@@ -6,6 +6,7 @@ import { useValidationCache } from "@envelop/validation-cache";
 import { useDisableIntrospection } from "@graphql-yoga/plugin-disable-introspection";
 import { sql } from "drizzle-orm";
 import { Elysia } from "elysia";
+import { schema } from "generated/graphql/schema.executable";
 import { useGrafast } from "grafast/envelop";
 
 import appConfig from "lib/config/app.config";
@@ -19,21 +20,6 @@ import { dbPool, pgPool } from "lib/db/db";
 import createGraphqlContext from "lib/graphql/createGraphqlContext";
 import { armorPlugin, authenticationPlugin } from "lib/graphql/plugins";
 import { maintenanceMiddleware } from "lib/middleware/maintenance";
-
-// Dynamic import for generated schema (run `bun graphql:generate` to create)
-const loadSchema = async () => {
-	try {
-		const { schema } = await import("generated/graphql/schema.executable");
-		return schema;
-	} catch {
-		console.warn(
-			"[Server] GraphQL schema not found - run `bun graphql:generate` first",
-		);
-		return null;
-	}
-};
-
-const schema = await loadSchema();
 
 /**
  * Elysia server.
@@ -76,39 +62,34 @@ const app = new Elysia()
 		}
 	});
 
-if (schema) {
-	app.use(
-		yoga({
-			schema,
-			context: createGraphqlContext,
-			graphiql: isDevEnv,
-			plugins: [
-				...armorPlugin,
-				authenticationPlugin,
-				isProdEnv && useDisableIntrospection(),
-				useOpenTelemetry({
-					variables: true,
-					result: true,
-				}),
-				useParserCache(),
-				useValidationCache(),
-				useGrafast(),
-			],
-		}),
-	);
-}
+app.use(
+	yoga({
+		schema,
+		context: createGraphqlContext,
+		graphiql: isDevEnv,
+		plugins: [
+			...armorPlugin,
+			authenticationPlugin,
+			isProdEnv && useDisableIntrospection(),
+			useOpenTelemetry({
+				variables: true,
+				result: true,
+			}),
+			useParserCache(),
+			useValidationCache(),
+			useGrafast(),
+		],
+	}),
+);
 
 app.listen(PORT);
 
 console.log(
 	`🦊 ${appConfig.name} Elysia server running at ${app.server?.url.toString().slice(0, -1)}`,
 );
-
-if (schema) {
-	console.log(
-		`🧘 ${appConfig.name} GraphQL Yoga API running at ${app.server?.url}graphql`,
-	);
-}
+console.log(
+	`🧘 ${appConfig.name} GraphQL Yoga API running at ${app.server?.url}graphql`,
+);
 
 /**
  * Graceful shutdown handler.
