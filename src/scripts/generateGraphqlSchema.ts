@@ -73,6 +73,10 @@ const computeSchemaHash = (): string => {
  * Check if schema dependencies have changed since last generation.
  */
 const hasSchemaChanged = (): boolean => {
+	const outputFile = `${SRC_DIR}/generated/graphql/schema.executable.ts`;
+
+	// Always regenerate if output doesn't exist (e.g. fresh container)
+	if (!existsSync(outputFile)) return true;
 	if (!existsSync(HASH_FILE)) return true;
 
 	const currentHash = computeSchemaHash();
