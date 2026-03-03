@@ -43,7 +43,10 @@ export const quoteTable = pgTable(
 			.default("draft")
 			.notNull(),
 		validUntil: date("valid_until").notNull(),
+		projectType: text("project_type"),
+		timeRange: text("time_range"),
 		terms: text(),
+		additionalTerms: text("additional_terms").array(),
 		notes: text(),
 		subtotal: numeric({ precision: 12, scale: 2 }).default("0"),
 		taxRate: numeric("tax_rate", { precision: 5, scale: 2 }),

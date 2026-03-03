@@ -1,4 +1,10 @@
-import { index, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	index,
+	pgTable,
+	text,
+	uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { generateDefaultDate, generateDefaultId } from "lib/db/util";
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
@@ -10,8 +16,9 @@ export const personTable = pgTable(
 		organizationId: text("organization_id").notNull(),
 		firstName: text("first_name").notNull(),
 		lastName: text("last_name").notNull(),
-		email: text(),
+		emails: text().array(),
 		phone: text(),
+		internal: boolean().default(false).notNull(),
 		avatarUrl: text("avatar_url"),
 		tags: text().array(),
 		notes: text(),
@@ -21,7 +28,7 @@ export const personTable = pgTable(
 	(table) => [
 		uniqueIndex().on(table.id),
 		index("person_organization_id_idx").on(table.organizationId),
-		index("person_email_idx").on(table.email),
+		index("person_emails_idx").on(table.emails),
 	],
 );
 

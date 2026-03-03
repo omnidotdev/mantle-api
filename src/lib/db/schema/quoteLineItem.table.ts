@@ -35,8 +35,22 @@ export const quoteLineItemTable = pgTable(
 			.default("fixed")
 			.notNull(),
 		estimatedHours: numeric("estimated_hours", { precision: 10, scale: 2 }),
+		hourlyRate: numeric("hourly_rate", { precision: 12, scale: 2 }),
+		weeklyCapHours: integer("weekly_cap_hours"),
+		monthlyCapHours: integer("monthly_cap_hours"),
+		maxCapHours: integer("max_cap_hours"),
 		royaltyPercentage: numeric("royalty_percentage", {
 			precision: 5,
+			scale: 2,
+		}),
+		royaltyTimeframe: integer("royalty_timeframe"),
+		royaltyTimeframeUnit: varchar("royalty_timeframe_unit", { length: 20 }),
+		royaltyThreshold: numeric("royalty_threshold", {
+			precision: 12,
+			scale: 2,
+		}),
+		royaltyBuyoutAmount: numeric("royalty_buyout_amount", {
+			precision: 12,
 			scale: 2,
 		}),
 		sortOrder: integer("sort_order").default(0),
