@@ -43,13 +43,14 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
 
 /**
  * Authentication plugin.
- * Validates tokens via HIDRA userinfo endpoint.
+ * Uses "resolve-only" mode to allow unauthenticated queries.
+ * Mutations are protected by authorization plugins that check for observer.
  * @see https://the-guild.dev/graphql/envelop/plugins/use-generic-auth
  */
 const authenticationPlugin = useGenericAuth({
 	contextFieldName: "observer",
 	resolveUserFn: resolveUser,
-	mode: "protect-all",
+	mode: "resolve-only",
 });
 
 export default authenticationPlugin;
