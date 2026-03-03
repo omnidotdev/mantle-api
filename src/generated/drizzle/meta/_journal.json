@@ -15,6 +15,13 @@
       "when": 1772513928109,
       "tag": "0001_faithful_mordo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772557228993,
+      "tag": "0002_nasty_human_robot",
+      "breakpoints": true
     }
   ]
 }
