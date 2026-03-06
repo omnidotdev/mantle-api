@@ -32,9 +32,7 @@ export const quoteTable = pgTable(
 		id: generateDefaultId(),
 		organizationId: text("organization_id").notNull(),
 		quoteNumber: text("quote_number").notNull(),
-		companyId: uuid("company_id")
-			.notNull()
-			.references(() => companyTable.id),
+		companyId: uuid("company_id").references(() => companyTable.id),
 		contactId: uuid("contact_id").references(() => personTable.id),
 		title: text().notNull(),
 		description: text(),

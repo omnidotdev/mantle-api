@@ -1,0 +1,1 @@
+ALTER TABLE "quote" ALTER COLUMN "company_id" DROP NOT NULL;
