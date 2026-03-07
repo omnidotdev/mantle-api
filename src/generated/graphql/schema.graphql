@@ -1247,6 +1247,9 @@ input QuoteFilter {
   """Filter by the object’s `company` relation."""
   company: CompanyFilter
 
+  """A related `company` exists."""
+  companyExists: Boolean
+
   """Filter by the object’s `contact` relation."""
   contact: PersonFilter
 
@@ -1740,7 +1743,7 @@ type Quote implements Node {
   rowId: UUID!
   organizationId: String!
   quoteNumber: String!
-  companyId: UUID!
+  companyId: UUID
   contactId: UUID
   title: String!
   description: String
@@ -2903,7 +2906,7 @@ input QuoteInput {
   rowId: UUID
   organizationId: String!
   quoteNumber: String!
-  companyId: UUID!
+  companyId: UUID
   contactId: UUID
   title: String!
   description: String

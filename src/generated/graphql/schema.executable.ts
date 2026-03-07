@@ -1577,7 +1577,7 @@ const spec_quote = {
     company_id: {
       description: undefined,
       codec: TYPES.uuid,
-      notNull: true,
+      notNull: false,
       hasDefault: false,
       extensions: {
         tags: {},
@@ -5262,6 +5262,9 @@ input QuoteFilter {
   """Filter by the object’s \`company\` relation."""
   company: CompanyFilter
 
+  """A related \`company\` exists."""
+  companyExists: Boolean
+
   """Filter by the object’s \`contact\` relation."""
   contact: PersonFilter
 
@@ -5755,7 +5758,7 @@ type Quote implements Node {
   rowId: UUID!
   organizationId: String!
   quoteNumber: String!
-  companyId: UUID!
+  companyId: UUID
   contactId: UUID
   title: String!
   description: String
@@ -6918,7 +6921,7 @@ input QuoteInput {
   rowId: UUID
   organizationId: String!
   quoteNumber: String!
-  companyId: UUID!
+  companyId: UUID
   contactId: UUID
   title: String!
   description: String
@@ -12973,6 +12976,19 @@ export const inputObjects = {
           $subQuery.where(sql`${$where.alias}.${sql.identifier(localAttribute)} = ${$subQuery.alias}.${sql.identifier(remoteAttribute)}`);
         });
         return $subQuery;
+      },
+      companyExists($where, value) {
+        assertAllowed35(value, "scalar");
+        if (value == null) return;
+        const $subQuery = $where.existsPlan({
+          tableExpression: companyIdentifier,
+          alias: resource_companyPgResource.name,
+          equals: value
+        });
+        registryConfig.pgRelations.quote.companyByMyCompanyId.localAttributes.forEach((localAttribute, i) => {
+          const remoteAttribute = registryConfig.pgRelations.quote.companyByMyCompanyId.remoteAttributes[i];
+          $subQuery.where(sql`${$where.alias}.${sql.identifier(localAttribute)} = ${$subQuery.alias}.${sql.identifier(remoteAttribute)}`);
+        });
       },
       companyId(queryBuilder, value) {
         if (value === void 0) return;
