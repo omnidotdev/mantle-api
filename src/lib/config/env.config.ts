@@ -10,6 +10,8 @@ export const {
 	GRAPHQL_MAX_COMPLEXITY_COST = "5000",
 	UNLEASH_SERVER_API_URL,
 	UNLEASH_SERVER_API_TOKEN,
+	VORTEX_API_URL,
+	VORTEX_API_KEY,
 } = process.env;
 
 export const isDevEnv = NODE_ENV === "development",
