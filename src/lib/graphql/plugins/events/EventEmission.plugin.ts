@@ -52,6 +52,9 @@ const EventEmissionPlugin = wrapPlans({
 		createPerson: emitOnMutate("person", "created"),
 		updatePerson: emitOnMutate("person", "updated"),
 		deletePerson: emitOnMutate("person", "deleted"),
+		createDocumentNumberingConfig: emitOnMutate("documentNumberingConfig", "created"),
+		updateDocumentNumberingConfig: emitOnMutate("documentNumberingConfig", "updated"),
+		deleteDocumentNumberingConfig: emitOnMutate("documentNumberingConfig", "deleted"),
 	},
 });
 
