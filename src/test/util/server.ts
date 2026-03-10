@@ -1,5 +1,4 @@
 import { Elysia } from "elysia";
-import { schema } from "generated/graphql/schema.executable";
 import { createYoga } from "graphql-yoga";
 import { createWithPgClient } from "postgraphile/adaptors/pg";
 
@@ -30,6 +29,8 @@ export const makeYogaServer = (opts?: {
 }) => {
 	const { pool, db } = globalThis.__TEST_DATABASE__;
 	const withPgClient = createWithPgClient({ pool });
+
+	const schema = globalThis.__TEST_SCHEMA__;
 
 	const yoga = createYoga({
 		schema,
