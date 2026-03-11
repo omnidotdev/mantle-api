@@ -4,6 +4,7 @@ export * from "./documentNumberingConfig.table";
 export * from "./inventoryAdjustment.table";
 export * from "./invoice.table";
 export * from "./invoiceLineItem.table";
+export * from "./organizationSettings.table";
 export * from "./person.table";
 export * from "./product.table";
 export * from "./quote.table";

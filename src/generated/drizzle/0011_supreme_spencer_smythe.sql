@@ -1,0 +1,1 @@
+ALTER TABLE "quote_line_item" ADD COLUMN "minimum_billing_minutes" integer;

@@ -46,6 +46,7 @@ export const quoteLineItemTable = pgTable(
     weeklyCapHours: integer("weekly_cap_hours"),
     monthlyCapHours: integer("monthly_cap_hours"),
     maxCapHours: integer("max_cap_hours"),
+    minimumBillingMinutes: integer("minimum_billing_minutes"),
     royaltyPercentage: numeric("royalty_percentage", {
       precision: 5,
       scale: 2,
