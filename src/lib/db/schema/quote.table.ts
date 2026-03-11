@@ -34,6 +34,8 @@ export const quoteTable = pgTable(
 		quoteNumber: text("quote_number").notNull(),
 		companyId: uuid("company_id").references(() => companyTable.id),
 		contactId: uuid("contact_id").references(() => personTable.id),
+		clientName: text("client_name"),
+		clientEmail: text("client_email"),
 		title: text().notNull(),
 		description: text(),
 		status: varchar({ length: 20 })
