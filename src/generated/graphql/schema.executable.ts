@@ -4887,8 +4887,9 @@ const generateRandomHex = length => {
   const bytes = globalThis.crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2)));
   return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("").toUpperCase().slice(0, length);
 };
-const assembleNumber = (prefix, separator, datePart, idPart) => {
+const assembleNumber = (globalPrefix, prefix, separator, datePart, idPart) => {
   const parts = [];
+  if (globalPrefix) parts.push(globalPrefix);
   if (prefix) parts.push(prefix);
   if (datePart) parts.push(datePart);
   parts.push(idPart);
@@ -10922,7 +10923,7 @@ ${String(oldPlan18)}`);
                 }).where(sql`id = ${config.id}`);
                 idPart = String(seqNum).padStart(config.sequential_padding, "0");
               } else idPart = generateRandomHex(config.random_length);
-              return assembleNumber(config.prefix, config.separator, datePart, idPart);
+              return assembleNumber(config.global_prefix ?? "", config.prefix, config.separator, datePart, idPart);
             })
           };
         },
