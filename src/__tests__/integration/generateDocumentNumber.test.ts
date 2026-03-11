@@ -2,6 +2,32 @@ import { describe, expect, test } from "bun:test";
 
 import { setupTestContext } from "test/setup/testContext";
 
+interface GenerateDocumentNumberData {
+	generateDocumentNumber?: { documentNumber?: string };
+}
+
+interface DocumentNumberingConfigsData {
+	documentNumberingConfigs?: {
+		nodes: Array<{
+			rowId: string;
+			organizationId: string;
+			documentType: string;
+			prefix: string;
+			separator: string;
+			idStrategy: string;
+			sequentialPadding: number;
+			randomLength: number;
+			nextSequentialNumber: number;
+		}>;
+	};
+}
+
+interface UpdateDocumentNumberingConfigData {
+	updateDocumentNumberingConfig?: {
+		documentNumberingConfig?: { rowId: string; idStrategy: string };
+	};
+}
+
 describe("generateDocumentNumber mutation", () => {
 	const ctx = setupTestContext();
 
@@ -43,7 +69,7 @@ describe("generateDocumentNumber mutation", () => {
   `;
 
 	test("generates sequential quote number with default config", async () => {
-		const result = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "quote" },
 		});
 
@@ -54,7 +80,7 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("generates sequential invoice number with default config", async () => {
-		const result = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "invoice" },
 		});
 
@@ -67,55 +93,55 @@ describe("generateDocumentNumber mutation", () => {
 	test("increments sequential number on each call", async () => {
 		const orgId = "test-org-seq";
 
-		const r1 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("QT-0002");
 
-		const r3 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r3 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r3.data?.generateDocumentNumber?.documentNumber).toBe("QT-0003");
 	});
 
 	test("auto-creates config on first call", async () => {
-		await ctx.graphql.execute(GENERATE_MUTATION, {
+		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "new-org", documentType: "invoice" },
 		});
 
-		const configResult = await ctx.graphql.execute(CONFIG_QUERY, {
+		const configResult = await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 			organizationId: "new-org",
 		});
 
 		const nodes = configResult.data?.documentNumberingConfigs?.nodes;
 		expect(nodes).toHaveLength(1);
-		expect(nodes[0].prefix).toBe("INV");
-		expect(nodes[0].separator).toBe("-");
-		expect(nodes[0].idStrategy).toBe("sequential");
-		expect(nodes[0].sequentialPadding).toBe(4);
-		expect(nodes[0].nextSequentialNumber).toBe(2);
+		expect(nodes?.[0].prefix).toBe("INV");
+		expect(nodes?.[0].separator).toBe("-");
+		expect(nodes?.[0].idStrategy).toBe("sequential");
+		expect(nodes?.[0].sequentialPadding).toBe(4);
+		expect(nodes?.[0].nextSequentialNumber).toBe(2);
 	});
 
 	test("generates random document number when configured", async () => {
 		// First generate to create the config
-		await ctx.graphql.execute(GENERATE_MUTATION, {
+		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "random-org", documentType: "quote" },
 		});
 
 		// Get the config rowId
-		const configResult = await ctx.graphql.execute(CONFIG_QUERY, {
+		const configResult = await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 			organizationId: "random-org",
 		});
 		const configRowId =
-			configResult.data?.documentNumberingConfigs?.nodes[0]?.rowId;
+			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
 
 		// Update to random strategy
-		await ctx.graphql.execute(UPDATE_CONFIG_MUTATION, {
+		await ctx.graphql.execute<UpdateDocumentNumberingConfigData>(UPDATE_CONFIG_MUTATION, {
 			input: {
 				rowId: configRowId,
 				patch: { idStrategy: "random" },
@@ -123,7 +149,7 @@ describe("generateDocumentNumber mutation", () => {
 		});
 
 		// Generate with random strategy
-		const result = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "random-org", documentType: "quote" },
 		});
 
@@ -134,24 +160,24 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("isolates numbering between organizations", async () => {
-		const r1 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "org-a", documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "org-b", documentType: "quote" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 	});
 
 	test("isolates numbering between document types", async () => {
-		const r1 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute(GENERATE_MUTATION, {
+		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "invoice" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("INV-0001");

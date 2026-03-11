@@ -14,7 +14,12 @@ import { quoteTable } from "./quote.table";
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
-export const pricingTypes = ["fixed", "hourly", "royalty"] as const;
+export const pricingTypes = [
+	"fixed",
+	"hourly",
+	"royalty",
+	"complimentary",
+] as const;
 
 export type PricingType = (typeof pricingTypes)[number];
 
@@ -27,6 +32,7 @@ export const quoteLineItemTable = pgTable(
 			.references(() => quoteTable.id, { onDelete: "cascade" }),
 		productId: uuid("product_id").references(() => productTable.id),
 		description: text().notNull(),
+		subtitle: text(),
 		quantity: numeric({ precision: 10, scale: 2 }).notNull(),
 		unitPrice: numeric("unit_price", { precision: 12, scale: 2 }).notNull(),
 		amount: numeric({ precision: 12, scale: 2 }).notNull(),

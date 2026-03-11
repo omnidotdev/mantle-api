@@ -71,6 +71,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
 		input GenerateDocumentNumberInput {
 			organizationId: String!
 			documentType: String!
+			idStrategy: String
 		}
 
 		type GenerateDocumentNumberPayload {
@@ -98,10 +99,14 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
           async (
             _parent: unknown,
             args: {
-              input: { organizationId: string; documentType: string };
+              input: {
+                organizationId: string;
+                documentType: string;
+                idStrategy?: string;
+              };
             },
           ) => {
-            const { organizationId, documentType } = args.input;
+            const { organizationId, documentType, idStrategy } = args.input;
 
             const documentNumber = await dbPool.transaction(async (tx) => {
               // Upsert default config if none exists
@@ -136,7 +141,10 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
 
               let idPart: string;
 
-              if (config.id_strategy === "sequential") {
+              // Use per-call override if provided, otherwise fall back to org config
+              const strategy = idStrategy ?? config.id_strategy;
+
+              if (strategy === "sequential") {
                 const seqNum = config.next_sequential_number as number;
 
                 // Increment counter

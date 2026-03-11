@@ -48,6 +48,7 @@ export const quoteTable = pgTable(
 		terms: text(),
 		additionalTerms: text("additional_terms").array(),
 		notes: text(),
+		additionalItemsLabel: text("additional_items_label"),
 		subtotal: numeric({ precision: 12, scale: 2 }).default("0"),
 		taxRate: numeric("tax_rate", { precision: 5, scale: 2 }),
 		taxAmount: numeric("tax_amount", { precision: 12, scale: 2 }).default("0"),
