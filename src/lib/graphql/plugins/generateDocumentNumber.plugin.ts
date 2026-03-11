@@ -1,9 +1,5 @@
-import { sql } from "drizzle-orm";
 import { EXPORTABLE } from "graphile-export";
 import { gql, makeExtendSchemaPlugin } from "graphile-utils";
-
-import { dbPool } from "lib/db/db";
-import { documentNumberingConfigTable } from "lib/db/schema";
 
 /**
  * Default prefix per document type.
@@ -22,13 +18,19 @@ const defaultPrefix = (docType: string): string => {
 /**
  * Generate uppercase hex string of given length.
  */
-const generateRandomHex = (length: number): string => {
-  const bytes = crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2)));
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0"))
-    .join("")
-    .toUpperCase()
-    .slice(0, length);
-};
+const generateRandomHex = EXPORTABLE(
+  () =>
+    (length: number): string => {
+      const bytes = globalThis.crypto.getRandomValues(
+        new Uint8Array(Math.ceil(length / 2)),
+      );
+      return Array.from(bytes, (b) => b.toString(16).padStart(2, "0"))
+        .join("")
+        .toUpperCase()
+        .slice(0, length);
+    },
+  [],
+);
 
 /**
  * Build the formatted document number from config parts.
@@ -87,15 +89,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
   resolvers: {
     Mutation: {
       generateDocumentNumber: EXPORTABLE(
-        (
-          dbPool,
-          documentNumberingConfigTable,
-          sql,
-          defaultPrefix,
-          generateRandomHex,
-          assembleNumber,
-          buildDatePart,
-        ) =>
+        (defaultPrefix, generateRandomHex, assembleNumber, buildDatePart) =>
           async (
             _parent: unknown,
             args: {
@@ -106,6 +100,13 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
               };
             },
           ) => {
+            // Lazy imports to avoid capturing class instances in EXPORTABLE
+            const { sql } = await import("drizzle-orm");
+            const { dbPool } = await import("lib/db/db");
+            const { documentNumberingConfigTable } = await import(
+              "lib/db/schema"
+            );
+
             const { organizationId, documentType, idStrategy } = args.input;
 
             const documentNumber = await dbPool.transaction(async (tx) => {
@@ -174,15 +175,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
 
             return { documentNumber };
           },
-        [
-          dbPool,
-          documentNumberingConfigTable,
-          sql,
-          defaultPrefix,
-          generateRandomHex,
-          assembleNumber,
-          buildDatePart,
-        ],
+        [defaultPrefix, generateRandomHex, assembleNumber, buildDatePart],
       ),
     },
   },

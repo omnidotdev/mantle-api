@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable */
 import { PgCondition, PgDeleteSingleStep, PgExecutor, TYPES, assertPgClassSingleStep, listOfCodec, makeRegistry, pgDeleteSingle, pgInsertSingle, pgSelectFromRecord, pgUpdateSingle, recordCodec, sqlValueWithCodec } from "@dataplan/pg";
-import { ConnectionStep, EdgeStep, ObjectStep, __ValueStep, access, assertExecutableStep, bakedInputRuntime, connection, constant, context, createObjectAndApplyChildren, first, get as get2, inhibitOnNull, inspect, lambda, list, makeDecodeNodeId, makeGrafastSchema, object, rootValue, specFromNodeId } from "grafast";
+import { ConnectionStep, EdgeStep, ExecutableStep, ObjectStep, __ValueStep, access, assertExecutableStep, bakedInputRuntime, connection, constant, context, createObjectAndApplyChildren, first, get as get2, inhibitOnNull, inspect, isExecutableStep, lambda, list, makeDecodeNodeId, makeGrafastSchema, object, rootValue, sideEffect, specFromNodeId } from "grafast";
 import { GraphQLError, Kind } from "graphql";
 import { sql } from "pg-sql2";
 const nodeIdHandler_Query = {
@@ -565,6 +565,182 @@ const spec_product = {
   executor: executor
 };
 const productCodec = recordCodec(spec_product);
+const documentNumberingConfigIdentifier = sql.identifier("public", "document_numbering_config");
+const spec_documentNumberingConfig = {
+  name: "documentNumberingConfig",
+  identifier: documentNumberingConfigIdentifier,
+  attributes: {
+    __proto__: null,
+    id: {
+      description: undefined,
+      codec: TYPES.uuid,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    organization_id: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    document_type: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    prefix: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    separator: {
+      description: undefined,
+      codec: TYPES.varchar,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    date_format: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    id_strategy: {
+      description: undefined,
+      codec: TYPES.varchar,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    sequential_padding: {
+      description: undefined,
+      codec: TYPES.int,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    random_length: {
+      description: undefined,
+      codec: TYPES.int,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    next_sequential_number: {
+      description: undefined,
+      codec: TYPES.int,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    created_at: {
+      description: undefined,
+      codec: TYPES.timestamptz,
+      notNull: false,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    updated_at: {
+      description: undefined,
+      codec: TYPES.timestamptz,
+      notNull: false,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    }
+  },
+  description: undefined,
+  extensions: {
+    oid: "504298",
+    isTableLike: true,
+    pg: {
+      serviceName: "main",
+      schemaName: "public",
+      name: "document_numbering_config"
+    },
+    tags: {
+      __proto__: null
+    }
+  },
+  executor: executor
+};
+const documentNumberingConfigCodec = recordCodec(spec_documentNumberingConfig);
 const personIdentifier = sql.identifier("public", "person");
 const pgCatalogTextArrayCodec = listOfCodec(TYPES.text, {
   extensions: {
@@ -1236,6 +1412,19 @@ const spec_quoteLineItem = {
         canUpdate: true,
         isIndexed: false
       }
+    },
+    subtitle: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
     }
   },
   description: undefined,
@@ -1818,6 +2007,45 @@ const spec_quote = {
         canUpdate: true,
         isIndexed: false
       }
+    },
+    client_name: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    client_email: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    additional_items_label: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
     }
   },
   description: undefined,
@@ -1980,6 +2208,16 @@ const registryConfig_pgResources_product_product = {
     canDelete: true
   }
 };
+const document_numbering_configUniques = [{
+  isPrimary: true,
+  attributes: ["id"],
+  description: undefined,
+  extensions: {
+    tags: {
+      __proto__: null
+    }
+  }
+}];
 const personUniques = [{
   isPrimary: true,
   attributes: ["id"],
@@ -2177,11 +2415,12 @@ const registryConfig = {
     invoiceLineItem: invoiceLineItemCodec,
     numeric: TYPES.numeric,
     product: productCodec,
+    documentNumberingConfig: documentNumberingConfigCodec,
+    varchar: TYPES.varchar,
     person: personCodec,
     pgCatalogTextArray: pgCatalogTextArrayCodec,
     company: companyCodec,
     quoteLineItem: quoteLineItemCodec,
-    varchar: TYPES.varchar,
     invoice: invoiceCodec,
     date: TYPES.date,
     quote: quoteCodec
@@ -2192,6 +2431,32 @@ const registryConfig = {
     inventory_adjustment: registryConfig_pgResources_inventory_adjustment_inventory_adjustment,
     invoice_line_item: registryConfig_pgResources_invoice_line_item_invoice_line_item,
     product: registryConfig_pgResources_product_product,
+    document_numbering_config: {
+      executor: executor,
+      name: "document_numbering_config",
+      identifier: "main.public.document_numbering_config",
+      from: documentNumberingConfigIdentifier,
+      codec: documentNumberingConfigCodec,
+      uniques: document_numbering_configUniques,
+      isVirtual: false,
+      description: undefined,
+      extensions: {
+        description: undefined,
+        pg: {
+          serviceName: "main",
+          schemaName: "public",
+          name: "document_numbering_config"
+        },
+        isInsertable: true,
+        isUpdatable: true,
+        isDeletable: true,
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        canDelete: true
+      }
+    },
     person: registryConfig_pgResources_person_person,
     company: registryConfig_pgResources_company_company,
     quote_line_item: registryConfig_pgResources_quote_line_item_quote_line_item,
@@ -2599,6 +2864,7 @@ const resource_company_memberPgResource = registry.pgResources["company_member"]
 const resource_inventory_adjustmentPgResource = registry.pgResources["inventory_adjustment"];
 const resource_invoice_line_itemPgResource = registry.pgResources["invoice_line_item"];
 const resource_productPgResource = registry.pgResources["product"];
+const resource_document_numbering_configPgResource = registry.pgResources["document_numbering_config"];
 const resource_personPgResource = registry.pgResources["person"];
 const resource_companyPgResource = registry.pgResources["company"];
 const resource_quote_line_itemPgResource = registry.pgResources["quote_line_item"];
@@ -2724,6 +2990,32 @@ const nodeIdHandler_Product = {
 const nodeFetcher_Product = $nodeId => {
   const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_Product));
   return nodeIdHandler_Product.get(nodeIdHandler_Product.getSpec($decoded));
+};
+const nodeIdHandler_DocumentNumberingConfig = {
+  typeName: "DocumentNumberingConfig",
+  codec: nodeIdCodecs_base64JSON_base64JSON,
+  deprecationReason: undefined,
+  plan($record) {
+    return list([constant("DocumentNumberingConfig", false), $record.get("id")]);
+  },
+  getSpec($list) {
+    return {
+      id: inhibitOnNull(access($list, [1]))
+    };
+  },
+  getIdentifiers(value) {
+    return value.slice(1);
+  },
+  get(spec) {
+    return resource_document_numbering_configPgResource.get(spec);
+  },
+  match(obj) {
+    return obj[0] === "DocumentNumberingConfig";
+  }
+};
+const nodeFetcher_DocumentNumberingConfig = $nodeId => {
+  const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_DocumentNumberingConfig));
+  return nodeIdHandler_DocumentNumberingConfig.get(nodeIdHandler_DocumentNumberingConfig.getSpec($decoded));
 };
 const nodeIdHandler_Person = {
   typeName: "Person",
@@ -2960,6 +3252,17 @@ function assertAllowed9(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
+function assertAllowed10(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
 const nodeIdHandlerByTypeName = {
   __proto__: null,
   Query: nodeIdHandler_Query,
@@ -2967,6 +3270,7 @@ const nodeIdHandlerByTypeName = {
   InventoryAdjustment: nodeIdHandler_InventoryAdjustment,
   InvoiceLineItem: nodeIdHandler_InvoiceLineItem,
   Product: nodeIdHandler_Product,
+  DocumentNumberingConfig: nodeIdHandler_DocumentNumberingConfig,
   Person: nodeIdHandler_Person,
   Company: nodeIdHandler_Company,
   QuoteLineItem: nodeIdHandler_QuoteLineItem,
@@ -2990,17 +3294,6 @@ const coerce = string => {
   if (!/^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(string)) throw new GraphQLError("Invalid UUID, expected 32 hexadecimal characters, optionally with hyphens");
   return string;
 };
-function assertAllowed10(value, mode) {
-  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-  if (mode === "list" && !false) {
-    const arr = value;
-    if (arr) {
-      const l = arr.length;
-      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-    }
-  }
-  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
-}
 function assertAllowed11(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3013,6 +3306,17 @@ function assertAllowed11(value, mode) {
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
 function assertAllowed12(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
+function assertAllowed13(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3038,7 +3342,7 @@ const colSpec3 = {
   attributeName: "person_id",
   attribute: spec_companyMember.attributes.person_id
 };
-function assertAllowed13(value, mode) {
+function assertAllowed14(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3049,7 +3353,7 @@ function assertAllowed13(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-function assertAllowed14(value, mode) {
+function assertAllowed15(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3120,7 +3424,7 @@ const colSpec5 = {
   attributeName: "organization_id",
   attribute: spec_company.attributes.organization_id
 };
-function assertAllowed15(value, mode) {
+function assertAllowed16(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3131,7 +3435,7 @@ function assertAllowed15(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-function assertAllowed16(value, mode) {
+function assertAllowed17(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3464,7 +3768,7 @@ function resolveSqlValue12(_unused, input, inputCodec) {
     if (inputCodec === TYPES.citext) return sqlValue;else return sql`lower(${sqlValue})`;
   }
 }
-function assertAllowed17(value, mode) {
+function assertAllowed18(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3475,7 +3779,7 @@ function assertAllowed17(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-function assertAllowed18(value, mode) {
+function assertAllowed19(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3511,17 +3815,6 @@ const colSpec10 = {
   attributeName: "status",
   attribute: spec_invoice.attributes.status
 };
-function assertAllowed19(value, mode) {
-  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-  if (mode === "list" && !false) {
-    const arr = value;
-    if (arr) {
-      const l = arr.length;
-      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-    }
-  }
-  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
-}
 function assertAllowed20(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3555,16 +3848,6 @@ function assertAllowed22(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-const colSpec11 = {
-  fieldName: "rowId",
-  attributeName: "id",
-  attribute: spec_invoiceLineItem.attributes.id
-};
-const colSpec12 = {
-  fieldName: "invoiceId",
-  attributeName: "invoice_id",
-  attribute: spec_invoiceLineItem.attributes.invoice_id
-};
 function assertAllowed23(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3576,7 +3859,28 @@ function assertAllowed23(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
+const colSpec11 = {
+  fieldName: "rowId",
+  attributeName: "id",
+  attribute: spec_invoiceLineItem.attributes.id
+};
+const colSpec12 = {
+  fieldName: "invoiceId",
+  attributeName: "invoice_id",
+  attribute: spec_invoiceLineItem.attributes.invoice_id
+};
 function assertAllowed24(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
+function assertAllowed25(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3602,17 +3906,6 @@ const colSpec15 = {
   attributeName: "sku",
   attribute: spec_product.attributes.sku
 };
-function assertAllowed25(value, mode) {
-  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-  if (mode === "list" && !false) {
-    const arr = value;
-    if (arr) {
-      const l = arr.length;
-      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-    }
-  }
-  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
-}
 function assertAllowed26(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3635,16 +3928,6 @@ function assertAllowed27(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-const colSpec16 = {
-  fieldName: "rowId",
-  attributeName: "id",
-  attribute: spec_inventoryAdjustment.attributes.id
-};
-const colSpec17 = {
-  fieldName: "productId",
-  attributeName: "product_id",
-  attribute: spec_inventoryAdjustment.attributes.product_id
-};
 function assertAllowed28(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3656,7 +3939,28 @@ function assertAllowed28(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
+const colSpec16 = {
+  fieldName: "rowId",
+  attributeName: "id",
+  attribute: spec_inventoryAdjustment.attributes.id
+};
+const colSpec17 = {
+  fieldName: "productId",
+  attributeName: "product_id",
+  attribute: spec_inventoryAdjustment.attributes.product_id
+};
 function assertAllowed29(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
+function assertAllowed30(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3682,7 +3986,7 @@ const colSpec20 = {
   attributeName: "emails",
   attribute: spec_person.attributes.emails
 };
-function assertAllowed30(value, mode) {
+function assertAllowed31(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3693,7 +3997,7 @@ function assertAllowed30(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-function assertAllowed31(value, mode) {
+function assertAllowed32(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3756,7 +4060,7 @@ const resolve53 = (i, v) => sql`${v} > ANY (${i})`;
 const resolve54 = (i, v) => sql`${v} >= ANY (${i})`;
 const resolve55 = (i, v) => sql`${v} < ANY (${i})`;
 const resolve56 = (i, v) => sql`${v} <= ANY (${i})`;
-function assertAllowed32(value, mode) {
+function assertAllowed33(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3767,7 +4071,7 @@ function assertAllowed32(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-function assertAllowed33(value, mode) {
+function assertAllowed34(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
     const arr = value;
@@ -3803,17 +4107,6 @@ const colSpec25 = {
   attributeName: "status",
   attribute: spec_quote.attributes.status
 };
-function assertAllowed34(value, mode) {
-  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-  if (mode === "list" && !false) {
-    const arr = value;
-    if (arr) {
-      const l = arr.length;
-      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
-    }
-  }
-  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
-}
 function assertAllowed35(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3847,16 +4140,6 @@ function assertAllowed37(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
-const colSpec26 = {
-  fieldName: "rowId",
-  attributeName: "id",
-  attribute: spec_quoteLineItem.attributes.id
-};
-const colSpec27 = {
-  fieldName: "quoteId",
-  attributeName: "quote_id",
-  attribute: spec_quoteLineItem.attributes.quote_id
-};
 function assertAllowed38(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3868,6 +4151,16 @@ function assertAllowed38(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
+const colSpec26 = {
+  fieldName: "rowId",
+  attributeName: "id",
+  attribute: spec_quoteLineItem.attributes.id
+};
+const colSpec27 = {
+  fieldName: "quoteId",
+  attributeName: "quote_id",
+  attribute: spec_quoteLineItem.attributes.quote_id
+};
 function assertAllowed39(value, mode) {
   if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
   if (mode === "list" && !false) {
@@ -3923,6 +4216,150 @@ function assertAllowed43(value, mode) {
   }
   if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
 }
+function assertAllowed44(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
+const colSpec28 = {
+  fieldName: "rowId",
+  attributeName: "id",
+  attribute: spec_documentNumberingConfig.attributes.id
+};
+const colSpec29 = {
+  fieldName: "organizationId",
+  attributeName: "organization_id",
+  attribute: spec_documentNumberingConfig.attributes.organization_id
+};
+const colSpec30 = {
+  fieldName: "documentType",
+  attributeName: "document_type",
+  attribute: spec_documentNumberingConfig.attributes.document_type
+};
+function assertAllowed45(value, mode) {
+  if (mode === "object" && !false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+  if (mode === "list" && !false) {
+    const arr = value;
+    if (arr) {
+      const l = arr.length;
+      for (let i = 0; i < l; i++) if (isEmpty(arr[i])) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+    }
+  }
+  if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+}
+function oldPlan(_, args) {
+  const $insert = pgInsertSingle(resource_productPgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const emitEvent = (type, data, subject) => {
+  import("lib/providers").then(({
+    events
+  }) => {
+    events.emit({
+      type,
+      data,
+      subject
+    });
+  });
+};
+const planWrapper = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"product"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+function oldPlan2(_, args) {
+  const $insert = pgInsertSingle(resource_document_numbering_configPgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const planWrapper2 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"documentNumberingConfig"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+function oldPlan3(_, args) {
+  const $insert = pgInsertSingle(resource_personPgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const planWrapper3 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"person"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+function oldPlan4(_, args) {
+  const $insert = pgInsertSingle(resource_companyPgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const planWrapper4 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"company"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+function oldPlan5(_, args) {
+  const $insert = pgInsertSingle(resource_invoicePgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const planWrapper5 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"invoice"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+function oldPlan6(_, args) {
+  const $insert = pgInsertSingle(resource_quotePgResource, Object.create(null));
+  args.apply($insert);
+  return object({
+    result: $insert
+  });
+}
+const planWrapper6 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"quote"}.${"created"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_CompanyMember = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_CompanyMember, $nodeId);
@@ -3939,13 +4376,89 @@ const specFromArgs_Product = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Product, $nodeId);
 };
+const oldPlan7 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_productPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper7 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"product"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+const specFromArgs_DocumentNumberingConfig = args => {
+  const $nodeId = args.getRaw(["input", "id"]);
+  return specFromNodeId(nodeIdHandler_DocumentNumberingConfig, $nodeId);
+};
+const oldPlan8 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_document_numbering_configPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper8 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"documentNumberingConfig"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Person = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Person, $nodeId);
 };
+const oldPlan9 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_personPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper9 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"person"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Company = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Company, $nodeId);
+};
+const oldPlan10 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_companyPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper10 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"company"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
 };
 const specFromArgs_QuoteLineItem = args => {
   const $nodeId = args.getRaw(["input", "id"]);
@@ -3955,9 +4468,45 @@ const specFromArgs_Invoice = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Invoice, $nodeId);
 };
+const oldPlan11 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_invoicePgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper11 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"invoice"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Quote = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Quote, $nodeId);
+};
+const oldPlan12 = (_$root, args) => {
+  const $update = pgUpdateSingle(resource_quotePgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($update);
+  return object({
+    result: $update
+  });
+};
+const planWrapper12 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"quote"}.${"updated"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
 };
 const specFromArgs_CompanyMember2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
@@ -3975,13 +4524,89 @@ const specFromArgs_Product2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Product, $nodeId);
 };
+const oldPlan13 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_productPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper13 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"product"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+const specFromArgs_DocumentNumberingConfig2 = args => {
+  const $nodeId = args.getRaw(["input", "id"]);
+  return specFromNodeId(nodeIdHandler_DocumentNumberingConfig, $nodeId);
+};
+const oldPlan14 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_document_numbering_configPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper14 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"documentNumberingConfig"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Person2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Person, $nodeId);
 };
+const oldPlan15 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_personPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper15 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"person"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Company2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Company, $nodeId);
+};
+const oldPlan16 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_companyPgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper16 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"company"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
 };
 const specFromArgs_QuoteLineItem2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
@@ -3991,9 +4616,82 @@ const specFromArgs_Invoice2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Invoice, $nodeId);
 };
+const oldPlan17 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_invoicePgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper17 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"invoice"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
 const specFromArgs_Quote2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
   return specFromNodeId(nodeIdHandler_Quote, $nodeId);
+};
+const oldPlan18 = (_$root, args) => {
+  const $delete = pgDeleteSingle(resource_quotePgResource, {
+    id: args.getRaw(['input', "rowId"])
+  });
+  args.apply($delete);
+  return object({
+    result: $delete
+  });
+};
+const planWrapper18 = (plan, $record) => {
+  sideEffect([$record], ([record]) => {
+    if (!record?.id) return;
+    emitEvent(`mantle.${"quote"}.${"deleted"}`, {
+      id: record.id
+    }, record.id);
+  });
+  return plan();
+};
+const defaultPrefix = docType => {
+  switch (docType) {
+    case "quote":
+      return "QT";
+    case "invoice":
+      return "INV";
+    default:
+      return docType.slice(0, 3).toUpperCase();
+  }
+};
+const generateRandomHex = length => {
+  const bytes = globalThis.crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2)));
+  return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("").toUpperCase().slice(0, length);
+};
+const assembleNumber = (prefix, separator, datePart, idPart) => {
+  const parts = [];
+  if (prefix) parts.push(prefix);
+  if (datePart) parts.push(datePart);
+  parts.push(idPart);
+  return parts.join(separator);
+};
+const buildDatePart = dateFormat => {
+  if (!dateFormat) return "";
+  const now = new Date(),
+    yyyy = now.getFullYear().toString(),
+    mm = (now.getMonth() + 1).toString().padStart(2, "0");
+  switch (dateFormat) {
+    case "YYYY":
+      return yyyy;
+    case "YYMM":
+      return `${yyyy.slice(2)}${mm}`;
+    case "YYYYMM":
+      return `${yyyy}${mm}`;
+    default:
+      return "";
+  }
 };
 const getPgSelectSingleFromMutationResult = (resource, pkAttributes, $mutation) => {
   const $result = $mutation.getStepForKey("result", !0);
@@ -4044,6 +4742,9 @@ type Query implements Node {
   """Get a single \`Product\`."""
   product(rowId: UUID!): Product
 
+  """Get a single \`DocumentNumberingConfig\`."""
+  documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
+
   """Get a single \`Person\`."""
   person(rowId: UUID!): Person
 
@@ -4088,6 +4789,16 @@ type Query implements Node {
     """The globally unique \`ID\` to be used in selecting a single \`Product\`."""
     id: ID!
   ): Product
+
+  """
+  Reads a single \`DocumentNumberingConfig\` using its globally unique \`ID\`.
+  """
+  documentNumberingConfigById(
+    """
+    The globally unique \`ID\` to be used in selecting a single \`DocumentNumberingConfig\`.
+    """
+    id: ID!
+  ): DocumentNumberingConfig
 
   """Reads a single \`Person\` using its globally unique \`ID\`."""
   personById(
@@ -4256,6 +4967,42 @@ type Query implements Node {
     """The method to use when ordering \`Product\`."""
     orderBy: [ProductOrderBy!] = [PRIMARY_KEY_ASC]
   ): ProductConnection
+
+  """
+  Reads and enables pagination through a set of \`DocumentNumberingConfig\`.
+  """
+  documentNumberingConfigs(
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DocumentNumberingConfigCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DocumentNumberingConfigFilter
+
+    """The method to use when ordering \`DocumentNumberingConfig\`."""
+    orderBy: [DocumentNumberingConfigOrderBy!] = [PRIMARY_KEY_ASC]
+  ): DocumentNumberingConfigConnection
 
   """Reads and enables pagination through a set of \`Person\`."""
   people(
@@ -5777,6 +6524,9 @@ type Quote implements Node {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 
   """Reads a single \`Company\` that is related to this \`Quote\`."""
   company: Company
@@ -5863,6 +6613,7 @@ type QuoteLineItem implements Node {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 
   """Reads a single \`Product\` that is related to this \`QuoteLineItem\`."""
   product: Product
@@ -5949,6 +6700,25 @@ enum QuoteOrderBy {
   STATUS_DESC
 }
 
+type DocumentNumberingConfig implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  organizationId: String!
+  documentType: String!
+  prefix: String!
+  separator: String!
+  dateFormat: String
+  idStrategy: String!
+  sequentialPadding: Int!
+  randomLength: Int!
+  nextSequentialNumber: Int!
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
 """A connection to a list of \`Product\` values."""
 type ProductConnection {
   """A list of \`Product\` objects."""
@@ -6000,6 +6770,85 @@ enum ProductOrderBy {
   ORGANIZATION_ID_DESC
   SKU_ASC
   SKU_DESC
+}
+
+"""A connection to a list of \`DocumentNumberingConfig\` values."""
+type DocumentNumberingConfigConnection {
+  """A list of \`DocumentNumberingConfig\` objects."""
+  nodes: [DocumentNumberingConfig]!
+
+  """
+  A list of edges which contains the \`DocumentNumberingConfig\` and cursor to aid in pagination.
+  """
+  edges: [DocumentNumberingConfigEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* \`DocumentNumberingConfig\` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A \`DocumentNumberingConfig\` edge in the connection."""
+type DocumentNumberingConfigEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`DocumentNumberingConfig\` at the end of the edge."""
+  node: DocumentNumberingConfig
+}
+
+"""
+A condition to be used against \`DocumentNumberingConfig\` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input DocumentNumberingConfigCondition {
+  """Checks for equality with the object’s \`rowId\` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s \`organizationId\` field."""
+  organizationId: String
+
+  """Checks for equality with the object’s \`documentType\` field."""
+  documentType: String
+}
+
+"""
+A filter to be used against \`DocumentNumberingConfig\` object types. All fields are combined with a logical ‘and.’
+"""
+input DocumentNumberingConfigFilter {
+  """Filter by the object’s \`rowId\` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s \`organizationId\` field."""
+  organizationId: StringFilter
+
+  """Filter by the object’s \`documentType\` field."""
+  documentType: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [DocumentNumberingConfigFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [DocumentNumberingConfigFilter!]
+
+  """Negates the expression."""
+  not: DocumentNumberingConfigFilter
+}
+
+"""Methods to use when ordering \`DocumentNumberingConfig\`."""
+enum DocumentNumberingConfigOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+  DOCUMENT_TYPE_ASC
+  DOCUMENT_TYPE_DESC
 }
 
 """A connection to a list of \`Person\` values."""
@@ -6134,6 +6983,14 @@ type Mutation {
     input: CreateProductInput!
   ): CreateProductPayload
 
+  """Creates a single \`DocumentNumberingConfig\`."""
+  createDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateDocumentNumberingConfigInput!
+  ): CreateDocumentNumberingConfigPayload
+
   """Creates a single \`Person\`."""
   createPerson(
     """
@@ -6243,6 +7100,26 @@ type Mutation {
     """
     input: UpdateProductInput!
   ): UpdateProductPayload
+
+  """
+  Updates a single \`DocumentNumberingConfig\` using its globally unique id and a patch.
+  """
+  updateDocumentNumberingConfigById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateDocumentNumberingConfigByIdInput!
+  ): UpdateDocumentNumberingConfigPayload
+
+  """
+  Updates a single \`DocumentNumberingConfig\` using a unique key and a patch.
+  """
+  updateDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateDocumentNumberingConfigInput!
+  ): UpdateDocumentNumberingConfigPayload
 
   """Updates a single \`Person\` using its globally unique id and a patch."""
   updatePersonById(
@@ -6390,6 +7267,24 @@ type Mutation {
     input: DeleteProductInput!
   ): DeleteProductPayload
 
+  """
+  Deletes a single \`DocumentNumberingConfig\` using its globally unique id.
+  """
+  deleteDocumentNumberingConfigById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteDocumentNumberingConfigByIdInput!
+  ): DeleteDocumentNumberingConfigPayload
+
+  """Deletes a single \`DocumentNumberingConfig\` using a unique key."""
+  deleteDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteDocumentNumberingConfigInput!
+  ): DeleteDocumentNumberingConfigPayload
+
   """Deletes a single \`Person\` using its globally unique id."""
   deletePersonById(
     """
@@ -6469,6 +7364,12 @@ type Mutation {
     """
     input: DeleteQuoteInput!
   ): DeleteQuotePayload
+  generateDocumentNumber(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: GenerateDocumentNumberInput!
+  ): GenerateDocumentNumberPayload
 }
 
 """The output of our create \`CompanyMember\` mutation."""
@@ -6658,6 +7559,57 @@ input ProductInput {
   updatedAt: Datetime
 }
 
+"""The output of our create \`DocumentNumberingConfig\` mutation."""
+type CreateDocumentNumberingConfigPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`DocumentNumberingConfig\` that was created by this mutation."""
+  documentNumberingConfig: DocumentNumberingConfig
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`DocumentNumberingConfig\`. May be used by Relay 1."""
+  documentNumberingConfigEdge(
+    """The method to use when ordering \`DocumentNumberingConfig\`."""
+    orderBy: [DocumentNumberingConfigOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): DocumentNumberingConfigEdge
+}
+
+"""All input for the create \`DocumentNumberingConfig\` mutation."""
+input CreateDocumentNumberingConfigInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The \`DocumentNumberingConfig\` to be created by this mutation."""
+  documentNumberingConfig: DocumentNumberingConfigInput!
+}
+
+"""An input for mutations affecting \`DocumentNumberingConfig\`"""
+input DocumentNumberingConfigInput {
+  rowId: UUID
+  organizationId: String!
+  documentType: String!
+  prefix: String
+  separator: String
+  dateFormat: String
+  idStrategy: String
+  sequentialPadding: Int
+  randomLength: Int
+  nextSequentialNumber: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
 """The output of our create \`Person\` mutation."""
 type CreatePersonPayload {
   """
@@ -6820,6 +7772,7 @@ input QuoteLineItemInput {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 }
 
 """The output of our create \`Invoice\` mutation."""
@@ -6940,6 +7893,9 @@ input QuoteInput {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 }
 
 """The output of our update \`CompanyMember\` mutation."""
@@ -7225,6 +8181,81 @@ input UpdateProductInput {
   patch: ProductPatch!
 }
 
+"""The output of our update \`DocumentNumberingConfig\` mutation."""
+type UpdateDocumentNumberingConfigPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`DocumentNumberingConfig\` that was updated by this mutation."""
+  documentNumberingConfig: DocumentNumberingConfig
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`DocumentNumberingConfig\`. May be used by Relay 1."""
+  documentNumberingConfigEdge(
+    """The method to use when ordering \`DocumentNumberingConfig\`."""
+    orderBy: [DocumentNumberingConfigOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): DocumentNumberingConfigEdge
+}
+
+"""All input for the \`updateDocumentNumberingConfigById\` mutation."""
+input UpdateDocumentNumberingConfigByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique \`ID\` which will identify a single \`DocumentNumberingConfig\` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the \`DocumentNumberingConfig\` being updated.
+  """
+  patch: DocumentNumberingConfigPatch!
+}
+
+"""
+Represents an update to a \`DocumentNumberingConfig\`. Fields that are set will be updated.
+"""
+input DocumentNumberingConfigPatch {
+  rowId: UUID
+  organizationId: String
+  documentType: String
+  prefix: String
+  separator: String
+  dateFormat: String
+  idStrategy: String
+  sequentialPadding: Int
+  randomLength: Int
+  nextSequentialNumber: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""All input for the \`updateDocumentNumberingConfig\` mutation."""
+input UpdateDocumentNumberingConfigInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the \`DocumentNumberingConfig\` being updated.
+  """
+  patch: DocumentNumberingConfigPatch!
+}
+
 """The output of our update \`Person\` mutation."""
 type UpdatePersonPayload {
   """
@@ -7444,6 +8475,7 @@ input QuoteLineItemPatch {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 }
 
 """All input for the \`updateQuoteLineItem\` mutation."""
@@ -7612,6 +8644,9 @@ input QuotePatch {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 }
 
 """All input for the \`updateQuote\` mutation."""
@@ -7813,6 +8848,54 @@ input DeleteProductByIdInput {
 
 """All input for the \`deleteProduct\` mutation."""
 input DeleteProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete \`DocumentNumberingConfig\` mutation."""
+type DeleteDocumentNumberingConfigPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`DocumentNumberingConfig\` that was deleted by this mutation."""
+  documentNumberingConfig: DocumentNumberingConfig
+  deletedDocumentNumberingConfigId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`DocumentNumberingConfig\`. May be used by Relay 1."""
+  documentNumberingConfigEdge(
+    """The method to use when ordering \`DocumentNumberingConfig\`."""
+    orderBy: [DocumentNumberingConfigOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): DocumentNumberingConfigEdge
+}
+
+"""All input for the \`deleteDocumentNumberingConfigById\` mutation."""
+input DeleteDocumentNumberingConfigByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique \`ID\` which will identify a single \`DocumentNumberingConfig\` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the \`deleteDocumentNumberingConfig\` mutation."""
+input DeleteDocumentNumberingConfigInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -8059,6 +9142,16 @@ input DeleteQuoteInput {
   """
   clientMutationId: String
   rowId: UUID!
+}
+
+input GenerateDocumentNumberInput {
+  organizationId: String!
+  documentType: String!
+  idStrategy: String
+}
+
+type GenerateDocumentNumberPayload {
+  documentNumber: String!
 }`;
 export const objects = {
   Query: {
@@ -8093,7 +9186,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed6(value, "object");
+              assertAllowed7(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8155,6 +9248,56 @@ export const objects = {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
               assertAllowed(value, "object");
+              if (value == null) return;
+              const condition = new PgCondition(queryBuilder);
+              return condition;
+            });
+          },
+          orderBy(parent, $connection, value) {
+            const $select = $connection.getSubplan();
+            value.apply($select);
+          }
+        }
+      },
+      documentNumberingConfig(_$root, {
+        $rowId
+      }) {
+        return resource_document_numbering_configPgResource.get({
+          id: $rowId
+        });
+      },
+      documentNumberingConfigById(_$parent, args) {
+        const $nodeId = args.getRaw("id");
+        return nodeFetcher_DocumentNumberingConfig($nodeId);
+      },
+      documentNumberingConfigs: {
+        plan() {
+          return connection(resource_document_numbering_configPgResource.find());
+        },
+        args: {
+          first(_, $connection, arg) {
+            $connection.setFirst(arg.getRaw());
+          },
+          last(_, $connection, val) {
+            $connection.setLast(val.getRaw());
+          },
+          offset(_, $connection, val) {
+            $connection.setOffset(val.getRaw());
+          },
+          before(_, $connection, val) {
+            $connection.setBefore(val.getRaw());
+          },
+          after(_, $connection, val) {
+            $connection.setAfter(val.getRaw());
+          },
+          condition(_condition, $connection, arg) {
+            const $select = $connection.getSubplan();
+            arg.apply($select, qbWhereBuilder);
+          },
+          filter(_, $connection, fieldArg) {
+            const $pgSelect = $connection.getSubplan();
+            fieldArg.apply($pgSelect, (queryBuilder, value) => {
+              assertAllowed5(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8308,7 +9451,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed8(value, "object");
+              assertAllowed9(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8350,7 +9493,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed5(value, "object");
+              assertAllowed6(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8475,7 +9618,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed7(value, "object");
+              assertAllowed8(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8514,7 +9657,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed9(value, "object");
+              assertAllowed10(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -8532,12 +9675,23 @@ export const objects = {
     assertStep: __ValueStep,
     plans: {
       createCompany: {
-        plan(_, args) {
-          const $insert = pgInsertSingle(resource_companyPgResource, Object.create(null));
-          args.apply($insert);
-          return object({
-            result: $insert
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan4.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createCompany"}, but that function did not return a step!
+${String(oldPlan4)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper4(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8552,6 +9706,31 @@ export const objects = {
           return object({
             result: $insert
           });
+        },
+        args: {
+          input(_, $object) {
+            return $object;
+          }
+        }
+      },
+      createDocumentNumberingConfig: {
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan2.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createDocumentNumberingConfig"}, but that function did not return a step!
+${String(oldPlan2)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper2(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8574,12 +9753,23 @@ export const objects = {
         }
       },
       createInvoice: {
-        plan(_, args) {
-          const $insert = pgInsertSingle(resource_invoicePgResource, Object.create(null));
-          args.apply($insert);
-          return object({
-            result: $insert
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan5.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createInvoice"}, but that function did not return a step!
+${String(oldPlan5)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper5(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8602,12 +9792,23 @@ export const objects = {
         }
       },
       createPerson: {
-        plan(_, args) {
-          const $insert = pgInsertSingle(resource_personPgResource, Object.create(null));
-          args.apply($insert);
-          return object({
-            result: $insert
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan3.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createPerson"}, but that function did not return a step!
+${String(oldPlan3)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper3(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8616,12 +9817,23 @@ export const objects = {
         }
       },
       createProduct: {
-        plan(_, args) {
-          const $insert = pgInsertSingle(resource_productPgResource, Object.create(null));
-          args.apply($insert);
-          return object({
-            result: $insert
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createProduct"}, but that function did not return a step!
+${String(oldPlan)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8630,12 +9842,23 @@ export const objects = {
         }
       },
       createQuote: {
-        plan(_, args) {
-          const $insert = pgInsertSingle(resource_quotePgResource, Object.create(null));
-          args.apply($insert);
-          return object({
-            result: $insert
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan6.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"createQuote"}, but that function did not return a step!
+${String(oldPlan6)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper6(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8658,14 +9881,23 @@ export const objects = {
         }
       },
       deleteCompany: {
-        plan(_$root, args) {
-          const $delete = pgDeleteSingle(resource_companyPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($delete);
-          return object({
-            result: $delete
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan16.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteCompany"}, but that function did not return a step!
+${String(oldPlan16)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper16(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8717,6 +9949,45 @@ export const objects = {
           }
         }
       },
+      deleteDocumentNumberingConfig: {
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan14.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteDocumentNumberingConfig"}, but that function did not return a step!
+${String(oldPlan14)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper14(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
+        },
+        args: {
+          input(_, $object) {
+            return $object;
+          }
+        }
+      },
+      deleteDocumentNumberingConfigById: {
+        plan(_$root, args) {
+          const $delete = pgDeleteSingle(resource_document_numbering_configPgResource, specFromArgs_DocumentNumberingConfig2(args));
+          args.apply($delete);
+          return object({
+            result: $delete
+          });
+        },
+        args: {
+          input(_, $object) {
+            return $object;
+          }
+        }
+      },
       deleteInventoryAdjustment: {
         plan(_$root, args) {
           const $delete = pgDeleteSingle(resource_inventory_adjustmentPgResource, {
@@ -8748,14 +10019,23 @@ export const objects = {
         }
       },
       deleteInvoice: {
-        plan(_$root, args) {
-          const $delete = pgDeleteSingle(resource_invoicePgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($delete);
-          return object({
-            result: $delete
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan17.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteInvoice"}, but that function did not return a step!
+${String(oldPlan17)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper17(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8808,14 +10088,23 @@ export const objects = {
         }
       },
       deletePerson: {
-        plan(_$root, args) {
-          const $delete = pgDeleteSingle(resource_personPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($delete);
-          return object({
-            result: $delete
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan15.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deletePerson"}, but that function did not return a step!
+${String(oldPlan15)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper15(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8838,14 +10127,23 @@ export const objects = {
         }
       },
       deleteProduct: {
-        plan(_$root, args) {
-          const $delete = pgDeleteSingle(resource_productPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($delete);
-          return object({
-            result: $delete
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan13.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteProduct"}, but that function did not return a step!
+${String(oldPlan13)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper13(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8868,14 +10166,23 @@ export const objects = {
         }
       },
       deleteQuote: {
-        plan(_$root, args) {
-          const $delete = pgDeleteSingle(resource_quotePgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($delete);
-          return object({
-            result: $delete
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan18.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteQuote"}, but that function did not return a step!
+${String(oldPlan18)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper18(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8927,15 +10234,71 @@ export const objects = {
           }
         }
       },
+      generateDocumentNumber: {
+        async resolve(_parent, args) {
+          const {
+              sql
+            } = await import("drizzle-orm"),
+            {
+              dbPool
+            } = await import("lib/db/db"),
+            {
+              documentNumberingConfigTable
+            } = await import("lib/db/schema"),
+            {
+              organizationId,
+              documentType,
+              idStrategy
+            } = args.input;
+          return {
+            documentNumber: await dbPool.transaction(async tx => {
+              await tx.insert(documentNumberingConfigTable).values({
+                organizationId,
+                documentType,
+                prefix: defaultPrefix(documentType),
+                separator: "-",
+                idStrategy: "sequential",
+                sequentialPadding: 4,
+                randomLength: 8,
+                nextSequentialNumber: 1
+              }).onConflictDoNothing({
+                target: [documentNumberingConfigTable.organizationId, documentNumberingConfigTable.documentType]
+              });
+              const config = (await tx.execute(sql`SELECT * FROM document_numbering_config WHERE organization_id = ${organizationId} AND document_type = ${documentType} FOR UPDATE`)).rows[0],
+                datePart = buildDatePart(config.date_format);
+              let idPart;
+              if ((idStrategy ?? config.id_strategy) === "sequential") {
+                const seqNum = config.next_sequential_number;
+                await tx.update(documentNumberingConfigTable).set({
+                  nextSequentialNumber: sql`${documentNumberingConfigTable.nextSequentialNumber} + 1`,
+                  updatedAt: sql`NOW()`
+                }).where(sql`id = ${config.id}`);
+                idPart = String(seqNum).padStart(config.sequential_padding, "0");
+              } else idPart = generateRandomHex(config.random_length);
+              return assembleNumber(config.prefix, config.separator, datePart, idPart);
+            })
+          };
+        },
+        subscribe: undefined
+      },
       updateCompany: {
-        plan(_$root, args) {
-          const $update = pgUpdateSingle(resource_companyPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($update);
-          return object({
-            result: $update
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan10.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updateCompany"}, but that function did not return a step!
+${String(oldPlan10)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper10(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -8987,6 +10350,45 @@ export const objects = {
           }
         }
       },
+      updateDocumentNumberingConfig: {
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan8.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updateDocumentNumberingConfig"}, but that function did not return a step!
+${String(oldPlan8)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper8(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
+        },
+        args: {
+          input(_, $object) {
+            return $object;
+          }
+        }
+      },
+      updateDocumentNumberingConfigById: {
+        plan(_$root, args) {
+          const $update = pgUpdateSingle(resource_document_numbering_configPgResource, specFromArgs_DocumentNumberingConfig(args));
+          args.apply($update);
+          return object({
+            result: $update
+          });
+        },
+        args: {
+          input(_, $object) {
+            return $object;
+          }
+        }
+      },
       updateInventoryAdjustment: {
         plan(_$root, args) {
           const $update = pgUpdateSingle(resource_inventory_adjustmentPgResource, {
@@ -9018,14 +10420,23 @@ export const objects = {
         }
       },
       updateInvoice: {
-        plan(_$root, args) {
-          const $update = pgUpdateSingle(resource_invoicePgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($update);
-          return object({
-            result: $update
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan11.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updateInvoice"}, but that function did not return a step!
+${String(oldPlan11)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper11(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -9078,14 +10489,23 @@ export const objects = {
         }
       },
       updatePerson: {
-        plan(_$root, args) {
-          const $update = pgUpdateSingle(resource_personPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($update);
-          return object({
-            result: $update
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan9.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updatePerson"}, but that function did not return a step!
+${String(oldPlan9)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper9(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -9108,14 +10528,23 @@ export const objects = {
         }
       },
       updateProduct: {
-        plan(_$root, args) {
-          const $update = pgUpdateSingle(resource_productPgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($update);
-          return object({
-            result: $update
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan7.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updateProduct"}, but that function did not return a step!
+${String(oldPlan7)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper7(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -9138,14 +10567,23 @@ export const objects = {
         }
       },
       updateQuote: {
-        plan(_$root, args) {
-          const $update = pgUpdateSingle(resource_quotePgResource, {
-            id: args.getRaw(['input', "rowId"])
-          });
-          args.apply($update);
-          return object({
-            result: $update
-          });
+        plan(...planParams) {
+          const smartPlan = (...overrideParams) => {
+              const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
+                $prev = oldPlan12.apply(this, args);
+              if (!($prev instanceof ExecutableStep)) {
+                console.error(`Wrapped a plan function at ${"Mutation"}.${"updateQuote"}, but that function did not return a step!
+${String(oldPlan12)}`);
+                throw Error("Wrapped a plan function, but that function did not return a step!");
+              }
+              args[1].autoApply($prev);
+              return $prev;
+            },
+            [$source, fieldArgs, info] = planParams,
+            $newPlan = planWrapper12(smartPlan, $source, fieldArgs, info);
+          if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
+          if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
+          return $newPlan;
         },
         args: {
           input(_, $object) {
@@ -9238,7 +10676,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed10(value, "object");
+              assertAllowed11(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -9287,7 +10725,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed11(value, "object");
+              assertAllowed12(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -9335,7 +10773,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed12(value, "object");
+              assertAllowed13(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -9443,6 +10881,23 @@ export const objects = {
       },
       companyEdge($mutation, fieldArgs) {
         return pgMutationPayloadEdge(resource_companyPgResource, companyUniques[0].attributes, $mutation, fieldArgs);
+      },
+      query() {
+        return rootValue();
+      }
+    }
+  },
+  CreateDocumentNumberingConfigPayload: {
+    assertStep: assertExecutableStep,
+    plans: {
+      clientMutationId($mutation) {
+        return $mutation.getStepForKey("result").getMeta("clientMutationId");
+      },
+      documentNumberingConfig($object) {
+        return $object.get("result");
+      },
+      documentNumberingConfigEdge($mutation, fieldArgs) {
+        return pgMutationPayloadEdge(resource_document_numbering_configPgResource, document_numbering_configUniques[0].attributes, $mutation, fieldArgs);
       },
       query() {
         return rootValue();
@@ -9612,6 +11067,28 @@ export const objects = {
       }
     }
   },
+  DeleteDocumentNumberingConfigPayload: {
+    assertStep: ObjectStep,
+    plans: {
+      clientMutationId($mutation) {
+        return $mutation.getStepForKey("result").getMeta("clientMutationId");
+      },
+      deletedDocumentNumberingConfigId($object) {
+        const $record = $object.getStepForKey("result"),
+          specifier = nodeIdHandler_DocumentNumberingConfig.plan($record);
+        return lambda(specifier, nodeIdCodecs_base64JSON_base64JSON.encode);
+      },
+      documentNumberingConfig($object) {
+        return $object.get("result");
+      },
+      documentNumberingConfigEdge($mutation, fieldArgs) {
+        return pgMutationPayloadEdge(resource_document_numbering_configPgResource, document_numbering_configUniques[0].attributes, $mutation, fieldArgs);
+      },
+      query() {
+        return rootValue();
+      }
+    }
+  },
   DeleteInventoryAdjustmentPayload: {
     assertStep: ObjectStep,
     plans: {
@@ -9766,6 +11243,58 @@ export const objects = {
       }
     }
   },
+  DocumentNumberingConfig: {
+    assertStep: assertPgClassSingleStep,
+    plans: {
+      createdAt($record) {
+        return $record.get("created_at");
+      },
+      dateFormat($record) {
+        return $record.get("date_format");
+      },
+      documentType($record) {
+        return $record.get("document_type");
+      },
+      id($parent) {
+        const specifier = nodeIdHandler_DocumentNumberingConfig.plan($parent);
+        return lambda(specifier, nodeIdCodecs[nodeIdHandler_DocumentNumberingConfig.codec.name].encode);
+      },
+      idStrategy($record) {
+        return $record.get("id_strategy");
+      },
+      nextSequentialNumber($record) {
+        return $record.get("next_sequential_number");
+      },
+      organizationId($record) {
+        return $record.get("organization_id");
+      },
+      randomLength($record) {
+        return $record.get("random_length");
+      },
+      rowId($record) {
+        return $record.get("id");
+      },
+      sequentialPadding($record) {
+        return $record.get("sequential_padding");
+      },
+      updatedAt($record) {
+        return $record.get("updated_at");
+      }
+    },
+    planType($specifier) {
+      const spec = Object.create(null);
+      for (const pkCol of document_numbering_configUniques[0].attributes) spec[pkCol] = get2($specifier, pkCol);
+      return resource_document_numbering_configPgResource.get(spec);
+    }
+  },
+  DocumentNumberingConfigConnection: {
+    assertStep: ConnectionStep,
+    plans: {
+      totalCount($connection) {
+        return $connection.cloneSubplanWithoutPagination("aggregate").singleAsRecord().select(sql`count(*)`, TYPES.bigint, !1);
+      }
+    }
+  },
   InventoryAdjustment: {
     assertStep: assertPgClassSingleStep,
     plans: {
@@ -9870,7 +11399,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed40(value, "object");
+              assertAllowed41(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -10010,7 +11539,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed41(value, "object");
+              assertAllowed42(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -10102,7 +11631,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed42(value, "object");
+              assertAllowed43(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -10150,8 +11679,17 @@ export const objects = {
   Quote: {
     assertStep: assertPgClassSingleStep,
     plans: {
+      additionalItemsLabel($record) {
+        return $record.get("additional_items_label");
+      },
       additionalTerms($record) {
         return $record.get("additional_terms");
+      },
+      clientEmail($record) {
+        return $record.get("client_email");
+      },
+      clientName($record) {
+        return $record.get("client_name");
       },
       company($record) {
         return resource_companyPgResource.get({
@@ -10220,7 +11758,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed43(value, "object");
+              assertAllowed44(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -10376,6 +11914,23 @@ export const objects = {
       },
       companyEdge($mutation, fieldArgs) {
         return pgMutationPayloadEdge(resource_companyPgResource, companyUniques[0].attributes, $mutation, fieldArgs);
+      },
+      query() {
+        return rootValue();
+      }
+    }
+  },
+  UpdateDocumentNumberingConfigPayload: {
+    assertStep: ObjectStep,
+    plans: {
+      clientMutationId($mutation) {
+        return $mutation.getStepForKey("result").getMeta("clientMutationId");
+      },
+      documentNumberingConfig($object) {
+        return $object.get("result");
+      },
+      documentNumberingConfigEdge($mutation, fieldArgs) {
+        return pgMutationPayloadEdge(resource_document_numbering_configPgResource, document_numbering_configUniques[0].attributes, $mutation, fieldArgs);
       },
       query() {
         return rootValue();
@@ -10542,12 +12097,12 @@ export const inputObjects = {
   CompanyFilter: {
     plans: {
       and($where, value) {
-        assertAllowed16(value, "list");
+        assertAllowed17(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       companyMembers($where, value) {
-        assertAllowed15(value, "object");
+        assertAllowed16(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: companyMemberIdentifier,
@@ -10558,7 +12113,7 @@ export const inputObjects = {
         return $rel;
       },
       companyMembersExist($where, value) {
-        assertAllowed15(value, "scalar");
+        assertAllowed16(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyMemberIdentifier,
@@ -10571,7 +12126,7 @@ export const inputObjects = {
         });
       },
       invoices($where, value) {
-        assertAllowed15(value, "object");
+        assertAllowed16(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: invoiceIdentifier,
@@ -10582,7 +12137,7 @@ export const inputObjects = {
         return $rel;
       },
       invoicesExist($where, value) {
-        assertAllowed15(value, "scalar");
+        assertAllowed16(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: invoiceIdentifier,
@@ -10595,12 +12150,12 @@ export const inputObjects = {
         });
       },
       not($where, value) {
-        assertAllowed16(value, "object");
+        assertAllowed17(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed16(value, "list");
+        assertAllowed17(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
@@ -10614,7 +12169,7 @@ export const inputObjects = {
         return condition;
       },
       quotes($where, value) {
-        assertAllowed15(value, "object");
+        assertAllowed16(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: quoteIdentifier,
@@ -10625,7 +12180,7 @@ export const inputObjects = {
         return $rel;
       },
       quotesExist($where, value) {
-        assertAllowed15(value, "scalar");
+        assertAllowed16(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: quoteIdentifier,
@@ -10782,12 +12337,12 @@ export const inputObjects = {
   CompanyMemberFilter: {
     plans: {
       and($where, value) {
-        assertAllowed14(value, "list");
+        assertAllowed15(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       company($where, value) {
-        assertAllowed13(value, "object");
+        assertAllowed14(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyIdentifier,
@@ -10808,18 +12363,18 @@ export const inputObjects = {
         return condition;
       },
       not($where, value) {
-        assertAllowed14(value, "object");
+        assertAllowed15(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed14(value, "list");
+        assertAllowed15(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
       },
       person($where, value) {
-        assertAllowed13(value, "object");
+        assertAllowed14(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: personIdentifier,
@@ -11035,7 +12590,7 @@ export const inputObjects = {
   CompanyToManyCompanyMemberFilter: {
     plans: {
       every($where, value) {
-        assertAllowed17(value, "object");
+        assertAllowed18(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11055,7 +12610,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed17(value, "object");
+        assertAllowed18(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11075,7 +12630,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed17(value, "object");
+        assertAllowed18(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11099,7 +12654,7 @@ export const inputObjects = {
   CompanyToManyInvoiceFilter: {
     plans: {
       every($where, value) {
-        assertAllowed18(value, "object");
+        assertAllowed19(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11119,7 +12674,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed18(value, "object");
+        assertAllowed19(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11139,7 +12694,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed18(value, "object");
+        assertAllowed19(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11163,7 +12718,7 @@ export const inputObjects = {
   CompanyToManyQuoteFilter: {
     plans: {
       every($where, value) {
-        assertAllowed33(value, "object");
+        assertAllowed34(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11183,7 +12738,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed33(value, "object");
+        assertAllowed34(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11203,7 +12758,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed33(value, "object");
+        assertAllowed34(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -11240,6 +12795,16 @@ export const inputObjects = {
         qb.setMeta("clientMutationId", val);
       },
       companyMember(qb, arg) {
+        if (arg != null) return qb.setBuilder();
+      }
+    }
+  },
+  CreateDocumentNumberingConfigInput: {
+    plans: {
+      clientMutationId(qb, val) {
+        qb.setMeta("clientMutationId", val);
+      },
+      documentNumberingConfig(qb, arg) {
         if (arg != null) return qb.setBuilder();
       }
     }
@@ -11336,6 +12901,20 @@ export const inputObjects = {
     }
   },
   DeleteCompanyMemberInput: {
+    plans: {
+      clientMutationId(qb, val) {
+        qb.setMeta("clientMutationId", val);
+      }
+    }
+  },
+  DeleteDocumentNumberingConfigByIdInput: {
+    plans: {
+      clientMutationId(qb, val) {
+        qb.setMeta("clientMutationId", val);
+      }
+    }
+  },
+  DeleteDocumentNumberingConfigInput: {
     plans: {
       clientMutationId(qb, val) {
         qb.setMeta("clientMutationId", val);
@@ -11440,6 +13019,235 @@ export const inputObjects = {
       }
     }
   },
+  DocumentNumberingConfigCondition: {
+    plans: {
+      documentType($condition, val) {
+        $condition.where({
+          type: "attribute",
+          attribute: "document_type",
+          callback(expression) {
+            return val === null ? sql`${expression} is null` : sql`${expression} = ${sqlValueWithCodec(val, TYPES.text)}`;
+          }
+        });
+      },
+      organizationId($condition, val) {
+        $condition.where({
+          type: "attribute",
+          attribute: "organization_id",
+          callback(expression) {
+            return val === null ? sql`${expression} is null` : sql`${expression} = ${sqlValueWithCodec(val, TYPES.text)}`;
+          }
+        });
+      },
+      rowId($condition, val) {
+        $condition.where({
+          type: "attribute",
+          attribute: "id",
+          callback(expression) {
+            return val === null ? sql`${expression} is null` : sql`${expression} = ${sqlValueWithCodec(val, TYPES.uuid)}`;
+          }
+        });
+      }
+    }
+  },
+  DocumentNumberingConfigFilter: {
+    plans: {
+      and($where, value) {
+        assertAllowed45(value, "list");
+        if (value == null) return;
+        return $where.andPlan();
+      },
+      documentType(queryBuilder, value) {
+        if (value === void 0) return;
+        if (!false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+        if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+        const condition = new PgCondition(queryBuilder);
+        condition.extensions.pgFilterAttribute = colSpec30;
+        return condition;
+      },
+      not($where, value) {
+        assertAllowed45(value, "object");
+        if (value == null) return;
+        return $where.notPlan().andPlan();
+      },
+      or($where, value) {
+        assertAllowed45(value, "list");
+        if (value == null) return;
+        const $or = $where.orPlan();
+        return () => $or.andPlan();
+      },
+      organizationId(queryBuilder, value) {
+        if (value === void 0) return;
+        if (!false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+        if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+        const condition = new PgCondition(queryBuilder);
+        condition.extensions.pgFilterAttribute = colSpec29;
+        return condition;
+      },
+      rowId(queryBuilder, value) {
+        if (value === void 0) return;
+        if (!false && isEmpty(value)) throw Object.assign(Error("Empty objects are forbidden in filter argument input."), {});
+        if (!false && value === null) throw Object.assign(Error("Null literals are forbidden in filter argument input."), {});
+        const condition = new PgCondition(queryBuilder);
+        condition.extensions.pgFilterAttribute = colSpec28;
+        return condition;
+      }
+    }
+  },
+  DocumentNumberingConfigInput: {
+    baked: createObjectAndApplyChildren,
+    plans: {
+      createdAt(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("created_at", bakedInputRuntime(schema, field.type, val));
+      },
+      dateFormat(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("date_format", bakedInputRuntime(schema, field.type, val));
+      },
+      documentType(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("document_type", bakedInputRuntime(schema, field.type, val));
+      },
+      idStrategy(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("id_strategy", bakedInputRuntime(schema, field.type, val));
+      },
+      nextSequentialNumber(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("next_sequential_number", bakedInputRuntime(schema, field.type, val));
+      },
+      organizationId(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("organization_id", bakedInputRuntime(schema, field.type, val));
+      },
+      prefix(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("prefix", bakedInputRuntime(schema, field.type, val));
+      },
+      randomLength(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("random_length", bakedInputRuntime(schema, field.type, val));
+      },
+      rowId(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("id", bakedInputRuntime(schema, field.type, val));
+      },
+      separator(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("separator", bakedInputRuntime(schema, field.type, val));
+      },
+      sequentialPadding(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("sequential_padding", bakedInputRuntime(schema, field.type, val));
+      },
+      updatedAt(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("updated_at", bakedInputRuntime(schema, field.type, val));
+      }
+    }
+  },
+  DocumentNumberingConfigPatch: {
+    baked: createObjectAndApplyChildren,
+    plans: {
+      createdAt(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("created_at", bakedInputRuntime(schema, field.type, val));
+      },
+      dateFormat(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("date_format", bakedInputRuntime(schema, field.type, val));
+      },
+      documentType(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("document_type", bakedInputRuntime(schema, field.type, val));
+      },
+      idStrategy(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("id_strategy", bakedInputRuntime(schema, field.type, val));
+      },
+      nextSequentialNumber(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("next_sequential_number", bakedInputRuntime(schema, field.type, val));
+      },
+      organizationId(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("organization_id", bakedInputRuntime(schema, field.type, val));
+      },
+      prefix(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("prefix", bakedInputRuntime(schema, field.type, val));
+      },
+      randomLength(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("random_length", bakedInputRuntime(schema, field.type, val));
+      },
+      rowId(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("id", bakedInputRuntime(schema, field.type, val));
+      },
+      separator(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("separator", bakedInputRuntime(schema, field.type, val));
+      },
+      sequentialPadding(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("sequential_padding", bakedInputRuntime(schema, field.type, val));
+      },
+      updatedAt(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("updated_at", bakedInputRuntime(schema, field.type, val));
+      }
+    }
+  },
   InventoryAdjustmentCondition: {
     plans: {
       productId($condition, val) {
@@ -11465,23 +13273,23 @@ export const inputObjects = {
   InventoryAdjustmentFilter: {
     plans: {
       and($where, value) {
-        assertAllowed29(value, "list");
+        assertAllowed30(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       not($where, value) {
-        assertAllowed29(value, "object");
+        assertAllowed30(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed29(value, "list");
+        assertAllowed30(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
       },
       product($where, value) {
-        assertAllowed28(value, "object");
+        assertAllowed29(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: productIdentifier,
@@ -11645,12 +13453,12 @@ export const inputObjects = {
   InvoiceFilter: {
     plans: {
       and($where, value) {
-        assertAllowed21(value, "list");
+        assertAllowed22(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       company($where, value) {
-        assertAllowed20(value, "object");
+        assertAllowed21(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyIdentifier,
@@ -11663,7 +13471,7 @@ export const inputObjects = {
         return $subQuery;
       },
       companyExists($where, value) {
-        assertAllowed20(value, "scalar");
+        assertAllowed21(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyIdentifier,
@@ -11684,7 +13492,7 @@ export const inputObjects = {
         return condition;
       },
       contact($where, value) {
-        assertAllowed20(value, "object");
+        assertAllowed21(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: personIdentifier,
@@ -11697,7 +13505,7 @@ export const inputObjects = {
         return $subQuery;
       },
       contactExists($where, value) {
-        assertAllowed20(value, "scalar");
+        assertAllowed21(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: personIdentifier,
@@ -11710,7 +13518,7 @@ export const inputObjects = {
         });
       },
       invoiceLineItems($where, value) {
-        assertAllowed19(value, "object");
+        assertAllowed20(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: invoiceLineItemIdentifier,
@@ -11721,7 +13529,7 @@ export const inputObjects = {
         return $rel;
       },
       invoiceLineItemsExist($where, value) {
-        assertAllowed19(value, "scalar");
+        assertAllowed20(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: invoiceLineItemIdentifier,
@@ -11742,12 +13550,12 @@ export const inputObjects = {
         return condition;
       },
       not($where, value) {
-        assertAllowed21(value, "object");
+        assertAllowed22(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed21(value, "list");
+        assertAllowed22(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
@@ -11928,12 +13736,12 @@ export const inputObjects = {
   InvoiceLineItemFilter: {
     plans: {
       and($where, value) {
-        assertAllowed24(value, "list");
+        assertAllowed25(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       invoice($where, value) {
-        assertAllowed23(value, "object");
+        assertAllowed24(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: invoiceIdentifier,
@@ -11954,18 +13762,18 @@ export const inputObjects = {
         return condition;
       },
       not($where, value) {
-        assertAllowed24(value, "object");
+        assertAllowed25(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed24(value, "list");
+        assertAllowed25(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
       },
       product($where, value) {
-        assertAllowed23(value, "object");
+        assertAllowed24(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: productIdentifier,
@@ -11978,7 +13786,7 @@ export const inputObjects = {
         return $subQuery;
       },
       productExists($where, value) {
-        assertAllowed23(value, "scalar");
+        assertAllowed24(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: productIdentifier,
@@ -12234,7 +14042,7 @@ export const inputObjects = {
   InvoiceToManyInvoiceLineItemFilter: {
     plans: {
       every($where, value) {
-        assertAllowed22(value, "object");
+        assertAllowed23(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12254,7 +14062,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed22(value, "object");
+        assertAllowed23(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12274,7 +14082,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed22(value, "object");
+        assertAllowed23(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12320,12 +14128,12 @@ export const inputObjects = {
   PersonFilter: {
     plans: {
       and($where, value) {
-        assertAllowed31(value, "list");
+        assertAllowed32(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       companyMembers($where, value) {
-        assertAllowed30(value, "object");
+        assertAllowed31(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: companyMemberIdentifier,
@@ -12336,7 +14144,7 @@ export const inputObjects = {
         return $rel;
       },
       companyMembersExist($where, value) {
-        assertAllowed30(value, "scalar");
+        assertAllowed31(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyMemberIdentifier,
@@ -12357,12 +14165,12 @@ export const inputObjects = {
         return condition;
       },
       not($where, value) {
-        assertAllowed31(value, "object");
+        assertAllowed32(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed31(value, "list");
+        assertAllowed32(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
@@ -12542,7 +14350,7 @@ export const inputObjects = {
   PersonToManyCompanyMemberFilter: {
     plans: {
       every($where, value) {
-        assertAllowed32(value, "object");
+        assertAllowed33(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12562,7 +14370,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed32(value, "object");
+        assertAllowed33(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12582,7 +14390,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed32(value, "object");
+        assertAllowed33(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12637,12 +14445,12 @@ export const inputObjects = {
   ProductFilter: {
     plans: {
       and($where, value) {
-        assertAllowed26(value, "list");
+        assertAllowed27(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       inventoryAdjustments($where, value) {
-        assertAllowed25(value, "object");
+        assertAllowed26(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: inventoryAdjustmentIdentifier,
@@ -12653,7 +14461,7 @@ export const inputObjects = {
         return $rel;
       },
       inventoryAdjustmentsExist($where, value) {
-        assertAllowed25(value, "scalar");
+        assertAllowed26(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: inventoryAdjustmentIdentifier,
@@ -12666,12 +14474,12 @@ export const inputObjects = {
         });
       },
       not($where, value) {
-        assertAllowed26(value, "object");
+        assertAllowed27(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed26(value, "list");
+        assertAllowed27(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
@@ -12847,7 +14655,7 @@ export const inputObjects = {
   ProductToManyInventoryAdjustmentFilter: {
     plans: {
       every($where, value) {
-        assertAllowed27(value, "object");
+        assertAllowed28(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12867,7 +14675,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed27(value, "object");
+        assertAllowed28(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12887,7 +14695,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed27(value, "object");
+        assertAllowed28(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -12960,12 +14768,12 @@ export const inputObjects = {
   QuoteFilter: {
     plans: {
       and($where, value) {
-        assertAllowed36(value, "list");
+        assertAllowed37(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       company($where, value) {
-        assertAllowed35(value, "object");
+        assertAllowed36(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyIdentifier,
@@ -12978,7 +14786,7 @@ export const inputObjects = {
         return $subQuery;
       },
       companyExists($where, value) {
-        assertAllowed35(value, "scalar");
+        assertAllowed36(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: companyIdentifier,
@@ -12999,7 +14807,7 @@ export const inputObjects = {
         return condition;
       },
       contact($where, value) {
-        assertAllowed35(value, "object");
+        assertAllowed36(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: personIdentifier,
@@ -13012,7 +14820,7 @@ export const inputObjects = {
         return $subQuery;
       },
       contactExists($where, value) {
-        assertAllowed35(value, "scalar");
+        assertAllowed36(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: personIdentifier,
@@ -13025,7 +14833,7 @@ export const inputObjects = {
         });
       },
       convertedInvoice($where, value) {
-        assertAllowed35(value, "object");
+        assertAllowed36(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: invoiceIdentifier,
@@ -13038,7 +14846,7 @@ export const inputObjects = {
         return $subQuery;
       },
       convertedInvoiceExists($where, value) {
-        assertAllowed35(value, "scalar");
+        assertAllowed36(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: invoiceIdentifier,
@@ -13051,12 +14859,12 @@ export const inputObjects = {
         });
       },
       not($where, value) {
-        assertAllowed36(value, "object");
+        assertAllowed37(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed36(value, "list");
+        assertAllowed37(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
@@ -13070,7 +14878,7 @@ export const inputObjects = {
         return condition;
       },
       quoteLineItems($where, value) {
-        assertAllowed34(value, "object");
+        assertAllowed35(value, "object");
         const $rel = $where.andPlan();
         $rel.extensions.pgFilterRelation = {
           tableExpression: quoteLineItemIdentifier,
@@ -13081,7 +14889,7 @@ export const inputObjects = {
         return $rel;
       },
       quoteLineItemsExist($where, value) {
-        assertAllowed34(value, "scalar");
+        assertAllowed35(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: quoteLineItemIdentifier,
@@ -13122,11 +14930,29 @@ export const inputObjects = {
   QuoteInput: {
     baked: createObjectAndApplyChildren,
     plans: {
+      additionalItemsLabel(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("additional_items_label", bakedInputRuntime(schema, field.type, val));
+      },
       additionalTerms(obj, val, {
         field,
         schema
       }) {
         obj.set("additional_terms", bakedInputRuntime(schema, field.type, val));
+      },
+      clientEmail(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("client_email", bakedInputRuntime(schema, field.type, val));
+      },
+      clientName(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("client_name", bakedInputRuntime(schema, field.type, val));
       },
       companyId(obj, val, {
         field,
@@ -13281,23 +15107,23 @@ export const inputObjects = {
   QuoteLineItemFilter: {
     plans: {
       and($where, value) {
-        assertAllowed39(value, "list");
+        assertAllowed40(value, "list");
         if (value == null) return;
         return $where.andPlan();
       },
       not($where, value) {
-        assertAllowed39(value, "object");
+        assertAllowed40(value, "object");
         if (value == null) return;
         return $where.notPlan().andPlan();
       },
       or($where, value) {
-        assertAllowed39(value, "list");
+        assertAllowed40(value, "list");
         if (value == null) return;
         const $or = $where.orPlan();
         return () => $or.andPlan();
       },
       product($where, value) {
-        assertAllowed38(value, "object");
+        assertAllowed39(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: productIdentifier,
@@ -13310,7 +15136,7 @@ export const inputObjects = {
         return $subQuery;
       },
       productExists($where, value) {
-        assertAllowed38(value, "scalar");
+        assertAllowed39(value, "scalar");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: productIdentifier,
@@ -13323,7 +15149,7 @@ export const inputObjects = {
         });
       },
       quote($where, value) {
-        assertAllowed38(value, "object");
+        assertAllowed39(value, "object");
         if (value == null) return;
         const $subQuery = $where.existsPlan({
           tableExpression: quoteIdentifier,
@@ -13458,6 +15284,12 @@ export const inputObjects = {
       }) {
         obj.set("sort_order", bakedInputRuntime(schema, field.type, val));
       },
+      subtitle(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("subtitle", bakedInputRuntime(schema, field.type, val));
+      },
       unitPrice(obj, val, {
         field,
         schema
@@ -13577,6 +15409,12 @@ export const inputObjects = {
       }) {
         obj.set("sort_order", bakedInputRuntime(schema, field.type, val));
       },
+      subtitle(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("subtitle", bakedInputRuntime(schema, field.type, val));
+      },
       unitPrice(obj, val, {
         field,
         schema
@@ -13594,11 +15432,29 @@ export const inputObjects = {
   QuotePatch: {
     baked: createObjectAndApplyChildren,
     plans: {
+      additionalItemsLabel(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("additional_items_label", bakedInputRuntime(schema, field.type, val));
+      },
       additionalTerms(obj, val, {
         field,
         schema
       }) {
         obj.set("additional_terms", bakedInputRuntime(schema, field.type, val));
+      },
+      clientEmail(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("client_email", bakedInputRuntime(schema, field.type, val));
+      },
+      clientName(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("client_name", bakedInputRuntime(schema, field.type, val));
       },
       companyId(obj, val, {
         field,
@@ -13731,7 +15587,7 @@ export const inputObjects = {
   QuoteToManyQuoteLineItemFilter: {
     plans: {
       every($where, value) {
-        assertAllowed37(value, "object");
+        assertAllowed38(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -13751,7 +15607,7 @@ export const inputObjects = {
         return $subQuery.notPlan().andPlan();
       },
       none($where, value) {
-        assertAllowed37(value, "object");
+        assertAllowed38(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -13771,7 +15627,7 @@ export const inputObjects = {
         return $subQuery;
       },
       some($where, value) {
-        assertAllowed37(value, "object");
+        assertAllowed38(value, "object");
         if (value == null) return;
         if (!$where.extensions.pgFilterRelation) throw Error("Invalid use of filter, 'pgFilterRelation' expected");
         const {
@@ -15160,6 +17016,26 @@ export const inputObjects = {
       }
     }
   },
+  UpdateDocumentNumberingConfigByIdInput: {
+    plans: {
+      clientMutationId(qb, val) {
+        qb.setMeta("clientMutationId", val);
+      },
+      patch(qb, arg) {
+        if (arg != null) return qb.setBuilder();
+      }
+    }
+  },
+  UpdateDocumentNumberingConfigInput: {
+    plans: {
+      clientMutationId(qb, val) {
+        qb.setMeta("clientMutationId", val);
+      },
+      patch(qb, arg) {
+        if (arg != null) return qb.setBuilder();
+      }
+    }
+  },
   UpdateInventoryAdjustmentByIdInput: {
     plans: {
       clientMutationId(qb, val) {
@@ -15699,6 +17575,66 @@ export const enums = {
       },
       PRIMARY_KEY_DESC(queryBuilder) {
         companyUniques[0].attributes.forEach(attributeName => {
+          queryBuilder.orderBy({
+            attribute: attributeName,
+            direction: "DESC"
+          });
+        });
+        queryBuilder.setOrderIsUnique();
+      },
+      ROW_ID_ASC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "id",
+          direction: "ASC"
+        });
+        queryBuilder.setOrderIsUnique();
+      },
+      ROW_ID_DESC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "id",
+          direction: "DESC"
+        });
+        queryBuilder.setOrderIsUnique();
+      }
+    }
+  },
+  DocumentNumberingConfigOrderBy: {
+    values: {
+      DOCUMENT_TYPE_ASC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "document_type",
+          direction: "ASC"
+        });
+      },
+      DOCUMENT_TYPE_DESC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "document_type",
+          direction: "DESC"
+        });
+      },
+      ORGANIZATION_ID_ASC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "organization_id",
+          direction: "ASC"
+        });
+      },
+      ORGANIZATION_ID_DESC(queryBuilder) {
+        queryBuilder.orderBy({
+          attribute: "organization_id",
+          direction: "DESC"
+        });
+      },
+      PRIMARY_KEY_ASC(queryBuilder) {
+        document_numbering_configUniques[0].attributes.forEach(attributeName => {
+          queryBuilder.orderBy({
+            attribute: attributeName,
+            direction: "ASC"
+          });
+        });
+        queryBuilder.setOrderIsUnique();
+      },
+      PRIMARY_KEY_DESC(queryBuilder) {
+        document_numbering_configUniques[0].attributes.forEach(attributeName => {
           queryBuilder.orderBy({
             attribute: attributeName,
             direction: "DESC"

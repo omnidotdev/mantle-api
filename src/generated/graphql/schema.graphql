@@ -1811,6 +1811,9 @@ type Quote implements Node {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 
   """Reads a single `Company` that is related to this `Quote`."""
   company: Company
@@ -1897,6 +1900,7 @@ type QuoteLineItem implements Node {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 
   """Reads a single `Product` that is related to this `QuoteLineItem`."""
   product: Product
@@ -3055,6 +3059,7 @@ input QuoteLineItemInput {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 }
 
 """The output of our create `Invoice` mutation."""
@@ -3175,6 +3180,9 @@ input QuoteInput {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 }
 
 """The output of our update `CompanyMember` mutation."""
@@ -3754,6 +3762,7 @@ input QuoteLineItemPatch {
   royaltyTimeframeUnit: String
   royaltyThreshold: BigFloat
   royaltyBuyoutAmount: BigFloat
+  subtitle: String
 }
 
 """All input for the `updateQuoteLineItem` mutation."""
@@ -3922,6 +3931,9 @@ input QuotePatch {
   projectType: String
   timeRange: String
   additionalTerms: [String]
+  clientName: String
+  clientEmail: String
+  additionalItemsLabel: String
 }
 
 """All input for the `updateQuote` mutation."""
@@ -4422,6 +4434,7 @@ input DeleteQuoteInput {
 input GenerateDocumentNumberInput {
   organizationId: String!
   documentType: String!
+  idStrategy: String
 }
 
 type GenerateDocumentNumberPayload {

@@ -1,9 +1,23 @@
 import { EXPORTABLE } from "graphile-export";
-import { events } from "lib/providers";
 import { sideEffect } from "postgraphile/grafast";
 import { wrapPlans } from "postgraphile/utils";
 
 import type { PlanWrapperFn } from "postgraphile/utils";
+
+/**
+ * Emit a domain event. Lazily loads the provider to avoid capturing
+ * a class instance in EXPORTABLE closures.
+ */
+const emitEvent = EXPORTABLE(
+	() =>
+		(type: string, data: Record<string, unknown>, subject: string) => {
+			// Lazy import avoids EXPORTABLE serialization of class instances
+			import("lib/providers").then(({ events }) => {
+				void events.emit({ type, data, subject });
+			});
+		},
+	[],
+);
 
 /**
  * Emit a domain event after a mutation succeeds.
@@ -13,21 +27,21 @@ const emitOnMutate = (
 	action: "created" | "updated" | "deleted",
 ): PlanWrapperFn =>
 	EXPORTABLE(
-		(sideEffect, events, entity, action): PlanWrapperFn =>
+		(sideEffect, emitEvent, entity, action): PlanWrapperFn =>
 			(plan, $record) => {
 				sideEffect([$record], ([record]) => {
 					if (!record?.id) return;
 
-					void events.emit({
-						type: `mantle.${entity}.${action}`,
-						data: { id: record.id },
-						subject: record.id,
-					});
+					emitEvent(
+						`mantle.${entity}.${action}`,
+						{ id: record.id },
+						record.id,
+					);
 				});
 
 				return plan();
 			},
-		[sideEffect, events, entity, action],
+		[sideEffect, emitEvent, entity, action],
 	);
 
 /**
