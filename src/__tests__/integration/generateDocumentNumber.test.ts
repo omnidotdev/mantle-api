@@ -68,6 +68,21 @@ describe("generateDocumentNumber mutation", () => {
     }
   `;
 
+	const UPDATE_CONFIG_MUTATION_FULL = /* GraphQL */ `
+		mutation UpdateDocumentNumberingConfig(
+			$input: UpdateDocumentNumberingConfigInput!
+		) {
+			updateDocumentNumberingConfig(input: $input) {
+				documentNumberingConfig {
+					rowId
+					globalPrefix
+					prefix
+					idStrategy
+				}
+			}
+		}
+	`;
+
 	test("generates sequential quote number with default config", async () => {
 		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "quote" },
@@ -181,5 +196,78 @@ describe("generateDocumentNumber mutation", () => {
 			input: { organizationId: "test-org", documentType: "invoice" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("INV-0001");
+	});
+
+	test("prepends global prefix to document number", async () => {
+		// Generate first to auto-create config
+		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+			input: { organizationId: "global-prefix-org", documentType: "quote" },
+		});
+
+		// Get config rowId
+		const configResult =
+			await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+				organizationId: "global-prefix-org",
+			});
+		const configRowId =
+			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
+
+		// Set global prefix
+		await ctx.graphql.execute(UPDATE_CONFIG_MUTATION_FULL, {
+			input: {
+				rowId: configRowId,
+				patch: { globalPrefix: "ACME" },
+			},
+		});
+
+		// Generate again - should include global prefix
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+			GENERATE_MUTATION,
+			{
+				input: {
+					organizationId: "global-prefix-org",
+					documentType: "quote",
+				},
+			},
+		);
+
+		expect(result.data?.generateDocumentNumber?.documentNumber).toBe(
+			"ACME-QT-0002",
+		);
+	});
+
+	test("global prefix works with empty doc-type prefix", async () => {
+		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+			input: { organizationId: "gp-no-doc-prefix", documentType: "quote" },
+		});
+
+		const configResult =
+			await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+				organizationId: "gp-no-doc-prefix",
+			});
+		const configRowId =
+			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
+
+		// Set global prefix but clear doc-type prefix
+		await ctx.graphql.execute(UPDATE_CONFIG_MUTATION_FULL, {
+			input: {
+				rowId: configRowId,
+				patch: { globalPrefix: "ACME", prefix: "" },
+			},
+		});
+
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+			GENERATE_MUTATION,
+			{
+				input: {
+					organizationId: "gp-no-doc-prefix",
+					documentType: "quote",
+				},
+			},
+		);
+
+		expect(result.data?.generateDocumentNumber?.documentNumber).toBe(
+			"ACME-0002",
+		);
 	});
 });

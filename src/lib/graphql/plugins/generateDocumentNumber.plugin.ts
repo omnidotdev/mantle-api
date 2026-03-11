@@ -36,12 +36,14 @@ const generateRandomHex = EXPORTABLE(
  * Build the formatted document number from config parts.
  */
 const assembleNumber = (
+  globalPrefix: string,
   prefix: string,
   separator: string,
   datePart: string,
   idPart: string,
 ): string => {
   const parts: string[] = [];
+  if (globalPrefix) parts.push(globalPrefix);
   if (prefix) parts.push(prefix);
   if (datePart) parts.push(datePart);
   parts.push(idPart);
@@ -166,6 +168,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
               }
 
               return assembleNumber(
+                (config.global_prefix as string) ?? "",
                 config.prefix as string,
                 config.separator as string,
                 datePart,
