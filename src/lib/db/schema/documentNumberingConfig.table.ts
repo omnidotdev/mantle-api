@@ -18,6 +18,7 @@ export const documentNumberingConfigTable = pgTable(
 	{
 		id: generateDefaultId(),
 		organizationId: text("organization_id").notNull(),
+		globalPrefix: text("global_prefix").default(""),
 		documentType: text("document_type").notNull(),
 		prefix: text().default("").notNull(),
 		separator: varchar({ length: 5 }).default("-").notNull(),

@@ -1,0 +1,1 @@
+ALTER TABLE "document_numbering_config" ADD COLUMN "global_prefix" text DEFAULT '';

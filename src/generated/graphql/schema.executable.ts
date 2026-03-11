@@ -809,6 +809,19 @@ const spec_documentNumberingConfig = {
         canUpdate: true,
         isIndexed: false
       }
+    },
+    global_prefix: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
     }
   },
   description: undefined,
@@ -6979,6 +6992,7 @@ type DocumentNumberingConfig implements Node {
   nextSequentialNumber: Int!
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """A connection to a list of \`OrganizationSetting\` values."""
@@ -8027,6 +8041,7 @@ input DocumentNumberingConfigInput {
   nextSequentialNumber: Int
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """The output of our create \`Person\` mutation."""
@@ -8727,6 +8742,7 @@ input DocumentNumberingConfigPatch {
   nextSequentialNumber: Int
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """All input for the \`updateDocumentNumberingConfig\` mutation."""
@@ -11955,6 +11971,9 @@ ${String(oldPlan12)}`);
       documentType($record) {
         return $record.get("document_type");
       },
+      globalPrefix($record) {
+        return $record.get("global_prefix");
+      },
       id($parent) {
         const specifier = nodeIdHandler_DocumentNumberingConfig.plan($parent);
         return lambda(specifier, nodeIdCodecs[nodeIdHandler_DocumentNumberingConfig.codec.name].encode);
@@ -13896,6 +13915,12 @@ export const inputObjects = {
       }) {
         obj.set("document_type", bakedInputRuntime(schema, field.type, val));
       },
+      globalPrefix(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("global_prefix", bakedInputRuntime(schema, field.type, val));
+      },
       idStrategy(obj, val, {
         field,
         schema
@@ -13972,6 +13997,12 @@ export const inputObjects = {
         schema
       }) {
         obj.set("document_type", bakedInputRuntime(schema, field.type, val));
+      },
+      globalPrefix(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("global_prefix", bakedInputRuntime(schema, field.type, val));
       },
       idStrategy(obj, val, {
         field,

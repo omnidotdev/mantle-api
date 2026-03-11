@@ -2062,6 +2062,7 @@ type DocumentNumberingConfig implements Node {
   nextSequentialNumber: Int!
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """A connection to a list of `OrganizationSetting` values."""
@@ -3110,6 +3111,7 @@ input DocumentNumberingConfigInput {
   nextSequentialNumber: Int
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """The output of our create `Person` mutation."""
@@ -3810,6 +3812,7 @@ input DocumentNumberingConfigPatch {
   nextSequentialNumber: Int
   createdAt: Datetime
   updatedAt: Datetime
+  globalPrefix: String
 }
 
 """All input for the `updateDocumentNumberingConfig` mutation."""
