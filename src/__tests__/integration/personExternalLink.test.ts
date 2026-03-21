@@ -62,6 +62,7 @@ interface DeletePersonData {
 
 describe("person external linking", () => {
 	const ctx = setupTestContext();
+	const testObserver = { id: "test-user-id", email: "test@example.com", name: "Test User" };
 
 	const CREATE_PERSON = /* GraphQL */ `
 		mutation CreatePerson($input: CreatePersonInput!) {
@@ -141,7 +142,7 @@ describe("person external linking", () => {
 		lastName: string,
 		email: string,
 	) => {
-		const result = await ctx.graphql.execute<CreatePersonData>(
+		const result = await ctx.graphqlAs(testObserver).execute<CreatePersonData>(
 			CREATE_PERSON,
 			{
 				input: {

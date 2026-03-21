@@ -15,6 +15,9 @@ export const UNLEASH_SERVER_API_URL = process.env.UNLEASH_SERVER_API_URL;
 export const UNLEASH_SERVER_API_TOKEN = process.env.UNLEASH_SERVER_API_TOKEN;
 export const VORTEX_API_URL = process.env.VORTEX_API_URL;
 export const VORTEX_API_KEY = process.env.VORTEX_API_KEY;
+export const SERVICE_KEY = process.env.SERVICE_KEY;
+export const BILLING_BASE_URL = process.env.BILLING_BASE_URL;
+export const BILLING_SERVICE_API_KEY = process.env.BILLING_SERVICE_API_KEY;
 
 export const isDevEnv = NODE_ENV === "development",
   isProdEnv = NODE_ENV === "production";

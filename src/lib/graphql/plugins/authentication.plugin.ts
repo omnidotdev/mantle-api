@@ -1,44 +1,57 @@
-import type { ResolveUserFn } from "@envelop/generic-auth";
 import { useGenericAuth } from "@envelop/generic-auth";
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { AUTH_JWKS_URL } from "lib/config/env.config";
+
+import { AUTH_JWKS_URL, SERVICE_KEY } from "lib/config/env.config";
+
+import type { ResolveUserFn } from "@envelop/generic-auth";
 import type { GraphQLContext } from "lib/graphql/createGraphqlContext";
 
 /**
  * Observer type - represents the authenticated entity.
  */
 export interface Observer {
-	id: string;
-	email?: string;
-	name?: string;
+  id: string;
+  email?: string;
+  name?: string;
 }
 
 const jwks = AUTH_JWKS_URL ? createRemoteJWKSet(new URL(AUTH_JWKS_URL)) : null;
 
 /**
- * Validate user session via JWKS token verification.
+ * Validate user session via JWKS token or service key.
  * @see https://the-guild.dev/graphql/envelop/plugins/use-generic-auth#getting-started
  */
 const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
-	const accessToken = ctx.request.headers
-		.get("authorization")
-		?.split("Bearer ")[1];
+  // Check for service-to-service auth via x-service-key header
+  const serviceKey = ctx.request.headers.get("x-service-key");
+  if (serviceKey && SERVICE_KEY && serviceKey === SERVICE_KEY) {
+    return {
+      id: "service:internal",
+      email: "service@internal",
+      name: "Internal Service",
+    };
+  }
 
-	if (!accessToken || !jwks) {
-		return null;
-	}
+  // Fall back to JWT bearer token
+  const accessToken = ctx.request.headers
+    .get("authorization")
+    ?.split("Bearer ")[1];
 
-	try {
-		const { payload } = await jwtVerify(accessToken, jwks);
+  if (!accessToken || !jwks) {
+    return null;
+  }
 
-		return {
-			id: payload.sub as string,
-			email: payload.email as string | undefined,
-			name: payload.name as string | undefined,
-		};
-	} catch {
-		return null;
-	}
+  try {
+    const { payload } = await jwtVerify(accessToken, jwks);
+
+    return {
+      id: payload.sub as string,
+      email: payload.email as string | undefined,
+      name: payload.name as string | undefined,
+    };
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -48,9 +61,9 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
  * @see https://the-guild.dev/graphql/envelop/plugins/use-generic-auth
  */
 const authenticationPlugin = useGenericAuth({
-	contextFieldName: "observer",
-	resolveUserFn: resolveUser,
-	mode: "resolve-only",
+  contextFieldName: "observer",
+  resolveUserFn: resolveUser,
+  mode: "resolve-only",
 });
 
 export default authenticationPlugin;

@@ -3,6 +3,11 @@ import { makePgService } from "postgraphile/adaptors/pg";
 import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
 import { PostGraphileConnectionFilterPreset } from "postgraphile-plugin-connection-filter";
 
+import {
+  CompanyMemberPlugin,
+  InvoicePlugin,
+  PersonPlugin,
+} from "lib/graphql/plugins/authorization";
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
 import { DATABASE_URL, isDevEnv } from "./env.config";
@@ -18,7 +23,13 @@ const graphilePreset: GraphileConfig.Preset = {
   ],
   pgServices: [makePgService({ connectionString: DATABASE_URL })],
   grafast: { explain: isDevEnv },
-  plugins: [EventEmissionPlugin, GenerateDocumentNumberPlugin],
+  plugins: [
+    CompanyMemberPlugin,
+    InvoicePlugin,
+    PersonPlugin,
+    EventEmissionPlugin,
+    GenerateDocumentNumberPlugin,
+  ],
   schema: {
     defaultBehavior: "+manyRelation:resource:connection",
   },
