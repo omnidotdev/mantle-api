@@ -24,6 +24,7 @@ export const personExternalLinkTable = pgTable(
 		createdAt: generateDefaultDate(),
 	},
 	(table) => [
+		uniqueIndex().on(table.id),
 		uniqueIndex("person_external_link_provider_external_id_idx").on(
 			table.provider,
 			table.externalId,

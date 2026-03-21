@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "person_external_link_id_index" ON "person_external_link" USING btree ("id");
