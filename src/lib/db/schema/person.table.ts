@@ -19,6 +19,7 @@ export const personTable = pgTable(
 		emails: text().array(),
 		phone: text(),
 		internal: boolean().default(false).notNull(),
+		emailConsent: boolean("email_consent").default(false).notNull(),
 		avatarUrl: text("avatar_url"),
 		tags: text().array(),
 		notes: text(),

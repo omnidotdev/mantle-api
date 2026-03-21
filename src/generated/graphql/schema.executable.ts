@@ -937,198 +937,6 @@ const spec_documentNumberingConfig = {
   executor: executor
 };
 const documentNumberingConfigCodec = recordCodec(spec_documentNumberingConfig);
-const personIdentifier = sql.identifier("public", "person");
-const pgCatalogTextArrayCodec = listOfCodec(TYPES.text, {
-  extensions: {
-    oid: "1009",
-    pg: {
-      serviceName: "main",
-      schemaName: "pg_catalog",
-      name: "_text"
-    },
-    tags: {
-      __proto__: null
-    }
-  },
-  typeDelim: ",",
-  description: undefined,
-  name: "pgCatalogTextArray"
-});
-const spec_person = {
-  name: "person",
-  identifier: personIdentifier,
-  attributes: {
-    __proto__: null,
-    id: {
-      description: undefined,
-      codec: TYPES.uuid,
-      notNull: true,
-      hasDefault: true,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true
-      }
-    },
-    organization_id: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: true,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true
-      }
-    },
-    first_name: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: true,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    last_name: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: true,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    phone: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: false,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    avatar_url: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: false,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    tags: {
-      description: undefined,
-      codec: pgCatalogTextArrayCodec,
-      notNull: false,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    notes: {
-      description: undefined,
-      codec: TYPES.text,
-      notNull: false,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    created_at: {
-      description: undefined,
-      codec: TYPES.timestamptz,
-      notNull: false,
-      hasDefault: true,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    updated_at: {
-      description: undefined,
-      codec: TYPES.timestamptz,
-      notNull: false,
-      hasDefault: true,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    },
-    emails: {
-      description: undefined,
-      codec: pgCatalogTextArrayCodec,
-      notNull: false,
-      hasDefault: false,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true
-      }
-    },
-    internal: {
-      description: undefined,
-      codec: TYPES.boolean,
-      notNull: true,
-      hasDefault: true,
-      extensions: {
-        tags: {},
-        canSelect: true,
-        canInsert: true,
-        canUpdate: true,
-        isIndexed: false
-      }
-    }
-  },
-  description: undefined,
-  extensions: {
-    oid: "453570",
-    isTableLike: true,
-    pg: {
-      serviceName: "main",
-      schemaName: "public",
-      name: "person"
-    },
-    tags: {
-      __proto__: null
-    }
-  },
-  executor: executor
-};
-const personCodec = recordCodec(spec_person);
 const companyIdentifier = sql.identifier("public", "company");
 const spec_company = {
   name: "company",
@@ -1358,6 +1166,211 @@ const spec_company = {
   executor: executor
 };
 const companyCodec = recordCodec(spec_company);
+const personIdentifier = sql.identifier("public", "person");
+const pgCatalogTextArrayCodec = listOfCodec(TYPES.text, {
+  extensions: {
+    oid: "1009",
+    pg: {
+      serviceName: "main",
+      schemaName: "pg_catalog",
+      name: "_text"
+    },
+    tags: {
+      __proto__: null
+    }
+  },
+  typeDelim: ",",
+  description: undefined,
+  name: "pgCatalogTextArray"
+});
+const spec_person = {
+  name: "person",
+  identifier: personIdentifier,
+  attributes: {
+    __proto__: null,
+    id: {
+      description: undefined,
+      codec: TYPES.uuid,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    organization_id: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    first_name: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    last_name: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: true,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    phone: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    avatar_url: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    tags: {
+      description: undefined,
+      codec: pgCatalogTextArrayCodec,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    notes: {
+      description: undefined,
+      codec: TYPES.text,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    created_at: {
+      description: undefined,
+      codec: TYPES.timestamptz,
+      notNull: false,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    updated_at: {
+      description: undefined,
+      codec: TYPES.timestamptz,
+      notNull: false,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    emails: {
+      description: undefined,
+      codec: pgCatalogTextArrayCodec,
+      notNull: false,
+      hasDefault: false,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true
+      }
+    },
+    internal: {
+      description: undefined,
+      codec: TYPES.boolean,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    },
+    email_consent: {
+      description: undefined,
+      codec: TYPES.boolean,
+      notNull: true,
+      hasDefault: true,
+      extensions: {
+        tags: {},
+        canSelect: true,
+        canInsert: true,
+        canUpdate: true,
+        isIndexed: false
+      }
+    }
+  },
+  description: undefined,
+  extensions: {
+    oid: "453570",
+    isTableLike: true,
+    pg: {
+      serviceName: "main",
+      schemaName: "public",
+      name: "person"
+    },
+    tags: {
+      __proto__: null
+    }
+  },
+  executor: executor
+};
+const personCodec = recordCodec(spec_person);
 const quoteLineItemIdentifier = sql.identifier("public", "quote_line_item");
 const spec_quoteLineItem = {
   name: "quoteLineItem",
@@ -2473,42 +2486,6 @@ const document_numbering_configUniques = [{
     }
   }
 }];
-const personUniques = [{
-  isPrimary: true,
-  attributes: ["id"],
-  description: undefined,
-  extensions: {
-    tags: {
-      __proto__: null
-    }
-  }
-}];
-const registryConfig_pgResources_person_person = {
-  executor: executor,
-  name: "person",
-  identifier: "main.public.person",
-  from: personIdentifier,
-  codec: personCodec,
-  uniques: personUniques,
-  isVirtual: false,
-  description: undefined,
-  extensions: {
-    description: undefined,
-    pg: {
-      serviceName: "main",
-      schemaName: "public",
-      name: "person"
-    },
-    isInsertable: true,
-    isUpdatable: true,
-    isDeletable: true,
-    tags: {},
-    canSelect: true,
-    canInsert: true,
-    canUpdate: true,
-    canDelete: true
-  }
-};
 const companyUniques = [{
   isPrimary: true,
   attributes: ["id"],
@@ -2534,6 +2511,42 @@ const registryConfig_pgResources_company_company = {
       serviceName: "main",
       schemaName: "public",
       name: "company"
+    },
+    isInsertable: true,
+    isUpdatable: true,
+    isDeletable: true,
+    tags: {},
+    canSelect: true,
+    canInsert: true,
+    canUpdate: true,
+    canDelete: true
+  }
+};
+const personUniques = [{
+  isPrimary: true,
+  attributes: ["id"],
+  description: undefined,
+  extensions: {
+    tags: {
+      __proto__: null
+    }
+  }
+}];
+const registryConfig_pgResources_person_person = {
+  executor: executor,
+  name: "person",
+  identifier: "main.public.person",
+  from: personIdentifier,
+  codec: personCodec,
+  uniques: personUniques,
+  isVirtual: false,
+  description: undefined,
+  extensions: {
+    description: undefined,
+    pg: {
+      serviceName: "main",
+      schemaName: "public",
+      name: "person"
     },
     isInsertable: true,
     isUpdatable: true,
@@ -2675,9 +2688,9 @@ const registryConfig = {
     varchar: TYPES.varchar,
     product: productCodec,
     documentNumberingConfig: documentNumberingConfigCodec,
+    company: companyCodec,
     person: personCodec,
     pgCatalogTextArray: pgCatalogTextArrayCodec,
-    company: companyCodec,
     quoteLineItem: quoteLineItemCodec,
     invoice: invoiceCodec,
     date: TYPES.date,
@@ -2742,8 +2755,8 @@ const registryConfig = {
         canDelete: true
       }
     },
-    person: registryConfig_pgResources_person_person,
     company: registryConfig_pgResources_company_company,
+    person: registryConfig_pgResources_person_person,
     quote_line_item: registryConfig_pgResources_quote_line_item_quote_line_item,
     invoice: registryConfig_pgResources_invoice_invoice,
     quote: registryConfig_pgResources_quote_quote
@@ -3185,8 +3198,8 @@ const resource_invoice_line_itemPgResource = registry.pgResources["invoice_line_
 const resource_organization_settingsPgResource = registry.pgResources["organization_settings"];
 const resource_productPgResource = registry.pgResources["product"];
 const resource_document_numbering_configPgResource = registry.pgResources["document_numbering_config"];
-const resource_personPgResource = registry.pgResources["person"];
 const resource_companyPgResource = registry.pgResources["company"];
+const resource_personPgResource = registry.pgResources["person"];
 const resource_quote_line_itemPgResource = registry.pgResources["quote_line_item"];
 const resource_invoicePgResource = registry.pgResources["invoice"];
 const resource_quotePgResource = registry.pgResources["quote"];
@@ -3389,32 +3402,6 @@ const nodeFetcher_DocumentNumberingConfig = $nodeId => {
   const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_DocumentNumberingConfig));
   return nodeIdHandler_DocumentNumberingConfig.get(nodeIdHandler_DocumentNumberingConfig.getSpec($decoded));
 };
-const nodeIdHandler_Person = {
-  typeName: "Person",
-  codec: nodeIdCodecs_base64JSON_base64JSON,
-  deprecationReason: undefined,
-  plan($record) {
-    return list([constant("Person", false), $record.get("id")]);
-  },
-  getSpec($list) {
-    return {
-      id: inhibitOnNull(access($list, [1]))
-    };
-  },
-  getIdentifiers(value) {
-    return value.slice(1);
-  },
-  get(spec) {
-    return resource_personPgResource.get(spec);
-  },
-  match(obj) {
-    return obj[0] === "Person";
-  }
-};
-const nodeFetcher_Person = $nodeId => {
-  const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_Person));
-  return nodeIdHandler_Person.get(nodeIdHandler_Person.getSpec($decoded));
-};
 const nodeIdHandler_Company = {
   typeName: "Company",
   codec: nodeIdCodecs_base64JSON_base64JSON,
@@ -3440,6 +3427,32 @@ const nodeIdHandler_Company = {
 const nodeFetcher_Company = $nodeId => {
   const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_Company));
   return nodeIdHandler_Company.get(nodeIdHandler_Company.getSpec($decoded));
+};
+const nodeIdHandler_Person = {
+  typeName: "Person",
+  codec: nodeIdCodecs_base64JSON_base64JSON,
+  deprecationReason: undefined,
+  plan($record) {
+    return list([constant("Person", false), $record.get("id")]);
+  },
+  getSpec($list) {
+    return {
+      id: inhibitOnNull(access($list, [1]))
+    };
+  },
+  getIdentifiers(value) {
+    return value.slice(1);
+  },
+  get(spec) {
+    return resource_personPgResource.get(spec);
+  },
+  match(obj) {
+    return obj[0] === "Person";
+  }
+};
+const nodeFetcher_Person = $nodeId => {
+  const $decoded = lambda($nodeId, specForHandler(nodeIdHandler_Person));
+  return nodeIdHandler_Person.get(nodeIdHandler_Person.getSpec($decoded));
 };
 const nodeIdHandler_QuoteLineItem = {
   typeName: "QuoteLineItem",
@@ -3667,8 +3680,8 @@ const nodeIdHandlerByTypeName = {
   OrganizationSetting: nodeIdHandler_OrganizationSetting,
   Product: nodeIdHandler_Product,
   DocumentNumberingConfig: nodeIdHandler_DocumentNumberingConfig,
-  Person: nodeIdHandler_Person,
   Company: nodeIdHandler_Company,
+  Person: nodeIdHandler_Person,
   QuoteLineItem: nodeIdHandler_QuoteLineItem,
   Invoice: nodeIdHandler_Invoice,
   Quote: nodeIdHandler_Quote
@@ -4778,7 +4791,7 @@ const planWrapper2 = (plan, $record) => {
   return plan();
 };
 function oldPlan3(_, args) {
-  const $insert = pgInsertSingle(resource_personPgResource, Object.create(null));
+  const $insert = pgInsertSingle(resource_companyPgResource, Object.create(null));
   args.apply($insert);
   return object({
     result: $insert
@@ -4787,14 +4800,14 @@ function oldPlan3(_, args) {
 const planWrapper3 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"person"}.${"created"}`, {
+    emitEvent(`mantle.${"company"}.${"created"}`, {
       id: record.id
     }, record.id);
   });
   return plan();
 };
 function oldPlan4(_, args) {
-  const $insert = pgInsertSingle(resource_companyPgResource, Object.create(null));
+  const $insert = pgInsertSingle(resource_personPgResource, Object.create(null));
   args.apply($insert);
   return object({
     result: $insert
@@ -4803,7 +4816,7 @@ function oldPlan4(_, args) {
 const planWrapper4 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"company"}.${"created"}`, {
+    emitEvent(`mantle.${"person"}.${"created"}`, {
       id: record.id
     }, record.id);
   });
@@ -4905,12 +4918,12 @@ const planWrapper8 = (plan, $record) => {
   });
   return plan();
 };
-const specFromArgs_Person = args => {
+const specFromArgs_Company = args => {
   const $nodeId = args.getRaw(["input", "id"]);
-  return specFromNodeId(nodeIdHandler_Person, $nodeId);
+  return specFromNodeId(nodeIdHandler_Company, $nodeId);
 };
 const oldPlan9 = (_$root, args) => {
-  const $update = pgUpdateSingle(resource_personPgResource, {
+  const $update = pgUpdateSingle(resource_companyPgResource, {
     id: args.getRaw(['input', "rowId"])
   });
   args.apply($update);
@@ -4921,18 +4934,18 @@ const oldPlan9 = (_$root, args) => {
 const planWrapper9 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"person"}.${"updated"}`, {
+    emitEvent(`mantle.${"company"}.${"updated"}`, {
       id: record.id
     }, record.id);
   });
   return plan();
 };
-const specFromArgs_Company = args => {
+const specFromArgs_Person = args => {
   const $nodeId = args.getRaw(["input", "id"]);
-  return specFromNodeId(nodeIdHandler_Company, $nodeId);
+  return specFromNodeId(nodeIdHandler_Person, $nodeId);
 };
 const oldPlan10 = (_$root, args) => {
-  const $update = pgUpdateSingle(resource_companyPgResource, {
+  const $update = pgUpdateSingle(resource_personPgResource, {
     id: args.getRaw(['input', "rowId"])
   });
   args.apply($update);
@@ -4943,7 +4956,7 @@ const oldPlan10 = (_$root, args) => {
 const planWrapper10 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"company"}.${"updated"}`, {
+    emitEvent(`mantle.${"person"}.${"updated"}`, {
       id: record.id
     }, record.id);
   });
@@ -5061,12 +5074,12 @@ const planWrapper14 = (plan, $record) => {
   });
   return plan();
 };
-const specFromArgs_Person2 = args => {
+const specFromArgs_Company2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
-  return specFromNodeId(nodeIdHandler_Person, $nodeId);
+  return specFromNodeId(nodeIdHandler_Company, $nodeId);
 };
 const oldPlan15 = (_$root, args) => {
-  const $delete = pgDeleteSingle(resource_personPgResource, {
+  const $delete = pgDeleteSingle(resource_companyPgResource, {
     id: args.getRaw(['input', "rowId"])
   });
   args.apply($delete);
@@ -5077,18 +5090,18 @@ const oldPlan15 = (_$root, args) => {
 const planWrapper15 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"person"}.${"deleted"}`, {
+    emitEvent(`mantle.${"company"}.${"deleted"}`, {
       id: record.id
     }, record.id);
   });
   return plan();
 };
-const specFromArgs_Company2 = args => {
+const specFromArgs_Person2 = args => {
   const $nodeId = args.getRaw(["input", "id"]);
-  return specFromNodeId(nodeIdHandler_Company, $nodeId);
+  return specFromNodeId(nodeIdHandler_Person, $nodeId);
 };
 const oldPlan16 = (_$root, args) => {
-  const $delete = pgDeleteSingle(resource_companyPgResource, {
+  const $delete = pgDeleteSingle(resource_personPgResource, {
     id: args.getRaw(['input', "rowId"])
   });
   args.apply($delete);
@@ -5099,7 +5112,7 @@ const oldPlan16 = (_$root, args) => {
 const planWrapper16 = (plan, $record) => {
   sideEffect([$record], ([record]) => {
     if (!record?.id) return;
-    emitEvent(`mantle.${"company"}.${"deleted"}`, {
+    emitEvent(`mantle.${"person"}.${"deleted"}`, {
       id: record.id
     }, record.id);
   });
@@ -5249,11 +5262,11 @@ type Query implements Node {
   """Get a single \`DocumentNumberingConfig\`."""
   documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
 
-  """Get a single \`Person\`."""
-  person(rowId: UUID!): Person
-
   """Get a single \`Company\`."""
   company(rowId: UUID!): Company
+
+  """Get a single \`Person\`."""
+  person(rowId: UUID!): Person
 
   """Get a single \`QuoteLineItem\`."""
   quoteLineItem(rowId: UUID!): QuoteLineItem
@@ -5320,17 +5333,17 @@ type Query implements Node {
     id: ID!
   ): DocumentNumberingConfig
 
-  """Reads a single \`Person\` using its globally unique \`ID\`."""
-  personById(
-    """The globally unique \`ID\` to be used in selecting a single \`Person\`."""
-    id: ID!
-  ): Person
-
   """Reads a single \`Company\` using its globally unique \`ID\`."""
   companyById(
     """The globally unique \`ID\` to be used in selecting a single \`Company\`."""
     id: ID!
   ): Company
+
+  """Reads a single \`Person\` using its globally unique \`ID\`."""
+  personById(
+    """The globally unique \`ID\` to be used in selecting a single \`Person\`."""
+    id: ID!
+  ): Person
 
   """Reads a single \`QuoteLineItem\` using its globally unique \`ID\`."""
   quoteLineItemById(
@@ -5592,40 +5605,6 @@ type Query implements Node {
     orderBy: [DocumentNumberingConfigOrderBy!] = [PRIMARY_KEY_ASC]
   ): DocumentNumberingConfigConnection
 
-  """Reads and enables pagination through a set of \`Person\`."""
-  people(
-    """Only read the first \`n\` values of the set."""
-    first: Int
-
-    """Only read the last \`n\` values of the set."""
-    last: Int
-
-    """
-    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
-    based pagination. May not be used with \`last\`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PersonCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: PersonFilter
-
-    """The method to use when ordering \`Person\`."""
-    orderBy: [PersonOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonConnection
-
   """Reads and enables pagination through a set of \`Company\`."""
   companies(
     """Only read the first \`n\` values of the set."""
@@ -5659,6 +5638,40 @@ type Query implements Node {
     """The method to use when ordering \`Company\`."""
     orderBy: [CompanyOrderBy!] = [PRIMARY_KEY_ASC]
   ): CompanyConnection
+
+  """Reads and enables pagination through a set of \`Person\`."""
+  people(
+    """Only read the first \`n\` values of the set."""
+    first: Int
+
+    """Only read the last \`n\` values of the set."""
+    last: Int
+
+    """
+    Skip the first \`n\` values from our \`after\` cursor, an alternative to cursor
+    based pagination. May not be used with \`last\`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PersonCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PersonFilter
+
+    """The method to use when ordering \`Person\`."""
+    orderBy: [PersonOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PersonConnection
 
   """Reads and enables pagination through a set of \`QuoteLineItem\`."""
   quoteLineItems(
@@ -6848,6 +6861,7 @@ type Person implements Node {
   updatedAt: Datetime
   emails: [String]
   internal: Boolean!
+  emailConsent: Boolean!
 
   """Reads and enables pagination through a set of \`CompanyMember\`."""
   companyMembers(
@@ -7695,54 +7709,6 @@ enum DocumentNumberingConfigOrderBy {
   DOCUMENT_TYPE_DESC
 }
 
-"""A connection to a list of \`Person\` values."""
-type PersonConnection {
-  """A list of \`Person\` objects."""
-  nodes: [Person]!
-
-  """
-  A list of edges which contains the \`Person\` and cursor to aid in pagination.
-  """
-  edges: [PersonEdge]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* \`Person\` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A \`Person\` edge in the connection."""
-type PersonEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The \`Person\` at the end of the edge."""
-  node: Person
-}
-
-"""
-A condition to be used against \`Person\` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input PersonCondition {
-  """Checks for equality with the object’s \`rowId\` field."""
-  rowId: UUID
-
-  """Checks for equality with the object’s \`organizationId\` field."""
-  organizationId: String
-}
-
-"""Methods to use when ordering \`Person\`."""
-enum PersonOrderBy {
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  ROW_ID_ASC
-  ROW_ID_DESC
-  ORGANIZATION_ID_ASC
-  ORGANIZATION_ID_DESC
-}
-
 """A connection to a list of \`Company\` values."""
 type CompanyConnection {
   """A list of \`Company\` objects."""
@@ -7782,6 +7748,54 @@ input CompanyCondition {
 
 """Methods to use when ordering \`Company\`."""
 enum CompanyOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+}
+
+"""A connection to a list of \`Person\` values."""
+type PersonConnection {
+  """A list of \`Person\` objects."""
+  nodes: [Person]!
+
+  """
+  A list of edges which contains the \`Person\` and cursor to aid in pagination.
+  """
+  edges: [PersonEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* \`Person\` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A \`Person\` edge in the connection."""
+type PersonEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The \`Person\` at the end of the edge."""
+  node: Person
+}
+
+"""
+A condition to be used against \`Person\` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input PersonCondition {
+  """Checks for equality with the object’s \`rowId\` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s \`organizationId\` field."""
+  organizationId: String
+}
+
+"""Methods to use when ordering \`Person\`."""
+enum PersonOrderBy {
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
@@ -7851,14 +7865,6 @@ type Mutation {
     input: CreateDocumentNumberingConfigInput!
   ): CreateDocumentNumberingConfigPayload
 
-  """Creates a single \`Person\`."""
-  createPerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreatePersonInput!
-  ): CreatePersonPayload
-
   """Creates a single \`Company\`."""
   createCompany(
     """
@@ -7866,6 +7872,14 @@ type Mutation {
     """
     input: CreateCompanyInput!
   ): CreateCompanyPayload
+
+  """Creates a single \`Person\`."""
+  createPerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePersonInput!
+  ): CreatePersonPayload
 
   """Creates a single \`QuoteLineItem\`."""
   createQuoteLineItem(
@@ -8017,22 +8031,6 @@ type Mutation {
     input: UpdateDocumentNumberingConfigInput!
   ): UpdateDocumentNumberingConfigPayload
 
-  """Updates a single \`Person\` using its globally unique id and a patch."""
-  updatePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonByIdInput!
-  ): UpdatePersonPayload
-
-  """Updates a single \`Person\` using a unique key and a patch."""
-  updatePerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonInput!
-  ): UpdatePersonPayload
-
   """Updates a single \`Company\` using its globally unique id and a patch."""
   updateCompanyById(
     """
@@ -8048,6 +8046,22 @@ type Mutation {
     """
     input: UpdateCompanyInput!
   ): UpdateCompanyPayload
+
+  """Updates a single \`Person\` using its globally unique id and a patch."""
+  updatePersonById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonByIdInput!
+  ): UpdatePersonPayload
+
+  """Updates a single \`Person\` using a unique key and a patch."""
+  updatePerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonInput!
+  ): UpdatePersonPayload
 
   """
   Updates a single \`QuoteLineItem\` using its globally unique id and a patch.
@@ -8213,22 +8227,6 @@ type Mutation {
     input: DeleteDocumentNumberingConfigInput!
   ): DeleteDocumentNumberingConfigPayload
 
-  """Deletes a single \`Person\` using its globally unique id."""
-  deletePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonByIdInput!
-  ): DeletePersonPayload
-
-  """Deletes a single \`Person\` using a unique key."""
-  deletePerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonInput!
-  ): DeletePersonPayload
-
   """Deletes a single \`Company\` using its globally unique id."""
   deleteCompanyById(
     """
@@ -8244,6 +8242,22 @@ type Mutation {
     """
     input: DeleteCompanyInput!
   ): DeleteCompanyPayload
+
+  """Deletes a single \`Person\` using its globally unique id."""
+  deletePersonById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonByIdInput!
+  ): DeletePersonPayload
+
+  """Deletes a single \`Person\` using a unique key."""
+  deletePerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonInput!
+  ): DeletePersonPayload
 
   """Deletes a single \`QuoteLineItem\` using its globally unique id."""
   deleteQuoteLineItemById(
@@ -8628,57 +8642,6 @@ input DocumentNumberingConfigInput {
   globalPrefix: String
 }
 
-"""The output of our create \`Person\` mutation."""
-type CreatePersonPayload {
-  """
-  The exact same \`clientMutationId\` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The \`Person\` that was created by this mutation."""
-  person: Person
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our \`Person\`. May be used by Relay 1."""
-  personEdge(
-    """The method to use when ordering \`Person\`."""
-    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): PersonEdge
-}
-
-"""All input for the create \`Person\` mutation."""
-input CreatePersonInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The \`Person\` to be created by this mutation."""
-  person: PersonInput!
-}
-
-"""An input for mutations affecting \`Person\`"""
-input PersonInput {
-  rowId: UUID
-  organizationId: String!
-  firstName: String!
-  lastName: String!
-  phone: String
-  avatarUrl: String
-  tags: [String]
-  notes: String
-  createdAt: Datetime
-  updatedAt: Datetime
-  emails: [String]
-  internal: Boolean
-}
-
 """The output of our create \`Company\` mutation."""
 type CreateCompanyPayload {
   """
@@ -8732,6 +8695,58 @@ input CompanyInput {
   notes: String
   createdAt: Datetime
   updatedAt: Datetime
+}
+
+"""The output of our create \`Person\` mutation."""
+type CreatePersonPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`Person\` that was created by this mutation."""
+  person: Person
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`Person\`. May be used by Relay 1."""
+  personEdge(
+    """The method to use when ordering \`Person\`."""
+    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonEdge
+}
+
+"""All input for the create \`Person\` mutation."""
+input CreatePersonInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The \`Person\` to be created by this mutation."""
+  person: PersonInput!
+}
+
+"""An input for mutations affecting \`Person\`"""
+input PersonInput {
+  rowId: UUID
+  organizationId: String!
+  firstName: String!
+  lastName: String!
+  phone: String
+  avatarUrl: String
+  tags: [String]
+  notes: String
+  createdAt: Datetime
+  updatedAt: Datetime
+  emails: [String]
+  internal: Boolean
+  emailConsent: Boolean
 }
 
 """The output of our create \`QuoteLineItem\` mutation."""
@@ -9413,81 +9428,6 @@ input UpdateDocumentNumberingConfigInput {
   patch: DocumentNumberingConfigPatch!
 }
 
-"""The output of our update \`Person\` mutation."""
-type UpdatePersonPayload {
-  """
-  The exact same \`clientMutationId\` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The \`Person\` that was updated by this mutation."""
-  person: Person
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our \`Person\`. May be used by Relay 1."""
-  personEdge(
-    """The method to use when ordering \`Person\`."""
-    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): PersonEdge
-}
-
-"""All input for the \`updatePersonById\` mutation."""
-input UpdatePersonByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique \`ID\` which will identify a single \`Person\` to be updated.
-  """
-  id: ID!
-
-  """
-  An object where the defined keys will be set on the \`Person\` being updated.
-  """
-  patch: PersonPatch!
-}
-
-"""
-Represents an update to a \`Person\`. Fields that are set will be updated.
-"""
-input PersonPatch {
-  rowId: UUID
-  organizationId: String
-  firstName: String
-  lastName: String
-  phone: String
-  avatarUrl: String
-  tags: [String]
-  notes: String
-  createdAt: Datetime
-  updatedAt: Datetime
-  emails: [String]
-  internal: Boolean
-}
-
-"""All input for the \`updatePerson\` mutation."""
-input UpdatePersonInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the \`Person\` being updated.
-  """
-  patch: PersonPatch!
-}
-
 """The output of our update \`Company\` mutation."""
 type UpdateCompanyPayload {
   """
@@ -9565,6 +9505,82 @@ input UpdateCompanyInput {
   An object where the defined keys will be set on the \`Company\` being updated.
   """
   patch: CompanyPatch!
+}
+
+"""The output of our update \`Person\` mutation."""
+type UpdatePersonPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`Person\` that was updated by this mutation."""
+  person: Person
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`Person\`. May be used by Relay 1."""
+  personEdge(
+    """The method to use when ordering \`Person\`."""
+    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonEdge
+}
+
+"""All input for the \`updatePersonById\` mutation."""
+input UpdatePersonByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique \`ID\` which will identify a single \`Person\` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the \`Person\` being updated.
+  """
+  patch: PersonPatch!
+}
+
+"""
+Represents an update to a \`Person\`. Fields that are set will be updated.
+"""
+input PersonPatch {
+  rowId: UUID
+  organizationId: String
+  firstName: String
+  lastName: String
+  phone: String
+  avatarUrl: String
+  tags: [String]
+  notes: String
+  createdAt: Datetime
+  updatedAt: Datetime
+  emails: [String]
+  internal: Boolean
+  emailConsent: Boolean
+}
+
+"""All input for the \`updatePerson\` mutation."""
+input UpdatePersonInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the \`Person\` being updated.
+  """
+  patch: PersonPatch!
 }
 
 """The output of our update \`QuoteLineItem\` mutation."""
@@ -10158,54 +10174,6 @@ input DeleteDocumentNumberingConfigInput {
   rowId: UUID!
 }
 
-"""The output of our delete \`Person\` mutation."""
-type DeletePersonPayload {
-  """
-  The exact same \`clientMutationId\` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The \`Person\` that was deleted by this mutation."""
-  person: Person
-  deletedPersonId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our \`Person\`. May be used by Relay 1."""
-  personEdge(
-    """The method to use when ordering \`Person\`."""
-    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): PersonEdge
-}
-
-"""All input for the \`deletePersonById\` mutation."""
-input DeletePersonByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique \`ID\` which will identify a single \`Person\` to be deleted.
-  """
-  id: ID!
-}
-
-"""All input for the \`deletePerson\` mutation."""
-input DeletePersonInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-}
-
 """The output of our delete \`Company\` mutation."""
 type DeleteCompanyPayload {
   """
@@ -10246,6 +10214,54 @@ input DeleteCompanyByIdInput {
 
 """All input for the \`deleteCompany\` mutation."""
 input DeleteCompanyInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete \`Person\` mutation."""
+type DeletePersonPayload {
+  """
+  The exact same \`clientMutationId\` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The \`Person\` that was deleted by this mutation."""
+  person: Person
+  deletedPersonId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our \`Person\`. May be used by Relay 1."""
+  personEdge(
+    """The method to use when ordering \`Person\`."""
+    orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonEdge
+}
+
+"""All input for the \`deletePersonById\` mutation."""
+input DeletePersonByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique \`ID\` which will identify a single \`Person\` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the \`deletePerson\` mutation."""
+input DeletePersonInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -10440,7 +10456,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed9(value, "object");
+              assertAllowed8(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -10797,7 +10813,7 @@ export const objects = {
           filter(_, $connection, fieldArg) {
             const $pgSelect = $connection.getSubplan();
             fieldArg.apply($pgSelect, (queryBuilder, value) => {
-              assertAllowed8(value, "object");
+              assertAllowed9(value, "object");
               if (value == null) return;
               const condition = new PgCondition(queryBuilder);
               return condition;
@@ -11032,17 +11048,17 @@ export const objects = {
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan4.apply(this, args);
+                $prev = oldPlan3.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"createCompany"}, but that function did not return a step!
-${String(oldPlan4)}`);
+${String(oldPlan3)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper4(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper3(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -11163,17 +11179,17 @@ ${String(oldPlan5)}`);
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan3.apply(this, args);
+                $prev = oldPlan4.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"createPerson"}, but that function did not return a step!
-${String(oldPlan3)}`);
+${String(oldPlan4)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper3(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper4(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -11266,17 +11282,17 @@ ${String(oldPlan6)}`);
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan16.apply(this, args);
+                $prev = oldPlan15.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"deleteCompany"}, but that function did not return a step!
-${String(oldPlan16)}`);
+${String(oldPlan15)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper16(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper15(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -11503,17 +11519,17 @@ ${String(oldPlan17)}`);
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan15.apply(this, args);
+                $prev = oldPlan16.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"deletePerson"}, but that function did not return a step!
-${String(oldPlan15)}`);
+${String(oldPlan16)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper15(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper16(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -11727,17 +11743,17 @@ ${String(oldPlan18)}`);
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan10.apply(this, args);
+                $prev = oldPlan9.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"updateCompany"}, but that function did not return a step!
-${String(oldPlan10)}`);
+${String(oldPlan9)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper10(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper9(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -11964,17 +11980,17 @@ ${String(oldPlan11)}`);
         plan(...planParams) {
           const smartPlan = (...overrideParams) => {
               const args = [...overrideParams.concat(planParams.slice(overrideParams.length))],
-                $prev = oldPlan9.apply(this, args);
+                $prev = oldPlan10.apply(this, args);
               if (!($prev instanceof ExecutableStep)) {
                 console.error(`Wrapped a plan function at ${"Mutation"}.${"updatePerson"}, but that function did not return a step!
-${String(oldPlan9)}`);
+${String(oldPlan10)}`);
                 throw Error("Wrapped a plan function, but that function did not return a step!");
               }
               args[1].autoApply($prev);
               return $prev;
             },
             [$source, fieldArgs, info] = planParams,
-            $newPlan = planWrapper9(smartPlan, $source, fieldArgs, info);
+            $newPlan = planWrapper10(smartPlan, $source, fieldArgs, info);
           if ($newPlan === void 0) throw Error("Your plan wrapper didn't return anything; it must return a step or null!");
           if ($newPlan !== null && !isExecutableStep($newPlan)) throw Error(`Your plan wrapper returned something other than a step... It must return a step (or null). (Returned: ${inspect($newPlan)})`);
           return $newPlan;
@@ -13173,6 +13189,9 @@ ${String(oldPlan12)}`);
       },
       createdAt($record) {
         return $record.get("created_at");
+      },
+      emailConsent($record) {
+        return $record.get("email_consent");
       },
       firstName($record) {
         return $record.get("first_name");
@@ -16345,6 +16364,12 @@ export const inputObjects = {
       }) {
         obj.set("created_at", bakedInputRuntime(schema, field.type, val));
       },
+      emailConsent(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("email_consent", bakedInputRuntime(schema, field.type, val));
+      },
       emails(obj, val, {
         field,
         schema
@@ -16421,6 +16446,12 @@ export const inputObjects = {
         schema
       }) {
         obj.set("created_at", bakedInputRuntime(schema, field.type, val));
+      },
+      emailConsent(obj, val, {
+        field,
+        schema
+      }) {
+        obj.set("email_consent", bakedInputRuntime(schema, field.type, val));
       },
       emails(obj, val, {
         field,
