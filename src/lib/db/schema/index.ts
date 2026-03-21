@@ -6,6 +6,7 @@ export * from "./invoice.table";
 export * from "./invoiceLineItem.table";
 export * from "./organizationSettings.table";
 export * from "./person.table";
+export * from "./personExternalLink.table";
 export * from "./product.table";
 export * from "./quote.table";
 export * from "./quoteLineItem.table";

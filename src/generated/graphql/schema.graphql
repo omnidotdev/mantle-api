@@ -23,6 +23,9 @@ type Query implements Node {
   """Get a single `InventoryAdjustment`."""
   inventoryAdjustment(rowId: UUID!): InventoryAdjustment
 
+  """Get a single `PersonExternalLink`."""
+  personExternalLink(rowId: UUID!): PersonExternalLink
+
   """Get a single `InvoiceLineItem`."""
   invoiceLineItem(rowId: UUID!): InvoiceLineItem
 
@@ -65,6 +68,14 @@ type Query implements Node {
     """
     id: ID!
   ): InventoryAdjustment
+
+  """Reads a single `PersonExternalLink` using its globally unique `ID`."""
+  personExternalLinkById(
+    """
+    The globally unique `ID` to be used in selecting a single `PersonExternalLink`.
+    """
+    id: ID!
+  ): PersonExternalLink
 
   """Reads a single `InvoiceLineItem` using its globally unique `ID`."""
   invoiceLineItemById(
@@ -197,6 +208,40 @@ type Query implements Node {
     """The method to use when ordering `InventoryAdjustment`."""
     orderBy: [InventoryAdjustmentOrderBy!] = [PRIMARY_KEY_ASC]
   ): InventoryAdjustmentConnection
+
+  """Reads and enables pagination through a set of `PersonExternalLink`."""
+  personExternalLinks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PersonExternalLinkCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PersonExternalLinkFilter
+
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkConnection
 
   """Reads and enables pagination through a set of `InvoiceLineItem`."""
   invoiceLineItems(
@@ -1200,6 +1245,12 @@ input PersonFilter {
   """Some related `companyMembers` exist."""
   companyMembersExist: Boolean
 
+  """Filter by the object’s `personExternalLinks` relation."""
+  personExternalLinks: PersonToManyPersonExternalLinkFilter
+
+  """Some related `personExternalLinks` exist."""
+  personExternalLinksExist: Boolean
+
   """Checks for all expressions in this list."""
   and: [PersonFilter!]
 
@@ -1291,6 +1342,55 @@ input PersonToManyCompanyMemberFilter {
   No related `CompanyMember` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
   none: CompanyMemberFilter
+}
+
+"""
+A filter to be used against many `PersonExternalLink` object types. All fields are combined with a logical ‘and.’
+"""
+input PersonToManyPersonExternalLinkFilter {
+  """
+  Every related `PersonExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: PersonExternalLinkFilter
+
+  """
+  Some related `PersonExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: PersonExternalLinkFilter
+
+  """
+  No related `PersonExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: PersonExternalLinkFilter
+}
+
+"""
+A filter to be used against `PersonExternalLink` object types. All fields are combined with a logical ‘and.’
+"""
+input PersonExternalLinkFilter {
+  """Filter by the object’s `rowId` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s `personId` field."""
+  personId: UUIDFilter
+
+  """Filter by the object’s `provider` field."""
+  provider: StringFilter
+
+  """Filter by the object’s `externalId` field."""
+  externalId: StringFilter
+
+  """Filter by the object’s `person` relation."""
+  person: PersonFilter
+
+  """Checks for all expressions in this list."""
+  and: [PersonExternalLinkFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [PersonExternalLinkFilter!]
+
+  """Negates the expression."""
+  not: PersonExternalLinkFilter
 }
 
 """
@@ -1571,6 +1671,122 @@ type Person implements Node {
     """The method to use when ordering `CompanyMember`."""
     orderBy: [CompanyMemberOrderBy!] = [PRIMARY_KEY_ASC]
   ): CompanyMemberConnection!
+
+  """Reads and enables pagination through a set of `PersonExternalLink`."""
+  personExternalLinks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PersonExternalLinkCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PersonExternalLinkFilter
+
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkConnection!
+}
+
+"""A connection to a list of `PersonExternalLink` values."""
+type PersonExternalLinkConnection {
+  """A list of `PersonExternalLink` objects."""
+  nodes: [PersonExternalLink]!
+
+  """
+  A list of edges which contains the `PersonExternalLink` and cursor to aid in pagination.
+  """
+  edges: [PersonExternalLinkEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `PersonExternalLink` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+type PersonExternalLink implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  personId: UUID!
+  provider: String!
+  externalId: String!
+  metadata: JSON
+  createdAt: Datetime
+
+  """Reads a single `Person` that is related to this `PersonExternalLink`."""
+  person: Person
+}
+
+"""
+Represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""A `PersonExternalLink` edge in the connection."""
+type PersonExternalLinkEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `PersonExternalLink` at the end of the edge."""
+  node: PersonExternalLink
+}
+
+"""
+A condition to be used against `PersonExternalLink` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input PersonExternalLinkCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s `personId` field."""
+  personId: UUID
+
+  """Checks for equality with the object’s `provider` field."""
+  provider: String
+
+  """Checks for equality with the object’s `externalId` field."""
+  externalId: String
+}
+
+"""Methods to use when ordering `PersonExternalLink`."""
+enum PersonExternalLinkOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  PERSON_ID_ASC
+  PERSON_ID_DESC
+  PROVIDER_ASC
+  PROVIDER_DESC
+  EXTERNAL_ID_ASC
+  EXTERNAL_ID_DESC
 }
 
 """A connection to a list of `InvoiceLineItem` values."""
@@ -2384,6 +2600,14 @@ type Mutation {
     input: CreateInventoryAdjustmentInput!
   ): CreateInventoryAdjustmentPayload
 
+  """Creates a single `PersonExternalLink`."""
+  createPersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePersonExternalLinkInput!
+  ): CreatePersonExternalLinkPayload
+
   """Creates a single `InvoiceLineItem`."""
   createInvoiceLineItem(
     """
@@ -2491,6 +2715,24 @@ type Mutation {
     """
     input: UpdateInventoryAdjustmentInput!
   ): UpdateInventoryAdjustmentPayload
+
+  """
+  Updates a single `PersonExternalLink` using its globally unique id and a patch.
+  """
+  updatePersonExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonExternalLinkByIdInput!
+  ): UpdatePersonExternalLinkPayload
+
+  """Updates a single `PersonExternalLink` using a unique key and a patch."""
+  updatePersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonExternalLinkInput!
+  ): UpdatePersonExternalLinkPayload
 
   """
   Updates a single `InvoiceLineItem` using its globally unique id and a patch.
@@ -2677,6 +2919,22 @@ type Mutation {
     """
     input: DeleteInventoryAdjustmentInput!
   ): DeleteInventoryAdjustmentPayload
+
+  """Deletes a single `PersonExternalLink` using its globally unique id."""
+  deletePersonExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonExternalLinkByIdInput!
+  ): DeletePersonExternalLinkPayload
+
+  """Deletes a single `PersonExternalLink` using a unique key."""
+  deletePersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonExternalLinkInput!
+  ): DeletePersonExternalLinkPayload
 
   """Deletes a single `InvoiceLineItem` using its globally unique id."""
   deleteInvoiceLineItemById(
@@ -2918,6 +3176,51 @@ input InventoryAdjustmentInput {
   quantityChange: Int!
   reason: String!
   referenceId: UUID
+  createdAt: Datetime
+}
+
+"""The output of our create `PersonExternalLink` mutation."""
+type CreatePersonExternalLinkPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `PersonExternalLink` that was created by this mutation."""
+  personExternalLink: PersonExternalLink
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `PersonExternalLink`. May be used by Relay 1."""
+  personExternalLinkEdge(
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkEdge
+}
+
+"""All input for the create `PersonExternalLink` mutation."""
+input CreatePersonExternalLinkInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `PersonExternalLink` to be created by this mutation."""
+  personExternalLink: PersonExternalLinkInput!
+}
+
+"""An input for mutations affecting `PersonExternalLink`"""
+input PersonExternalLinkInput {
+  rowId: UUID
+  personId: UUID!
+  provider: String!
+  externalId: String!
+  metadata: JSON
   createdAt: Datetime
 }
 
@@ -3539,6 +3842,75 @@ input UpdateInventoryAdjustmentInput {
   An object where the defined keys will be set on the `InventoryAdjustment` being updated.
   """
   patch: InventoryAdjustmentPatch!
+}
+
+"""The output of our update `PersonExternalLink` mutation."""
+type UpdatePersonExternalLinkPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `PersonExternalLink` that was updated by this mutation."""
+  personExternalLink: PersonExternalLink
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `PersonExternalLink`. May be used by Relay 1."""
+  personExternalLinkEdge(
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkEdge
+}
+
+"""All input for the `updatePersonExternalLinkById` mutation."""
+input UpdatePersonExternalLinkByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `PersonExternalLink` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `PersonExternalLink` being updated.
+  """
+  patch: PersonExternalLinkPatch!
+}
+
+"""
+Represents an update to a `PersonExternalLink`. Fields that are set will be updated.
+"""
+input PersonExternalLinkPatch {
+  rowId: UUID
+  personId: UUID
+  provider: String
+  externalId: String
+  metadata: JSON
+  createdAt: Datetime
+}
+
+"""All input for the `updatePersonExternalLink` mutation."""
+input UpdatePersonExternalLinkInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `PersonExternalLink` being updated.
+  """
+  patch: PersonExternalLinkPatch!
 }
 
 """The output of our update `InvoiceLineItem` mutation."""
@@ -4327,6 +4699,54 @@ input DeleteInventoryAdjustmentByIdInput {
 
 """All input for the `deleteInventoryAdjustment` mutation."""
 input DeleteInventoryAdjustmentInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete `PersonExternalLink` mutation."""
+type DeletePersonExternalLinkPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `PersonExternalLink` that was deleted by this mutation."""
+  personExternalLink: PersonExternalLink
+  deletedPersonExternalLinkId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `PersonExternalLink`. May be used by Relay 1."""
+  personExternalLinkEdge(
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkEdge
+}
+
+"""All input for the `deletePersonExternalLinkById` mutation."""
+input DeletePersonExternalLinkByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `PersonExternalLink` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deletePersonExternalLink` mutation."""
+input DeletePersonExternalLinkInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
