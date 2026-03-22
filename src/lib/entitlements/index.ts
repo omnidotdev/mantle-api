@@ -30,8 +30,6 @@ const DEFAULT_LIMITS: Record<string, Record<string, number>> = {
   custom_templates: { free: 0, pro: 0, team: 1 },
 };
 
-/** Tier type */
-type Tier = "free" | "pro" | "team" | "enterprise";
 
 /**
  * Fetch entitlements for an organization from the billing provider.
