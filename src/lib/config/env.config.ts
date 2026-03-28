@@ -1,23 +1,26 @@
 /**
  * Environment variables.
- *
- * Individual access avoids a bun bundler bug where destructured
- * `process.env` exports lose their `var` declarations in the output.
  */
-const NODE_ENV = process.env.NODE_ENV;
-export const PORT = process.env.PORT ?? 4000;
-export const DATABASE_URL = process.env.DATABASE_URL;
-export const CORS_ALLOWED_ORIGINS = process.env.CORS_ALLOWED_ORIGINS;
-export const AUTH_JWKS_URL = process.env.AUTH_JWKS_URL;
-export const GRAPHQL_MAX_COMPLEXITY_COST =
-  process.env.GRAPHQL_MAX_COMPLEXITY_COST ?? "5000";
-export const UNLEASH_SERVER_API_URL = process.env.UNLEASH_SERVER_API_URL;
-export const UNLEASH_SERVER_API_TOKEN = process.env.UNLEASH_SERVER_API_TOKEN;
-export const VORTEX_API_URL = process.env.VORTEX_API_URL;
-export const VORTEX_API_KEY = process.env.VORTEX_API_KEY;
-export const SERVICE_KEY = process.env.SERVICE_KEY;
-export const BILLING_BASE_URL = process.env.BILLING_BASE_URL;
-export const BILLING_SERVICE_API_KEY = process.env.BILLING_SERVICE_API_KEY;
+export const {
+  NODE_ENV,
+  PORT = 4000,
+  DATABASE_URL,
+  CORS_ALLOWED_ORIGINS,
+  AUTH_JWKS_URL,
+  GRAPHQL_MAX_COMPLEXITY_COST = "5000",
+  UNLEASH_SERVER_API_URL,
+  UNLEASH_SERVER_API_TOKEN,
+  VORTEX_API_URL,
+  VORTEX_API_KEY,
+  SERVICE_KEY,
+  BILLING_BASE_URL,
+  BILLING_SERVICE_API_KEY,
+} = process.env;
 
 export const isDevEnv = NODE_ENV === "development",
   isProdEnv = NODE_ENV === "production";
+
+// Startup warnings for optional integrations
+if (!BILLING_BASE_URL) console.warn("BILLING_BASE_URL not set, billing disabled");
+if (!VORTEX_API_URL) console.warn("VORTEX_API_URL not set, event streaming disabled");
+if (!UNLEASH_SERVER_API_URL) console.warn("UNLEASH_SERVER_API_URL not set, feature flags disabled");

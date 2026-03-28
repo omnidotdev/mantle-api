@@ -30,7 +30,6 @@ const DEFAULT_LIMITS: Record<string, Record<string, number>> = {
   custom_templates: { free: 0, pro: 0, team: 1 },
 };
 
-
 /**
  * Fetch entitlements for an organization from the billing provider.
  */
