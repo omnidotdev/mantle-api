@@ -120,6 +120,20 @@
       "when": 1774120373699,
       "tag": "0016_dear_pyro",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1774803189458,
+      "tag": "0017_optimal_komodo",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1774810309471,
+      "tag": "0018_red_stick",
+      "breakpoints": true
     }
   ]
 }

@@ -8,5 +8,7 @@ export * from "./organizationSettings.table";
 export * from "./person.table";
 export * from "./personExternalLink.table";
 export * from "./product.table";
+export * from "./productExternalLink.table";
 export * from "./quote.table";
 export * from "./quoteLineItem.table";
+export * from "./supplier.table";
