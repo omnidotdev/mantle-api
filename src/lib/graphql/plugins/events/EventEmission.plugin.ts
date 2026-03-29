@@ -40,6 +40,54 @@ const emitOnMutate = (
   );
 
 /**
+ * Emit an enriched product event with catalog-relevant fields.
+ * Used for product mutations so Halo can build its commerce projection.
+ */
+const emitProductEvent = (
+  action: "created" | "updated" | "deleted",
+): PlanWrapperFn =>
+  EXPORTABLE(
+    (sideEffect, emitEvent, action): PlanWrapperFn =>
+      (plan, $record) => {
+        sideEffect([$record], ([record]) => {
+          if (!record?.id) return;
+
+          emitEvent(
+            `mantle.product.${action}`,
+            {
+              id: record.id,
+              organizationId: record.organizationId,
+              sku: record.sku,
+              upc: record.upc,
+              name: record.name,
+              description: record.description,
+              costPrice: record.costPrice,
+              retailPrice: record.retailPrice,
+              unitPrice: record.unitPrice,
+              fulfillmentType: record.fulfillmentType,
+              supplierId: record.supplierId,
+              supplierSku: record.supplierSku,
+              weight: record.weight,
+              category1: record.category1,
+              category2: record.category2,
+              imageUrl: record.imageUrl,
+              imageUrl2: record.imageUrl2,
+              imageUrl3: record.imageUrl3,
+              isActive: record.isActive,
+              isRestricted: record.isRestricted,
+              currentQuantity: record.currentQuantity,
+              channels: record.channels,
+            },
+            record.id,
+          );
+        });
+
+        return plan();
+      },
+    [sideEffect, emitEvent, action],
+  );
+
+/**
  * Event emission plugin for Mantle mutations.
  *
  * Emits CloudEvents to Vortex for company, invoice, quote, product, and person lifecycle.
@@ -55,8 +103,8 @@ const EventEmissionPlugin = wrapPlans({
     createQuote: emitOnMutate("quote", "created"),
     updateQuote: emitOnMutate("quote", "updated"),
     deleteQuote: emitOnMutate("quote", "deleted"),
-    createProduct: emitOnMutate("product", "created"),
-    updateProduct: emitOnMutate("product", "updated"),
+    createProduct: emitProductEvent("created"),
+    updateProduct: emitProductEvent("updated"),
     deleteProduct: emitOnMutate("product", "deleted"),
     createPerson: emitOnMutate("person", "created"),
     updatePerson: emitOnMutate("person", "updated"),

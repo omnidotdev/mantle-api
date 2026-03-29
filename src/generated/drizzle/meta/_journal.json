@@ -134,6 +134,13 @@
       "when": 1774810309471,
       "tag": "0018_red_stick",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1774810766850,
+      "tag": "0019_superb_old_lace",
+      "breakpoints": true
     }
   ]
 }

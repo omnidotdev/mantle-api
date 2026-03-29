@@ -41,6 +41,7 @@ export const productTable = pgTable(
     imageUrl3: text("image_url_3"),
     isRestricted: boolean("is_restricted").default(false),
     isActive: boolean("is_active").default(true),
+    channels: text().array().default([]),
     createdAt: generateDefaultDate(),
     updatedAt: generateDefaultDate(),
   },
