@@ -15,3 +15,6 @@ export type {
   ChannelProvider,
   ChannelUpdate,
 } from "./types";
+
+import etsyProvider from "./etsy";
+registerProvider(etsyProvider);
