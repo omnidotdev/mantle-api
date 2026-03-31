@@ -6,8 +6,9 @@ import { useValidationCache } from "@envelop/validation-cache";
 import { useDisableIntrospection } from "@graphql-yoga/plugin-disable-introspection";
 import { sql } from "drizzle-orm";
 import { Elysia } from "elysia";
-import { schema } from "generated/graphql/schema.executable";
 import { useGrafast } from "grafast/envelop";
+import graphilePreset from "lib/config/graphile.config";
+import { makeSchema } from "postgraphile";
 
 import appConfig from "lib/config/app.config";
 import {
@@ -61,6 +62,8 @@ const app = new Elysia()
 			};
 		}
 	});
+
+const { schema } = await makeSchema(graphilePreset);
 
 app.use(
 	yoga({

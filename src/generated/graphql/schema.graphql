@@ -32,8 +32,11 @@ type Query implements Node {
   """Get a single `OrganizationSetting`."""
   organizationSetting(rowId: UUID!): OrganizationSetting
 
-  """Get a single `Product`."""
-  product(rowId: UUID!): Product
+  """Get a single `ProductExternalLink`."""
+  productExternalLink(rowId: UUID!): ProductExternalLink
+
+  """Get a single `Supplier`."""
+  supplier(rowId: UUID!): Supplier
 
   """Get a single `DocumentNumberingConfig`."""
   documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
@@ -49,6 +52,9 @@ type Query implements Node {
 
   """Get a single `Invoice`."""
   invoice(rowId: UUID!): Invoice
+
+  """Get a single `Product`."""
+  product(rowId: UUID!): Product
 
   """Get a single `Quote`."""
   quote(rowId: UUID!): Quote
@@ -93,11 +99,19 @@ type Query implements Node {
     id: ID!
   ): OrganizationSetting
 
-  """Reads a single `Product` using its globally unique `ID`."""
-  productById(
-    """The globally unique `ID` to be used in selecting a single `Product`."""
+  """Reads a single `ProductExternalLink` using its globally unique `ID`."""
+  productExternalLinkById(
+    """
+    The globally unique `ID` to be used in selecting a single `ProductExternalLink`.
+    """
     id: ID!
-  ): Product
+  ): ProductExternalLink
+
+  """Reads a single `Supplier` using its globally unique `ID`."""
+  supplierById(
+    """The globally unique `ID` to be used in selecting a single `Supplier`."""
+    id: ID!
+  ): Supplier
 
   """
   Reads a single `DocumentNumberingConfig` using its globally unique `ID`.
@@ -134,6 +148,12 @@ type Query implements Node {
     """The globally unique `ID` to be used in selecting a single `Invoice`."""
     id: ID!
   ): Invoice
+
+  """Reads a single `Product` using its globally unique `ID`."""
+  productById(
+    """The globally unique `ID` to be used in selecting a single `Product`."""
+    id: ID!
+  ): Product
 
   """Reads a single `Quote` using its globally unique `ID`."""
   quoteById(
@@ -311,8 +331,8 @@ type Query implements Node {
     orderBy: [OrganizationSettingOrderBy!] = [PRIMARY_KEY_ASC]
   ): OrganizationSettingConnection
 
-  """Reads and enables pagination through a set of `Product`."""
-  products(
+  """Reads and enables pagination through a set of `ProductExternalLink`."""
+  productExternalLinks(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -334,16 +354,50 @@ type Query implements Node {
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: ProductCondition
+    condition: ProductExternalLinkCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: ProductFilter
+    filter: ProductExternalLinkFilter
 
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductOrderBy!] = [PRIMARY_KEY_ASC]
-  ): ProductConnection
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkConnection
+
+  """Reads and enables pagination through a set of `Supplier`."""
+  suppliers(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SupplierCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SupplierFilter
+
+    """The method to use when ordering `Supplier`."""
+    orderBy: [SupplierOrderBy!] = [PRIMARY_KEY_ASC]
+  ): SupplierConnection
 
   """
   Reads and enables pagination through a set of `DocumentNumberingConfig`.
@@ -516,6 +570,40 @@ type Query implements Node {
     """The method to use when ordering `Invoice`."""
     orderBy: [InvoiceOrderBy!] = [PRIMARY_KEY_ASC]
   ): InvoiceConnection
+
+  """Reads and enables pagination through a set of `Product`."""
+  products(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductFilter
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductConnection
 
   """Reads and enables pagination through a set of `Quote`."""
   quotes(
@@ -1173,6 +1261,18 @@ input ProductFilter {
   """Some related `inventoryAdjustments` exist."""
   inventoryAdjustmentsExist: Boolean
 
+  """Filter by the object’s `productExternalLinks` relation."""
+  productExternalLinks: ProductToManyProductExternalLinkFilter
+
+  """Some related `productExternalLinks` exist."""
+  productExternalLinksExist: Boolean
+
+  """Filter by the object’s `supplier` relation."""
+  supplier: SupplierFilter
+
+  """A related `supplier` exists."""
+  supplierExists: Boolean
+
   """Checks for all expressions in this list."""
   and: [ProductFilter!]
 
@@ -1224,6 +1324,78 @@ input InventoryAdjustmentFilter {
 
   """Negates the expression."""
   not: InventoryAdjustmentFilter
+}
+
+"""
+A filter to be used against many `ProductExternalLink` object types. All fields are combined with a logical ‘and.’
+"""
+input ProductToManyProductExternalLinkFilter {
+  """
+  Every related `ProductExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: ProductExternalLinkFilter
+
+  """
+  Some related `ProductExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: ProductExternalLinkFilter
+
+  """
+  No related `ProductExternalLink` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: ProductExternalLinkFilter
+}
+
+"""
+A filter to be used against `ProductExternalLink` object types. All fields are combined with a logical ‘and.’
+"""
+input ProductExternalLinkFilter {
+  """Filter by the object’s `rowId` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s `productId` field."""
+  productId: UUIDFilter
+
+  """Filter by the object’s `provider` field."""
+  provider: StringFilter
+
+  """Filter by the object’s `externalId` field."""
+  externalId: StringFilter
+
+  """Filter by the object’s `product` relation."""
+  product: ProductFilter
+
+  """Checks for all expressions in this list."""
+  and: [ProductExternalLinkFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ProductExternalLinkFilter!]
+
+  """Negates the expression."""
+  not: ProductExternalLinkFilter
+}
+
+"""
+A filter to be used against `Supplier` object types. All fields are combined with a logical ‘and.’
+"""
+input SupplierFilter {
+  """Filter by the object’s `rowId` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s `organizationId` field."""
+  organizationId: StringFilter
+
+  """Filter by the object’s `code` field."""
+  code: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [SupplierFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [SupplierFilter!]
+
+  """Negates the expression."""
+  not: SupplierFilter
 }
 
 """
@@ -1846,6 +2018,23 @@ type Product implements Node {
   isActive: Boolean
   createdAt: Datetime
   updatedAt: Datetime
+  supplierId: UUID
+  fulfillmentType: String
+  supplierSku: String
+  upc: String
+  costPrice: BigFloat
+  retailPrice: BigFloat
+  weight: BigFloat
+  category1: String
+  category2: String
+  imageUrl: String
+  imageUrl2: String
+  imageUrl3: String
+  isRestricted: Boolean
+  channels: [String]
+
+  """Reads a single `Supplier` that is related to this `Product`."""
+  supplier: Supplier
 
   """Reads and enables pagination through a set of `InventoryAdjustment`."""
   inventoryAdjustments(
@@ -1880,6 +2069,58 @@ type Product implements Node {
     """The method to use when ordering `InventoryAdjustment`."""
     orderBy: [InventoryAdjustmentOrderBy!] = [PRIMARY_KEY_ASC]
   ): InventoryAdjustmentConnection!
+
+  """Reads and enables pagination through a set of `ProductExternalLink`."""
+  productExternalLinks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductExternalLinkCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductExternalLinkFilter
+
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkConnection!
+}
+
+type Supplier implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  organizationId: String!
+  name: String!
+  code: String
+  contactEmail: String
+  contactPhone: String
+  website: String
+  notes: String
+  isActive: Boolean
+  createdAt: Datetime
+  updatedAt: Datetime
 }
 
 """A connection to a list of `InventoryAdjustment` values."""
@@ -1949,6 +2190,86 @@ enum InventoryAdjustmentOrderBy {
   ROW_ID_DESC
   PRODUCT_ID_ASC
   PRODUCT_ID_DESC
+}
+
+"""A connection to a list of `ProductExternalLink` values."""
+type ProductExternalLinkConnection {
+  """A list of `ProductExternalLink` objects."""
+  nodes: [ProductExternalLink]!
+
+  """
+  A list of edges which contains the `ProductExternalLink` and cursor to aid in pagination.
+  """
+  edges: [ProductExternalLinkEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ProductExternalLink` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+type ProductExternalLink implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  productId: UUID!
+  provider: String!
+  externalId: String!
+  metadata: JSON
+  createdAt: Datetime
+  updatedAt: Datetime
+
+  """
+  Reads a single `Product` that is related to this `ProductExternalLink`.
+  """
+  product: Product
+}
+
+"""A `ProductExternalLink` edge in the connection."""
+type ProductExternalLinkEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ProductExternalLink` at the end of the edge."""
+  node: ProductExternalLink
+}
+
+"""
+A condition to be used against `ProductExternalLink` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input ProductExternalLinkCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s `productId` field."""
+  productId: UUID
+
+  """Checks for equality with the object’s `provider` field."""
+  provider: String
+
+  """Checks for equality with the object’s `externalId` field."""
+  externalId: String
+}
+
+"""Methods to use when ordering `ProductExternalLink`."""
+enum ProductExternalLinkOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  PRODUCT_ID_ASC
+  PRODUCT_ID_DESC
+  PROVIDER_ASC
+  PROVIDER_DESC
+  EXTERNAL_ID_ASC
+  EXTERNAL_ID_DESC
 }
 
 """A `InvoiceLineItem` edge in the connection."""
@@ -2353,48 +2674,49 @@ enum OrganizationSettingOrderBy {
   ORGANIZATION_ID_DESC
 }
 
-"""A connection to a list of `Product` values."""
-type ProductConnection {
-  """A list of `Product` objects."""
-  nodes: [Product]!
+"""A connection to a list of `Supplier` values."""
+type SupplierConnection {
+  """A list of `Supplier` objects."""
+  nodes: [Supplier]!
 
   """
-  A list of edges which contains the `Product` and cursor to aid in pagination.
+  A list of edges which contains the `Supplier` and cursor to aid in pagination.
   """
-  edges: [ProductEdge]!
+  edges: [SupplierEdge]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `Product` you could get from the connection."""
+  """The count of *all* `Supplier` you could get from the connection."""
   totalCount: Int!
 }
 
-"""A `Product` edge in the connection."""
-type ProductEdge {
+"""A `Supplier` edge in the connection."""
+type SupplierEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `Product` at the end of the edge."""
-  node: Product
+  """The `Supplier` at the end of the edge."""
+  node: Supplier
 }
 
 """
-A condition to be used against `Product` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `Supplier` object types. All fields are tested
+for equality and combined with a logical ‘and.’
 """
-input ProductCondition {
+input SupplierCondition {
   """Checks for equality with the object’s `rowId` field."""
   rowId: UUID
 
   """Checks for equality with the object’s `organizationId` field."""
   organizationId: String
 
-  """Checks for equality with the object’s `sku` field."""
-  sku: String
+  """Checks for equality with the object’s `code` field."""
+  code: String
 }
 
-"""Methods to use when ordering `Product`."""
-enum ProductOrderBy {
+"""Methods to use when ordering `Supplier`."""
+enum SupplierOrderBy {
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
@@ -2402,8 +2724,8 @@ enum ProductOrderBy {
   ROW_ID_DESC
   ORGANIZATION_ID_ASC
   ORGANIZATION_ID_DESC
-  SKU_ASC
-  SKU_DESC
+  CODE_ASC
+  CODE_DESC
 }
 
 """A connection to a list of `DocumentNumberingConfig` values."""
@@ -2581,6 +2903,59 @@ enum PersonOrderBy {
   ORGANIZATION_ID_DESC
 }
 
+"""A connection to a list of `Product` values."""
+type ProductConnection {
+  """A list of `Product` objects."""
+  nodes: [Product]!
+
+  """
+  A list of edges which contains the `Product` and cursor to aid in pagination.
+  """
+  edges: [ProductEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Product` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Product` edge in the connection."""
+type ProductEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Product` at the end of the edge."""
+  node: Product
+}
+
+"""
+A condition to be used against `Product` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input ProductCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s `organizationId` field."""
+  organizationId: String
+
+  """Checks for equality with the object’s `sku` field."""
+  sku: String
+}
+
+"""Methods to use when ordering `Product`."""
+enum ProductOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+  SKU_ASC
+  SKU_DESC
+}
+
 """
 The root mutation type which contains root level fields which mutate data.
 """
@@ -2625,13 +3000,21 @@ type Mutation {
     input: CreateOrganizationSettingInput!
   ): CreateOrganizationSettingPayload
 
-  """Creates a single `Product`."""
-  createProduct(
+  """Creates a single `ProductExternalLink`."""
+  createProductExternalLink(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateProductInput!
-  ): CreateProductPayload
+    input: CreateProductExternalLinkInput!
+  ): CreateProductExternalLinkPayload
+
+  """Creates a single `Supplier`."""
+  createSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateSupplierInput!
+  ): CreateSupplierPayload
 
   """Creates a single `DocumentNumberingConfig`."""
   createDocumentNumberingConfig(
@@ -2672,6 +3055,14 @@ type Mutation {
     """
     input: CreateInvoiceInput!
   ): CreateInvoicePayload
+
+  """Creates a single `Product`."""
+  createProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductInput!
+  ): CreateProductPayload
 
   """Creates a single `Quote`."""
   createQuote(
@@ -2771,21 +3162,39 @@ type Mutation {
     input: UpdateOrganizationSettingInput!
   ): UpdateOrganizationSettingPayload
 
-  """Updates a single `Product` using its globally unique id and a patch."""
-  updateProductById(
+  """
+  Updates a single `ProductExternalLink` using its globally unique id and a patch.
+  """
+  updateProductExternalLinkById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateProductByIdInput!
-  ): UpdateProductPayload
+    input: UpdateProductExternalLinkByIdInput!
+  ): UpdateProductExternalLinkPayload
 
-  """Updates a single `Product` using a unique key and a patch."""
-  updateProduct(
+  """Updates a single `ProductExternalLink` using a unique key and a patch."""
+  updateProductExternalLink(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateProductInput!
-  ): UpdateProductPayload
+    input: UpdateProductExternalLinkInput!
+  ): UpdateProductExternalLinkPayload
+
+  """Updates a single `Supplier` using its globally unique id and a patch."""
+  updateSupplierById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSupplierByIdInput!
+  ): UpdateSupplierPayload
+
+  """Updates a single `Supplier` using a unique key and a patch."""
+  updateSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSupplierInput!
+  ): UpdateSupplierPayload
 
   """
   Updates a single `DocumentNumberingConfig` using its globally unique id and a patch.
@@ -2872,6 +3281,22 @@ type Mutation {
     """
     input: UpdateInvoiceInput!
   ): UpdateInvoicePayload
+
+  """Updates a single `Product` using its globally unique id and a patch."""
+  updateProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductByIdInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Product` using a unique key and a patch."""
+  updateProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductInput!
+  ): UpdateProductPayload
 
   """Updates a single `Quote` using its globally unique id and a patch."""
   updateQuoteById(
@@ -2969,21 +3394,37 @@ type Mutation {
     input: DeleteOrganizationSettingInput!
   ): DeleteOrganizationSettingPayload
 
-  """Deletes a single `Product` using its globally unique id."""
-  deleteProductById(
+  """Deletes a single `ProductExternalLink` using its globally unique id."""
+  deleteProductExternalLinkById(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteProductByIdInput!
-  ): DeleteProductPayload
+    input: DeleteProductExternalLinkByIdInput!
+  ): DeleteProductExternalLinkPayload
 
-  """Deletes a single `Product` using a unique key."""
-  deleteProduct(
+  """Deletes a single `ProductExternalLink` using a unique key."""
+  deleteProductExternalLink(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteProductInput!
-  ): DeleteProductPayload
+    input: DeleteProductExternalLinkInput!
+  ): DeleteProductExternalLinkPayload
+
+  """Deletes a single `Supplier` using its globally unique id."""
+  deleteSupplierById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSupplierByIdInput!
+  ): DeleteSupplierPayload
+
+  """Deletes a single `Supplier` using a unique key."""
+  deleteSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSupplierInput!
+  ): DeleteSupplierPayload
 
   """
   Deletes a single `DocumentNumberingConfig` using its globally unique id.
@@ -3066,6 +3507,22 @@ type Mutation {
     """
     input: DeleteInvoiceInput!
   ): DeleteInvoicePayload
+
+  """Deletes a single `Product` using its globally unique id."""
+  deleteProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductByIdInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Product` using a unique key."""
+  deleteProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductInput!
+  ): DeleteProductPayload
 
   """Deletes a single `Quote` using its globally unique id."""
   deleteQuoteById(
@@ -3316,51 +3773,97 @@ input OrganizationSettingInput {
   updatedAt: Datetime
 }
 
-"""The output of our create `Product` mutation."""
-type CreateProductPayload {
+"""The output of our create `ProductExternalLink` mutation."""
+type CreateProductExternalLinkPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `Product` that was created by this mutation."""
-  product: Product
+  """The `ProductExternalLink` that was created by this mutation."""
+  productExternalLink: ProductExternalLink
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """An edge for our `Product`. May be used by Relay 1."""
-  productEdge(
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): ProductEdge
+  """An edge for our `ProductExternalLink`. May be used by Relay 1."""
+  productExternalLinkEdge(
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkEdge
 }
 
-"""All input for the create `Product` mutation."""
-input CreateProductInput {
+"""All input for the create `ProductExternalLink` mutation."""
+input CreateProductExternalLinkInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
 
-  """The `Product` to be created by this mutation."""
-  product: ProductInput!
+  """The `ProductExternalLink` to be created by this mutation."""
+  productExternalLink: ProductExternalLinkInput!
 }
 
-"""An input for mutations affecting `Product`"""
-input ProductInput {
+"""An input for mutations affecting `ProductExternalLink`"""
+input ProductExternalLinkInput {
+  rowId: UUID
+  productId: UUID!
+  provider: String!
+  externalId: String!
+  metadata: JSON
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""The output of our create `Supplier` mutation."""
+type CreateSupplierPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Supplier` that was created by this mutation."""
+  supplier: Supplier
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Supplier`. May be used by Relay 1."""
+  supplierEdge(
+    """The method to use when ordering `Supplier`."""
+    orderBy: [SupplierOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): SupplierEdge
+}
+
+"""All input for the create `Supplier` mutation."""
+input CreateSupplierInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Supplier` to be created by this mutation."""
+  supplier: SupplierInput!
+}
+
+"""An input for mutations affecting `Supplier`"""
+input SupplierInput {
   rowId: UUID
   organizationId: String!
   name: String!
-  description: String
-  sku: String
-  unitPrice: BigFloat
-  currentQuantity: Int
-  lowStockThreshold: Int
+  code: String
+  contactEmail: String
+  contactPhone: String
+  website: String
+  notes: String
   isActive: Boolean
   createdAt: Datetime
   updatedAt: Datetime
@@ -3642,6 +4145,70 @@ input InvoiceInput {
   createdAt: Datetime
   updatedAt: Datetime
   billTo: String
+}
+
+"""The output of our create `Product` mutation."""
+type CreateProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was created by this mutation."""
+  product: Product
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductEdge
+}
+
+"""All input for the create `Product` mutation."""
+input CreateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Product` to be created by this mutation."""
+  product: ProductInput!
+}
+
+"""An input for mutations affecting `Product`"""
+input ProductInput {
+  rowId: UUID
+  organizationId: String!
+  name: String!
+  description: String
+  sku: String
+  unitPrice: BigFloat
+  currentQuantity: Int
+  lowStockThreshold: Int
+  isActive: Boolean
+  createdAt: Datetime
+  updatedAt: Datetime
+  supplierId: UUID
+  fulfillmentType: String
+  supplierSku: String
+  upc: String
+  costPrice: BigFloat
+  retailPrice: BigFloat
+  weight: BigFloat
+  category1: String
+  category2: String
+  imageUrl: String
+  imageUrl2: String
+  imageUrl3: String
+  isRestricted: Boolean
+  channels: [String]
 }
 
 """The output of our create `Quote` mutation."""
@@ -4054,31 +4621,31 @@ input UpdateOrganizationSettingInput {
   patch: OrganizationSettingPatch!
 }
 
-"""The output of our update `Product` mutation."""
-type UpdateProductPayload {
+"""The output of our update `ProductExternalLink` mutation."""
+type UpdateProductExternalLinkPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `Product` that was updated by this mutation."""
-  product: Product
+  """The `ProductExternalLink` that was updated by this mutation."""
+  productExternalLink: ProductExternalLink
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """An edge for our `Product`. May be used by Relay 1."""
-  productEdge(
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): ProductEdge
+  """An edge for our `ProductExternalLink`. May be used by Relay 1."""
+  productExternalLinkEdge(
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkEdge
 }
 
-"""All input for the `updateProductById` mutation."""
-input UpdateProductByIdInput {
+"""All input for the `updateProductExternalLinkById` mutation."""
+input UpdateProductExternalLinkByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4086,35 +4653,31 @@ input UpdateProductByIdInput {
   clientMutationId: String
 
   """
-  The globally unique `ID` which will identify a single `Product` to be updated.
+  The globally unique `ID` which will identify a single `ProductExternalLink` to be updated.
   """
   id: ID!
 
   """
-  An object where the defined keys will be set on the `Product` being updated.
+  An object where the defined keys will be set on the `ProductExternalLink` being updated.
   """
-  patch: ProductPatch!
+  patch: ProductExternalLinkPatch!
 }
 
 """
-Represents an update to a `Product`. Fields that are set will be updated.
+Represents an update to a `ProductExternalLink`. Fields that are set will be updated.
 """
-input ProductPatch {
+input ProductExternalLinkPatch {
   rowId: UUID
-  organizationId: String
-  name: String
-  description: String
-  sku: String
-  unitPrice: BigFloat
-  currentQuantity: Int
-  lowStockThreshold: Int
-  isActive: Boolean
+  productId: UUID
+  provider: String
+  externalId: String
+  metadata: JSON
   createdAt: Datetime
   updatedAt: Datetime
 }
 
-"""All input for the `updateProduct` mutation."""
-input UpdateProductInput {
+"""All input for the `updateProductExternalLink` mutation."""
+input UpdateProductExternalLinkInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4123,9 +4686,83 @@ input UpdateProductInput {
   rowId: UUID!
 
   """
-  An object where the defined keys will be set on the `Product` being updated.
+  An object where the defined keys will be set on the `ProductExternalLink` being updated.
   """
-  patch: ProductPatch!
+  patch: ProductExternalLinkPatch!
+}
+
+"""The output of our update `Supplier` mutation."""
+type UpdateSupplierPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Supplier` that was updated by this mutation."""
+  supplier: Supplier
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Supplier`. May be used by Relay 1."""
+  supplierEdge(
+    """The method to use when ordering `Supplier`."""
+    orderBy: [SupplierOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): SupplierEdge
+}
+
+"""All input for the `updateSupplierById` mutation."""
+input UpdateSupplierByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Supplier` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Supplier` being updated.
+  """
+  patch: SupplierPatch!
+}
+
+"""
+Represents an update to a `Supplier`. Fields that are set will be updated.
+"""
+input SupplierPatch {
+  rowId: UUID
+  organizationId: String
+  name: String
+  code: String
+  contactEmail: String
+  contactPhone: String
+  website: String
+  notes: String
+  isActive: Boolean
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""All input for the `updateSupplier` mutation."""
+input UpdateSupplierInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `Supplier` being updated.
+  """
+  patch: SupplierPatch!
 }
 
 """The output of our update `DocumentNumberingConfig` mutation."""
@@ -4526,6 +5163,94 @@ input UpdateInvoiceInput {
   patch: InvoicePatch!
 }
 
+"""The output of our update `Product` mutation."""
+type UpdateProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was updated by this mutation."""
+  product: Product
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductEdge
+}
+
+"""All input for the `updateProductById` mutation."""
+input UpdateProductByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Product` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  patch: ProductPatch!
+}
+
+"""
+Represents an update to a `Product`. Fields that are set will be updated.
+"""
+input ProductPatch {
+  rowId: UUID
+  organizationId: String
+  name: String
+  description: String
+  sku: String
+  unitPrice: BigFloat
+  currentQuantity: Int
+  lowStockThreshold: Int
+  isActive: Boolean
+  createdAt: Datetime
+  updatedAt: Datetime
+  supplierId: UUID
+  fulfillmentType: String
+  supplierSku: String
+  upc: String
+  costPrice: BigFloat
+  retailPrice: BigFloat
+  weight: BigFloat
+  category1: String
+  category2: String
+  imageUrl: String
+  imageUrl2: String
+  imageUrl3: String
+  isRestricted: Boolean
+  channels: [String]
+}
+
+"""All input for the `updateProduct` mutation."""
+input UpdateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  patch: ProductPatch!
+}
+
 """The output of our update `Quote` mutation."""
 type UpdateQuotePayload {
   """
@@ -4854,32 +5579,32 @@ input DeleteOrganizationSettingInput {
   rowId: UUID!
 }
 
-"""The output of our delete `Product` mutation."""
-type DeleteProductPayload {
+"""The output of our delete `ProductExternalLink` mutation."""
+type DeleteProductExternalLinkPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `Product` that was deleted by this mutation."""
-  product: Product
-  deletedProductId: ID
+  """The `ProductExternalLink` that was deleted by this mutation."""
+  productExternalLink: ProductExternalLink
+  deletedProductExternalLinkId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
 
-  """An edge for our `Product`. May be used by Relay 1."""
-  productEdge(
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): ProductEdge
+  """An edge for our `ProductExternalLink`. May be used by Relay 1."""
+  productExternalLinkEdge(
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkEdge
 }
 
-"""All input for the `deleteProductById` mutation."""
-input DeleteProductByIdInput {
+"""All input for the `deleteProductExternalLinkById` mutation."""
+input DeleteProductExternalLinkByIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -4887,13 +5612,61 @@ input DeleteProductByIdInput {
   clientMutationId: String
 
   """
-  The globally unique `ID` which will identify a single `Product` to be deleted.
+  The globally unique `ID` which will identify a single `ProductExternalLink` to be deleted.
   """
   id: ID!
 }
 
-"""All input for the `deleteProduct` mutation."""
-input DeleteProductInput {
+"""All input for the `deleteProductExternalLink` mutation."""
+input DeleteProductExternalLinkInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete `Supplier` mutation."""
+type DeleteSupplierPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Supplier` that was deleted by this mutation."""
+  supplier: Supplier
+  deletedSupplierId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Supplier`. May be used by Relay 1."""
+  supplierEdge(
+    """The method to use when ordering `Supplier`."""
+    orderBy: [SupplierOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): SupplierEdge
+}
+
+"""All input for the `deleteSupplierById` mutation."""
+input DeleteSupplierByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Supplier` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deleteSupplier` mutation."""
+input DeleteSupplierInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -5134,6 +5907,54 @@ input DeleteInvoiceByIdInput {
 
 """All input for the `deleteInvoice` mutation."""
 input DeleteInvoiceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete `Product` mutation."""
+type DeleteProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was deleted by this mutation."""
+  product: Product
+  deletedProductId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ProductEdge
+}
+
+"""All input for the `deleteProductById` mutation."""
+input DeleteProductByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Product` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deleteProduct` mutation."""
+input DeleteProductInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
