@@ -190,8 +190,8 @@ const scopeChildSingleItem = (
  *   organization membership from the Grafast context
  *
  * Tables with direct `organization_id`:
- *   company, person, product, invoice, quote, supplier,
- *   document_numbering_config, organization_settings
+ *   channel_connection, company, person, product, invoice, quote,
+ *   supplier, document_numbering_config, organization_settings
  *
  * Child tables scoped via parent FK:
  *   company_member -> company, invoice_line_item -> invoice,
@@ -201,6 +201,7 @@ const scopeChildSingleItem = (
 const OrganizationScopePlugin = wrapPlans({
   Query: {
     // Collection queries - SQL-level WHERE organization_id filtering
+    channelConnections: scopeCollection(),
     companies: scopeCollection(),
     people: scopeCollection(),
     products: scopeCollection(),
@@ -219,6 +220,7 @@ const OrganizationScopePlugin = wrapPlans({
     productExternalLinks: scopeChildCollection("product", "product_id"),
 
     // Single-item queries (by rowId) - post-resolution org membership check
+    channelConnection: scopeSingleItem(),
     company: scopeSingleItem(),
     person: scopeSingleItem(),
     product: scopeSingleItem(),
@@ -237,6 +239,7 @@ const OrganizationScopePlugin = wrapPlans({
     productExternalLink: scopeChildSingleItem("product", "productId"),
 
     // Single-item queries (by Relay global ID)
+    channelConnectionById: scopeSingleItem(),
     companyById: scopeSingleItem(),
     personById: scopeSingleItem(),
     productById: scopeSingleItem(),
