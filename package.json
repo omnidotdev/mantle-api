@@ -26,6 +26,7 @@
     "db:up": "bun --env-file .env.local drizzle-kit up --config src/lib/config/drizzle.config.ts",
     "graphql:generate": "GRAPHILE_ENV=development bun run --env-file .env.local src/scripts/generateGraphqlSchema.ts",
     "channel:connect": "bun --env-file .env.local src/scripts/channel-connect.ts",
+    "sync:channels": "bun --env-file .env.local src/scripts/sync-channels.ts",
     "import:catalog": "bun --env-file .env.local src/scripts/import-catalog.ts",
     "import:etsy": "bun --env-file .env.local src/scripts/import-etsy.ts",
     "prepare": "husky"
