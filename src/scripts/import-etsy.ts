@@ -86,6 +86,16 @@ interface EtsyListing {
   images: EtsyImage[];
 }
 
+async function fetchListingImages(
+  listingId: number,
+): Promise<EtsyImage[]> {
+  const data = await fetchJson<{ results: EtsyImage[] }>(
+    `${ETSY_API_BASE}/listings/${listingId}/images`,
+  );
+
+  return data.results ?? [];
+}
+
 async function fetchAllListings(): Promise<EtsyListing[]> {
   const { results: shops } = await fetchJson<{
     results: { shop_id: number }[];
@@ -97,10 +107,15 @@ async function fetchAllListings(): Promise<EtsyListing[]> {
   let offset = 0;
 
   while (true) {
-    const url = `${ETSY_API_BASE}/shops/${shopData.shop_id}/listings/active?includes=images&limit=${PAGE_LIMIT}&offset=${offset}`;
+    const url = `${ETSY_API_BASE}/shops/${shopData.shop_id}/listings/active?limit=${PAGE_LIMIT}&offset=${offset}`;
     const data = await fetchJson<{ count: number; results: EtsyListing[] }>(
       url,
     );
+
+    // Fetch images per listing (includes=images doesn't work with production keys)
+    for (const listing of data.results) {
+      listing.images = await fetchListingImages(listing.listing_id);
+    }
 
     results.push(...data.results);
     if (results.length >= data.count) break;
