@@ -29,4 +29,4 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/.cache ./.cache
 
 EXPOSE 4000
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "start:source"]
