@@ -87,9 +87,11 @@ interface EtsyListing {
 }
 
 async function fetchAllListings(): Promise<EtsyListing[]> {
-  const shopData = await fetchJson<{ shop_id: number }>(
-    `${ETSY_API_BASE}/shops/${SHOP_HANDLE}`,
-  );
+  const { results: shops } = await fetchJson<{
+    results: { shop_id: number }[];
+  }>(`${ETSY_API_BASE}/shops?shop_name=${SHOP_HANDLE}`);
+  const shopData = shops[0];
+  if (!shopData) throw new Error(`Shop "${SHOP_HANDLE}" not found`);
 
   const results: EtsyListing[] = [];
   let offset = 0;
