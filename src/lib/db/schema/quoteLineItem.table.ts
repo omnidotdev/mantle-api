@@ -62,6 +62,8 @@ export const quoteLineItemTable = pgTable(
       scale: 2,
     }),
     sortOrder: integer("sort_order").default(0),
+    deliverables: text().array(),
+    acceptanceCriteria: text("acceptance_criteria").array(),
   },
   (table) => [
     uniqueIndex().on(table.id),

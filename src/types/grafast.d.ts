@@ -8,6 +8,8 @@ declare global {
       observer: Observer | null;
       /** Database client. */
       db: typeof dbPool;
+      /** Organization IDs the authenticated user belongs to. */
+      organizationIds: string[];
     }
   }
 }

@@ -24,6 +24,8 @@ export interface GraphQLContext {
 	pgSettings: Record<string, string | undefined> | null;
 	/** Postgres subscription client. */
 	pgSubscriber: PgSubscriber | null;
+	/** Organization IDs the authenticated user belongs to. */
+	organizationIds: string[];
 }
 
 /**
@@ -33,7 +35,7 @@ export interface GraphQLContext {
 const createGraphqlContext = async ({
 	request,
 }: Omit<YogaInitialContext, "waitUntil">): Promise<
-	Omit<GraphQLContext, "observer" | "pgSettings" | "pgSubscriber">
+	Omit<GraphQLContext, "observer" | "organizationIds" | "pgSettings" | "pgSubscriber">
 > => ({
 	request,
 	db: dbPool,
