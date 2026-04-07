@@ -88,6 +88,43 @@ const emitProductEvent = (
   );
 
 /**
+ * Emit an enriched invoice event with fields needed by MyFi for journal entries.
+ */
+const emitInvoiceEvent = (
+  action: "created" | "updated" | "deleted",
+): PlanWrapperFn =>
+  EXPORTABLE(
+    (sideEffect, emitEvent, action): PlanWrapperFn =>
+      (plan, $record) => {
+        sideEffect([$record], ([record]) => {
+          if (!record?.id) return;
+
+          emitEvent(
+            `mantle.invoice.${action}`,
+            {
+              id: record.id,
+              organizationId: record.organizationId,
+              companyId: record.companyId,
+              contactId: record.contactId,
+              invoiceNumber: record.invoiceNumber,
+              status: record.status,
+              total: record.total,
+              currency: record.currency,
+              issueDate: record.issueDate,
+              dueDate: record.dueDate,
+              paidAt: record.paidAt,
+              paymentReference: record.paymentReference,
+            },
+            record.id,
+          );
+        });
+
+        return plan();
+      },
+    [sideEffect, emitEvent, action],
+  );
+
+/**
  * Event emission plugin for Mantle mutations.
  *
  * Emits CloudEvents to Vortex for company, invoice, quote, product, and person lifecycle.
@@ -97,9 +134,9 @@ const EventEmissionPlugin = wrapPlans({
     createCompany: emitOnMutate("company", "created"),
     updateCompany: emitOnMutate("company", "updated"),
     deleteCompany: emitOnMutate("company", "deleted"),
-    createInvoice: emitOnMutate("invoice", "created"),
-    updateInvoice: emitOnMutate("invoice", "updated"),
-    deleteInvoice: emitOnMutate("invoice", "deleted"),
+    createInvoice: emitInvoiceEvent("created"),
+    updateInvoice: emitInvoiceEvent("updated"),
+    deleteInvoice: emitInvoiceEvent("deleted"),
     createQuote: emitOnMutate("quote", "created"),
     updateQuote: emitOnMutate("quote", "updated"),
     deleteQuote: emitOnMutate("quote", "deleted"),
