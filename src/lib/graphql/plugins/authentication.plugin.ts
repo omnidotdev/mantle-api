@@ -101,7 +101,6 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
       name: claims.name,
     };
   } catch (err) {
-    // biome-ignore lint/suspicious/noConsole: auth error logging
     console.error("[auth] JWT verify failed:", err);
     (ctx as GraphQLContext).organizationIds = [];
     (ctx as GraphQLContext).pgSettings = {
