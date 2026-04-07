@@ -20,8 +20,7 @@ import { supplierTable } from "lib/db/schema/supplier.table";
 // -- CLI args ---------------------------------------------------------------
 
 const csvPath = process.argv[2];
-const rawOrganizationId =
-  process.argv[3] || process.env.ORGANIZATION_ID;
+const rawOrganizationId = process.argv[3] || process.env.ORGANIZATION_ID;
 
 if (!csvPath) {
   console.error(

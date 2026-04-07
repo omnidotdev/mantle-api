@@ -1,31 +1,32 @@
-import type { YogaInitialContext } from "graphql-yoga";
+import { createWithPgClient } from "postgraphile/adaptors/pg";
 
 import { dbPool, pgPool } from "lib/db/db";
+
+import type { YogaInitialContext } from "graphql-yoga";
 import type { Observer } from "lib/graphql/plugins/authentication.plugin";
 import type { WithPgClient } from "postgraphile/@dataplan/pg";
 import type {
-	NodePostgresPgClient,
-	PgSubscriber,
+  NodePostgresPgClient,
+  PgSubscriber,
 } from "postgraphile/adaptors/pg";
-import { createWithPgClient } from "postgraphile/adaptors/pg";
 
 const withPgClient = createWithPgClient({ pool: pgPool });
 
 export interface GraphQLContext {
-	/** API observer, injected by the authentication plugin. */
-	observer: Observer | null;
-	/** Network request. */
-	request: Request;
-	/** Database. */
-	db: typeof dbPool;
-	/** Postgres client, injected by Postgraphile. */
-	withPgClient: WithPgClient<NodePostgresPgClient>;
-	/** Postgres settings for the current request. */
-	pgSettings: Record<string, string | undefined> | null;
-	/** Postgres subscription client. */
-	pgSubscriber: PgSubscriber | null;
-	/** Organization IDs the authenticated user belongs to. */
-	organizationIds: string[];
+  /** API observer, injected by the authentication plugin. */
+  observer: Observer | null;
+  /** Network request. */
+  request: Request;
+  /** Database. */
+  db: typeof dbPool;
+  /** Postgres client, injected by Postgraphile. */
+  withPgClient: WithPgClient<NodePostgresPgClient>;
+  /** Postgres settings for the current request. */
+  pgSettings: Record<string, string | undefined> | null;
+  /** Postgres subscription client. */
+  pgSubscriber: PgSubscriber | null;
+  /** Organization IDs the authenticated user belongs to. */
+  organizationIds: string[];
 }
 
 /**
@@ -33,13 +34,16 @@ export interface GraphQLContext {
  * @see https://graphql.org/learn/execution/#root-fields-and-resolvers
  */
 const createGraphqlContext = async ({
-	request,
+  request,
 }: Omit<YogaInitialContext, "waitUntil">): Promise<
-	Omit<GraphQLContext, "observer" | "organizationIds" | "pgSettings" | "pgSubscriber">
+  Omit<
+    GraphQLContext,
+    "observer" | "organizationIds" | "pgSettings" | "pgSubscriber"
+  >
 > => ({
-	request,
-	db: dbPool,
-	withPgClient,
+  request,
+  db: dbPool,
+  withPgClient,
 });
 
 export default createGraphqlContext;

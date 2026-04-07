@@ -21,6 +21,9 @@ export const isDevEnv = NODE_ENV === "development",
   isProdEnv = NODE_ENV === "production";
 
 // Startup warnings for optional integrations
-if (!BILLING_BASE_URL) console.warn("BILLING_BASE_URL not set, billing disabled");
-if (!VORTEX_API_URL) console.warn("VORTEX_API_URL not set, event streaming disabled");
-if (!UNLEASH_SERVER_API_URL) console.warn("UNLEASH_SERVER_API_URL not set, feature flags disabled");
+if (!BILLING_BASE_URL)
+  console.warn("BILLING_BASE_URL not set, billing disabled");
+if (!VORTEX_API_URL)
+  console.warn("VORTEX_API_URL not set, event streaming disabled");
+if (!UNLEASH_SERVER_API_URL)
+  console.warn("UNLEASH_SERVER_API_URL not set, feature flags disabled");

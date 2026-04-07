@@ -141,19 +141,24 @@ const server = createServer(async (req, res) => {
 			Date.now() + tokenData.expires_in * 1000,
 		).toISOString();
 
-		// Fetch user/shop info
-		const meRes = await fetch(
-			"https://openapi.etsy.com/v3/application/users/me",
+		// Fetch shop info
+		const shopRes = await fetch(
+			`https://openapi.etsy.com/v3/application/shops?shop_name=${process.env.ETSY_SHOP_HANDLE ?? "matterforgeco"}`,
 			{
-				headers: { Authorization: `Bearer ${tokenData.access_token}` },
+				headers: {
+					"x-api-key": `${keystring}:${process.env.ETSY_API_KEY?.split(":")[1] ?? ""}`,
+				},
 			},
 		);
 
-		if (!meRes.ok) {
-			throw new Error(`Failed to fetch user info (${meRes.status})`);
+		if (!shopRes.ok) {
+			throw new Error(`Failed to fetch shop info (${shopRes.status})`);
 		}
 
-		const meData = (await meRes.json()) as { shop_id?: string };
+		const shopData = (await shopRes.json()) as {
+			results: { shop_id: number }[];
+		};
+		const shopId = shopData.results[0]?.shop_id;
 
 		// Upsert channel connection
 		await db
@@ -162,7 +167,7 @@ const server = createServer(async (req, res) => {
 				organizationId: rawOrganizationId,
 				provider,
 				status: "active",
-				externalShopId: meData.shop_id ? String(meData.shop_id) : null,
+				externalShopId: shopId ? String(shopId) : null,
 				credentials: {
 					accessToken: tokenData.access_token,
 					refreshToken: tokenData.refresh_token,
@@ -177,7 +182,7 @@ const server = createServer(async (req, res) => {
 				],
 				set: {
 					status: "active",
-					externalShopId: meData.shop_id ? String(meData.shop_id) : null,
+					externalShopId: shopId ? String(shopId) : null,
 					credentials: {
 						accessToken: tokenData.access_token,
 						refreshToken: tokenData.refresh_token,

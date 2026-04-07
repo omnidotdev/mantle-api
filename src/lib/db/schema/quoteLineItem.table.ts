@@ -20,6 +20,7 @@ export const pricingTypes = [
   "hourly",
   "royalty",
   "complimentary",
+  "included",
 ] as const;
 
 export type PricingType = (typeof pricingTypes)[number];
