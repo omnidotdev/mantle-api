@@ -125,6 +125,41 @@ const emitInvoiceEvent = (
   );
 
 /**
+ * Emit an enriched quote event with fields needed by MyFi for journal entries.
+ */
+const emitQuoteEvent = (
+  action: "created" | "updated" | "deleted",
+): PlanWrapperFn =>
+  EXPORTABLE(
+    (sideEffect, emitEvent, action): PlanWrapperFn =>
+      (plan, $record) => {
+        sideEffect([$record], ([record]) => {
+          if (!record?.id) return;
+
+          emitEvent(
+            `mantle.quote.${action}`,
+            {
+              id: record.id,
+              organizationId: record.organizationId,
+              companyId: record.companyId,
+              contactId: record.contactId,
+              quoteNumber: record.quoteNumber,
+              status: record.status,
+              total: record.total,
+              currency: record.currency,
+              validUntil: record.validUntil,
+              convertedInvoiceId: record.convertedInvoiceId,
+            },
+            record.id,
+          );
+        });
+
+        return plan();
+      },
+    [sideEffect, emitEvent, action],
+  );
+
+/**
  * Event emission plugin for Mantle mutations.
  *
  * Emits CloudEvents to Vortex for company, invoice, quote, product, and person lifecycle.
@@ -137,9 +172,9 @@ const EventEmissionPlugin = wrapPlans({
     createInvoice: emitInvoiceEvent("created"),
     updateInvoice: emitInvoiceEvent("updated"),
     deleteInvoice: emitInvoiceEvent("deleted"),
-    createQuote: emitOnMutate("quote", "created"),
-    updateQuote: emitOnMutate("quote", "updated"),
-    deleteQuote: emitOnMutate("quote", "deleted"),
+    createQuote: emitQuoteEvent("created"),
+    updateQuote: emitQuoteEvent("updated"),
+    deleteQuote: emitQuoteEvent("deleted"),
     createProduct: emitProductEvent("created"),
     updateProduct: emitProductEvent("updated"),
     deleteProduct: emitOnMutate("product", "deleted"),
