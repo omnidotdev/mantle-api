@@ -1,6 +1,8 @@
 // TODO remove after Tilt env reload
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+import { readFileSync } from "node:fs";
+
 import { cors } from "@elysiajs/cors";
 import { yoga } from "@elysiajs/graphql-yoga";
 import { useOpenTelemetry } from "@envelop/opentelemetry";
@@ -25,6 +27,8 @@ import createGraphqlContext from "lib/graphql/createGraphqlContext";
 import { armorPlugin, authenticationPlugin } from "lib/graphql/plugins";
 import { maintenanceMiddleware } from "lib/middleware/maintenance";
 
+const commit = (() => { try { return readFileSync("/app/.git-sha", "utf-8").trim(); } catch { return "unknown"; } })();
+
 /**
  * Elysia server.
  */
@@ -46,6 +50,7 @@ const app = new Elysia()
     status: "ok",
     timestamp: Date.now(),
     service: appConfig.name,
+    commit,
   }))
   .get("/ready", async ({ set }) => {
     try {
