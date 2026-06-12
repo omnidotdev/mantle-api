@@ -10,7 +10,7 @@
     "dev": "NODE_ENV=development GRAPHILE_ENV=development bun run --watch src/server.ts",
     "build": "bun build --target node --outdir build src/server.ts src/instrumentation.ts",
     "start": "NODE_ENV=production GRAPHILE_ENV=production bun run src/scripts/db/migrate.ts && NODE_ENV=production GRAPHILE_ENV=production bun run --import ./build/instrumentation.js build/server.js",
-    "start:source": "NODE_ENV=production GRAPHILE_ENV=production bun run src/scripts/db/migrate.ts && NODE_ENV=production GRAPHILE_ENV=production bun run src/server.ts",
+    "start:source": "NODE_ENV=production GRAPHILE_ENV=production bun run src/scripts/db/migrate.ts && NODE_ENV=production GRAPHILE_ENV=production bun --preload ./src/instrumentation.ts src/server.ts",
     "lint": "biome lint",
     "format": "biome format --write",
     "check": "biome check",

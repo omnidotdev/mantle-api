@@ -32,6 +32,7 @@ COPY --from=builder /app/.cache ./.cache
 COPY --from=builder /app/.git-sha ./.git-sha
 
 EXPOSE 4000
-# start (not start:source) so the server runs via --import ./build/instrumentation.js,
-# which loads the OpenTelemetry NodeSDK; start:source bypassed it so no spans were exported.
-CMD ["bun", "run", "start"]
+# start:source runs from src/ (the bundled build/server.js mangles the env-config
+# destructuring under bun). start:source now preloads src/instrumentation.ts so the
+# OpenTelemetry NodeSDK initializes before the app loads.
+CMD ["bun", "run", "start:source"]
