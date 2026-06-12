@@ -32,4 +32,6 @@ COPY --from=builder /app/.cache ./.cache
 COPY --from=builder /app/.git-sha ./.git-sha
 
 EXPOSE 4000
-CMD ["bun", "run", "start:source"]
+# start (not start:source) so the server runs via --import ./build/instrumentation.js,
+# which loads the OpenTelemetry NodeSDK; start:source bypassed it so no spans were exported.
+CMD ["bun", "run", "start"]
