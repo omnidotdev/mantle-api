@@ -25,9 +25,14 @@ import graphilePreset from "lib/config/graphile.config";
 import { dbPool, pgPool } from "lib/db/db";
 import createGraphqlContext from "lib/graphql/createGraphqlContext";
 import { armorPlugin, authenticationPlugin } from "lib/graphql/plugins";
-import { maintenanceMiddleware } from "lib/middleware/maintenance";
 
-const commit = (() => { try { return readFileSync("/app/.git-sha", "utf-8").trim(); } catch { return "unknown"; } })();
+const commit = (() => {
+  try {
+    return readFileSync("/app/.git-sha", "utf-8").trim();
+  } catch {
+    return "unknown";
+  }
+})();
 
 /**
  * Elysia server.
@@ -39,7 +44,6 @@ const app = new Elysia()
     set.headers["X-XSS-Protection"] = "1; mode=block";
     set.headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
   })
-  .use(maintenanceMiddleware)
   .use(
     cors({
       origin: CORS_ALLOWED_ORIGINS?.split(",") ?? [],

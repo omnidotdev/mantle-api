@@ -8,8 +8,6 @@ export const {
   CORS_ALLOWED_ORIGINS,
   AUTH_JWKS_URL,
   GRAPHQL_MAX_COMPLEXITY_COST = "5000",
-  UNLEASH_SERVER_API_URL,
-  UNLEASH_SERVER_API_TOKEN,
   VORTEX_API_URL,
   VORTEX_API_KEY,
   SERVICE_KEY,
@@ -25,5 +23,3 @@ if (!BILLING_BASE_URL)
   console.warn("BILLING_BASE_URL not set, billing disabled");
 if (!VORTEX_API_URL)
   console.warn("VORTEX_API_URL not set, event streaming disabled");
-if (!UNLEASH_SERVER_API_URL)
-  console.warn("UNLEASH_SERVER_API_URL not set, feature flags disabled");
