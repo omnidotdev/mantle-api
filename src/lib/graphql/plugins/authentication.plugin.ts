@@ -56,6 +56,10 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
       "app.user_id": "service:internal",
       // Service key: select all rows (no org filter applied via a permissive condition)
       "app.service_auth": "true",
+      // Set explicitly even though `app.service_auth` short-circuits the scope
+      // predicate: on a pooled backend an unset GUC reads back as '' (not NULL),
+      // so every auth path must set every GUC the scope SQL reads
+      "app.organization_ids": "{}",
     };
 
     return {

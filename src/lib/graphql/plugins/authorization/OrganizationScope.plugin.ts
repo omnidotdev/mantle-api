@@ -30,7 +30,7 @@ const scopeCollection = (): PlanWrapperFn =>
           type: "attribute",
           attribute: "organization_id",
           callback(expression: SQL) {
-            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} = ANY(coalesce(current_setting('app.organization_ids', true)::text[], '{}')))`;
+            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} = ANY(coalesce(nullif(current_setting('app.organization_ids', true), ''), '{}')::text[]))`;
           },
         });
 
@@ -65,7 +65,7 @@ const scopeChildCollection = (
           type: "attribute",
           attribute: fkColumn,
           callback(expression: SQL) {
-            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} IN (SELECT ${sql.identifier(parentPk)} FROM ${sql.identifier(parentTable)} WHERE organization_id = ANY(coalesce(current_setting('app.organization_ids', true)::text[], '{}'))))`;
+            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} IN (SELECT ${sql.identifier(parentPk)} FROM ${sql.identifier(parentTable)} WHERE organization_id = ANY(coalesce(nullif(current_setting('app.organization_ids', true), ''), '{}')::text[])))`;
           },
         });
 
