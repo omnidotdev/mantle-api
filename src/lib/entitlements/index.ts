@@ -23,7 +23,7 @@ const APP_ID = "mantle";
  * Prevents hard failures for organizations that haven't been provisioned in Aether.
  */
 const DEFAULT_LIMITS: Record<string, Record<string, number>> = {
-  max_team_members: { free: 1, pro: 3, team: -1 },
+  max_team_members: { free: 1, pro: -1, team: -1 },
   max_contacts: { free: 50, pro: -1, team: -1 },
   max_invoices_per_month: { free: 5, pro: -1, team: -1 },
   advanced_workflows: { free: 0, pro: 0, team: 1 },
