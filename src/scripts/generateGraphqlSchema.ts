@@ -8,11 +8,9 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 
-import { exportSchema } from "graphile-export";
 import { printSchema } from "graphql";
 import graphilePreset from "lib/config/graphile.config";
 import { makeSchema } from "postgraphile";
-import { replaceInFile } from "replace-in-file";
 
 const SRC_DIR = `${__dirname}/..`;
 const CACHE_DIR = `${__dirname}/../../.cache`;
@@ -94,21 +92,13 @@ const generateGraphqlSchema = async () => {
 	const { schema } = await makeSchema(graphilePreset);
 
 	const generatedDirectory = `${__dirname}/../generated/graphql`;
-	const schemaFilePath = `${generatedDirectory}/schema.executable.ts`;
 
 	if (!existsSync(generatedDirectory))
 		mkdirSync(generatedDirectory, { recursive: true });
 
-	await exportSchema(schema, schemaFilePath, {
-		mode: "typeDefs",
-	});
-
-	await replaceInFile({
-		files: schemaFilePath,
-		from: /\/\* eslint-disable graphile-export\/[^*]+\*\//g,
-		to: "// @ts-nocheck\n/* eslint-disable */",
-	});
-
+	// The server boots from makeSchema (custom plans close over runtime
+	// singletons, so exportSchema cannot serialize them); only the SDL is
+	// generated here, for client codegen
 	writeFileSync(`${generatedDirectory}/schema.graphql`, printSchema(schema));
 
 	if (!existsSync(CACHE_DIR)) mkdirSync(CACHE_DIR, { recursive: true });

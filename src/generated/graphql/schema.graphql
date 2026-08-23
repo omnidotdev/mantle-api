@@ -1,645 +1,3 @@
-"""The root query type which gives access points into the data universe."""
-type Query implements Node {
-  """
-  Exposes the root query type nested one level down. This is helpful for Relay 1
-  which can only query top level fields if they are in a particular form.
-  """
-  query: Query!
-
-  """
-  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
-  """
-  id: ID!
-
-  """Fetches an object given its globally unique `ID`."""
-  node(
-    """The globally unique `ID`."""
-    id: ID!
-  ): Node
-
-  """Get a single `CompanyMember`."""
-  companyMember(rowId: UUID!): CompanyMember
-
-  """Get a single `InventoryAdjustment`."""
-  inventoryAdjustment(rowId: UUID!): InventoryAdjustment
-
-  """Get a single `PersonExternalLink`."""
-  personExternalLink(rowId: UUID!): PersonExternalLink
-
-  """Get a single `InvoiceLineItem`."""
-  invoiceLineItem(rowId: UUID!): InvoiceLineItem
-
-  """Get a single `OrganizationSetting`."""
-  organizationSetting(rowId: UUID!): OrganizationSetting
-
-  """Get a single `ProductExternalLink`."""
-  productExternalLink(rowId: UUID!): ProductExternalLink
-
-  """Get a single `Supplier`."""
-  supplier(rowId: UUID!): Supplier
-
-  """Get a single `DocumentNumberingConfig`."""
-  documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
-
-  """Get a single `Company`."""
-  company(rowId: UUID!): Company
-
-  """Get a single `Person`."""
-  person(rowId: UUID!): Person
-
-  """Get a single `QuoteLineItem`."""
-  quoteLineItem(rowId: UUID!): QuoteLineItem
-
-  """Get a single `Invoice`."""
-  invoice(rowId: UUID!): Invoice
-
-  """Get a single `Product`."""
-  product(rowId: UUID!): Product
-
-  """Get a single `Quote`."""
-  quote(rowId: UUID!): Quote
-
-  """Reads a single `CompanyMember` using its globally unique `ID`."""
-  companyMemberById(
-    """
-    The globally unique `ID` to be used in selecting a single `CompanyMember`.
-    """
-    id: ID!
-  ): CompanyMember
-
-  """Reads a single `InventoryAdjustment` using its globally unique `ID`."""
-  inventoryAdjustmentById(
-    """
-    The globally unique `ID` to be used in selecting a single `InventoryAdjustment`.
-    """
-    id: ID!
-  ): InventoryAdjustment
-
-  """Reads a single `PersonExternalLink` using its globally unique `ID`."""
-  personExternalLinkById(
-    """
-    The globally unique `ID` to be used in selecting a single `PersonExternalLink`.
-    """
-    id: ID!
-  ): PersonExternalLink
-
-  """Reads a single `InvoiceLineItem` using its globally unique `ID`."""
-  invoiceLineItemById(
-    """
-    The globally unique `ID` to be used in selecting a single `InvoiceLineItem`.
-    """
-    id: ID!
-  ): InvoiceLineItem
-
-  """Reads a single `OrganizationSetting` using its globally unique `ID`."""
-  organizationSettingById(
-    """
-    The globally unique `ID` to be used in selecting a single `OrganizationSetting`.
-    """
-    id: ID!
-  ): OrganizationSetting
-
-  """Reads a single `ProductExternalLink` using its globally unique `ID`."""
-  productExternalLinkById(
-    """
-    The globally unique `ID` to be used in selecting a single `ProductExternalLink`.
-    """
-    id: ID!
-  ): ProductExternalLink
-
-  """Reads a single `Supplier` using its globally unique `ID`."""
-  supplierById(
-    """The globally unique `ID` to be used in selecting a single `Supplier`."""
-    id: ID!
-  ): Supplier
-
-  """
-  Reads a single `DocumentNumberingConfig` using its globally unique `ID`.
-  """
-  documentNumberingConfigById(
-    """
-    The globally unique `ID` to be used in selecting a single `DocumentNumberingConfig`.
-    """
-    id: ID!
-  ): DocumentNumberingConfig
-
-  """Reads a single `Company` using its globally unique `ID`."""
-  companyById(
-    """The globally unique `ID` to be used in selecting a single `Company`."""
-    id: ID!
-  ): Company
-
-  """Reads a single `Person` using its globally unique `ID`."""
-  personById(
-    """The globally unique `ID` to be used in selecting a single `Person`."""
-    id: ID!
-  ): Person
-
-  """Reads a single `QuoteLineItem` using its globally unique `ID`."""
-  quoteLineItemById(
-    """
-    The globally unique `ID` to be used in selecting a single `QuoteLineItem`.
-    """
-    id: ID!
-  ): QuoteLineItem
-
-  """Reads a single `Invoice` using its globally unique `ID`."""
-  invoiceById(
-    """The globally unique `ID` to be used in selecting a single `Invoice`."""
-    id: ID!
-  ): Invoice
-
-  """Reads a single `Product` using its globally unique `ID`."""
-  productById(
-    """The globally unique `ID` to be used in selecting a single `Product`."""
-    id: ID!
-  ): Product
-
-  """Reads a single `Quote` using its globally unique `ID`."""
-  quoteById(
-    """The globally unique `ID` to be used in selecting a single `Quote`."""
-    id: ID!
-  ): Quote
-
-  """Reads and enables pagination through a set of `CompanyMember`."""
-  companyMembers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: CompanyMemberCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: CompanyMemberFilter
-
-    """The method to use when ordering `CompanyMember`."""
-    orderBy: [CompanyMemberOrderBy!] = [PRIMARY_KEY_ASC]
-  ): CompanyMemberConnection
-
-  """Reads and enables pagination through a set of `InventoryAdjustment`."""
-  inventoryAdjustments(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: InventoryAdjustmentCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: InventoryAdjustmentFilter
-
-    """The method to use when ordering `InventoryAdjustment`."""
-    orderBy: [InventoryAdjustmentOrderBy!] = [PRIMARY_KEY_ASC]
-  ): InventoryAdjustmentConnection
-
-  """Reads and enables pagination through a set of `PersonExternalLink`."""
-  personExternalLinks(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PersonExternalLinkCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: PersonExternalLinkFilter
-
-    """The method to use when ordering `PersonExternalLink`."""
-    orderBy: [PersonExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonExternalLinkConnection
-
-  """Reads and enables pagination through a set of `InvoiceLineItem`."""
-  invoiceLineItems(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: InvoiceLineItemCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: InvoiceLineItemFilter
-
-    """The method to use when ordering `InvoiceLineItem`."""
-    orderBy: [InvoiceLineItemOrderBy!] = [PRIMARY_KEY_ASC]
-  ): InvoiceLineItemConnection
-
-  """Reads and enables pagination through a set of `OrganizationSetting`."""
-  organizationSettings(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationSettingCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OrganizationSettingFilter
-
-    """The method to use when ordering `OrganizationSetting`."""
-    orderBy: [OrganizationSettingOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationSettingConnection
-
-  """Reads and enables pagination through a set of `ProductExternalLink`."""
-  productExternalLinks(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductExternalLinkCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ProductExternalLinkFilter
-
-    """The method to use when ordering `ProductExternalLink`."""
-    orderBy: [ProductExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
-  ): ProductExternalLinkConnection
-
-  """Reads and enables pagination through a set of `Supplier`."""
-  suppliers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SupplierCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SupplierFilter
-
-    """The method to use when ordering `Supplier`."""
-    orderBy: [SupplierOrderBy!] = [PRIMARY_KEY_ASC]
-  ): SupplierConnection
-
-  """
-  Reads and enables pagination through a set of `DocumentNumberingConfig`.
-  """
-  documentNumberingConfigs(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DocumentNumberingConfigCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DocumentNumberingConfigFilter
-
-    """The method to use when ordering `DocumentNumberingConfig`."""
-    orderBy: [DocumentNumberingConfigOrderBy!] = [PRIMARY_KEY_ASC]
-  ): DocumentNumberingConfigConnection
-
-  """Reads and enables pagination through a set of `Company`."""
-  companies(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: CompanyCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: CompanyFilter
-
-    """The method to use when ordering `Company`."""
-    orderBy: [CompanyOrderBy!] = [PRIMARY_KEY_ASC]
-  ): CompanyConnection
-
-  """Reads and enables pagination through a set of `Person`."""
-  people(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PersonCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: PersonFilter
-
-    """The method to use when ordering `Person`."""
-    orderBy: [PersonOrderBy!] = [PRIMARY_KEY_ASC]
-  ): PersonConnection
-
-  """Reads and enables pagination through a set of `QuoteLineItem`."""
-  quoteLineItems(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: QuoteLineItemCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: QuoteLineItemFilter
-
-    """The method to use when ordering `QuoteLineItem`."""
-    orderBy: [QuoteLineItemOrderBy!] = [PRIMARY_KEY_ASC]
-  ): QuoteLineItemConnection
-
-  """Reads and enables pagination through a set of `Invoice`."""
-  invoices(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: InvoiceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: InvoiceFilter
-
-    """The method to use when ordering `Invoice`."""
-    orderBy: [InvoiceOrderBy!] = [PRIMARY_KEY_ASC]
-  ): InvoiceConnection
-
-  """Reads and enables pagination through a set of `Product`."""
-  products(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ProductFilter
-
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductOrderBy!] = [PRIMARY_KEY_ASC]
-  ): ProductConnection
-
-  """Reads and enables pagination through a set of `Quote`."""
-  quotes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: QuoteCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: QuoteFilter
-
-    """The method to use when ordering `Quote`."""
-    orderBy: [QuoteOrderBy!] = [PRIMARY_KEY_ASC]
-  ): QuoteConnection
-}
-
 """An object with a globally unique `ID`."""
 interface Node {
   """
@@ -1668,6 +1026,9 @@ input QuoteLineItemFilter {
   """Filter by the object’s `quoteId` field."""
   quoteId: UUIDFilter
 
+  """Filter by the object’s `sortOrder` field."""
+  sortOrder: IntFilter
+
   """Filter by the object’s `product` relation."""
   product: ProductFilter
 
@@ -1685,6 +1046,48 @@ input QuoteLineItemFilter {
 
   """Negates the expression."""
   not: QuoteLineItemFilter
+}
+
+"""
+A filter to be used against Int fields. All fields are combined with a logical ‘and.’
+"""
+input IntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Int
+
+  """Not equal to the specified value."""
+  notEqualTo: Int
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Int
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Int
+
+  """Included in the specified list."""
+  in: [Int!]
+
+  """Not included in the specified list."""
+  notIn: [Int!]
+
+  """Less than the specified value."""
+  lessThan: Int
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Int
+
+  """Greater than the specified value."""
+  greaterThan: Int
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Int
 }
 
 """Methods to use when ordering `CompanyMember`."""
@@ -2485,6 +1888,8 @@ type QuoteLineItem implements Node {
   royaltyBuyoutAmount: BigFloat
   subtitle: String
   minimumBillingMinutes: Int
+  deliverables: [String]
+  acceptanceCriteria: [String]
 
   """Reads a single `Product` that is related to this `QuoteLineItem`."""
   product: Product
@@ -2512,6 +1917,9 @@ input QuoteLineItemCondition {
 
   """Checks for equality with the object’s `quoteId` field."""
   quoteId: UUID
+
+  """Checks for equality with the object’s `sortOrder` field."""
+  sortOrder: Int
 }
 
 """Methods to use when ordering `QuoteLineItem`."""
@@ -2523,6 +1931,8 @@ enum QuoteLineItemOrderBy {
   ROW_ID_DESC
   QUOTE_ID_ASC
   QUOTE_ID_DESC
+  SORT_ORDER_ASC
+  SORT_ORDER_DESC
 }
 
 """A `Quote` edge in the connection."""
@@ -2601,6 +2011,24 @@ type DocumentNumberingConfig implements Node {
   createdAt: Datetime
   updatedAt: Datetime
   globalPrefix: String
+}
+
+type ChannelConnection implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  organizationId: String!
+  provider: String!
+  status: String!
+  externalShopId: String
+  credentials: JSON!
+  scopes: [String]
+  syncConfig: JSON!
+  lastSyncedAt: Datetime
+  createdAt: Datetime
+  updatedAt: Datetime
 }
 
 """A connection to a list of `OrganizationSetting` values."""
@@ -2807,6 +2235,85 @@ enum DocumentNumberingConfigOrderBy {
   DOCUMENT_TYPE_DESC
 }
 
+"""A connection to a list of `ChannelConnection` values."""
+type ChannelConnectionConnection {
+  """A list of `ChannelConnection` objects."""
+  nodes: [ChannelConnection]!
+
+  """
+  A list of edges which contains the `ChannelConnection` and cursor to aid in pagination.
+  """
+  edges: [ChannelConnectionEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ChannelConnection` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `ChannelConnection` edge in the connection."""
+type ChannelConnectionEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ChannelConnection` at the end of the edge."""
+  node: ChannelConnection
+}
+
+"""
+A condition to be used against `ChannelConnection` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ChannelConnectionCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s `organizationId` field."""
+  organizationId: String
+
+  """Checks for equality with the object’s `provider` field."""
+  provider: String
+}
+
+"""
+A filter to be used against `ChannelConnection` object types. All fields are combined with a logical ‘and.’
+"""
+input ChannelConnectionFilter {
+  """Filter by the object’s `rowId` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s `organizationId` field."""
+  organizationId: StringFilter
+
+  """Filter by the object’s `provider` field."""
+  provider: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [ChannelConnectionFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ChannelConnectionFilter!]
+
+  """Negates the expression."""
+  not: ChannelConnectionFilter
+}
+
+"""Methods to use when ordering `ChannelConnection`."""
+enum ChannelConnectionOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+  PROVIDER_ASC
+  PROVIDER_DESC
+}
+
 """A connection to a list of `Company` values."""
 type CompanyConnection {
   """A list of `Company` objects."""
@@ -2954,597 +2461,6 @@ enum ProductOrderBy {
   ORGANIZATION_ID_DESC
   SKU_ASC
   SKU_DESC
-}
-
-"""
-The root mutation type which contains root level fields which mutate data.
-"""
-type Mutation {
-  """Creates a single `CompanyMember`."""
-  createCompanyMember(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateCompanyMemberInput!
-  ): CreateCompanyMemberPayload
-
-  """Creates a single `InventoryAdjustment`."""
-  createInventoryAdjustment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateInventoryAdjustmentInput!
-  ): CreateInventoryAdjustmentPayload
-
-  """Creates a single `PersonExternalLink`."""
-  createPersonExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreatePersonExternalLinkInput!
-  ): CreatePersonExternalLinkPayload
-
-  """Creates a single `InvoiceLineItem`."""
-  createInvoiceLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateInvoiceLineItemInput!
-  ): CreateInvoiceLineItemPayload
-
-  """Creates a single `OrganizationSetting`."""
-  createOrganizationSetting(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateOrganizationSettingInput!
-  ): CreateOrganizationSettingPayload
-
-  """Creates a single `ProductExternalLink`."""
-  createProductExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateProductExternalLinkInput!
-  ): CreateProductExternalLinkPayload
-
-  """Creates a single `Supplier`."""
-  createSupplier(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateSupplierInput!
-  ): CreateSupplierPayload
-
-  """Creates a single `DocumentNumberingConfig`."""
-  createDocumentNumberingConfig(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateDocumentNumberingConfigInput!
-  ): CreateDocumentNumberingConfigPayload
-
-  """Creates a single `Company`."""
-  createCompany(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateCompanyInput!
-  ): CreateCompanyPayload
-
-  """Creates a single `Person`."""
-  createPerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreatePersonInput!
-  ): CreatePersonPayload
-
-  """Creates a single `QuoteLineItem`."""
-  createQuoteLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateQuoteLineItemInput!
-  ): CreateQuoteLineItemPayload
-
-  """Creates a single `Invoice`."""
-  createInvoice(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateInvoiceInput!
-  ): CreateInvoicePayload
-
-  """Creates a single `Product`."""
-  createProduct(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateProductInput!
-  ): CreateProductPayload
-
-  """Creates a single `Quote`."""
-  createQuote(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateQuoteInput!
-  ): CreateQuotePayload
-
-  """
-  Updates a single `CompanyMember` using its globally unique id and a patch.
-  """
-  updateCompanyMemberById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyMemberByIdInput!
-  ): UpdateCompanyMemberPayload
-
-  """Updates a single `CompanyMember` using a unique key and a patch."""
-  updateCompanyMember(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyMemberInput!
-  ): UpdateCompanyMemberPayload
-
-  """
-  Updates a single `InventoryAdjustment` using its globally unique id and a patch.
-  """
-  updateInventoryAdjustmentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInventoryAdjustmentByIdInput!
-  ): UpdateInventoryAdjustmentPayload
-
-  """Updates a single `InventoryAdjustment` using a unique key and a patch."""
-  updateInventoryAdjustment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInventoryAdjustmentInput!
-  ): UpdateInventoryAdjustmentPayload
-
-  """
-  Updates a single `PersonExternalLink` using its globally unique id and a patch.
-  """
-  updatePersonExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonExternalLinkByIdInput!
-  ): UpdatePersonExternalLinkPayload
-
-  """Updates a single `PersonExternalLink` using a unique key and a patch."""
-  updatePersonExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonExternalLinkInput!
-  ): UpdatePersonExternalLinkPayload
-
-  """
-  Updates a single `InvoiceLineItem` using its globally unique id and a patch.
-  """
-  updateInvoiceLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceLineItemByIdInput!
-  ): UpdateInvoiceLineItemPayload
-
-  """Updates a single `InvoiceLineItem` using a unique key and a patch."""
-  updateInvoiceLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceLineItemInput!
-  ): UpdateInvoiceLineItemPayload
-
-  """
-  Updates a single `OrganizationSetting` using its globally unique id and a patch.
-  """
-  updateOrganizationSettingById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationSettingByIdInput!
-  ): UpdateOrganizationSettingPayload
-
-  """Updates a single `OrganizationSetting` using a unique key and a patch."""
-  updateOrganizationSetting(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationSettingInput!
-  ): UpdateOrganizationSettingPayload
-
-  """
-  Updates a single `ProductExternalLink` using its globally unique id and a patch.
-  """
-  updateProductExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductExternalLinkByIdInput!
-  ): UpdateProductExternalLinkPayload
-
-  """Updates a single `ProductExternalLink` using a unique key and a patch."""
-  updateProductExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductExternalLinkInput!
-  ): UpdateProductExternalLinkPayload
-
-  """Updates a single `Supplier` using its globally unique id and a patch."""
-  updateSupplierById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSupplierByIdInput!
-  ): UpdateSupplierPayload
-
-  """Updates a single `Supplier` using a unique key and a patch."""
-  updateSupplier(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSupplierInput!
-  ): UpdateSupplierPayload
-
-  """
-  Updates a single `DocumentNumberingConfig` using its globally unique id and a patch.
-  """
-  updateDocumentNumberingConfigById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateDocumentNumberingConfigByIdInput!
-  ): UpdateDocumentNumberingConfigPayload
-
-  """
-  Updates a single `DocumentNumberingConfig` using a unique key and a patch.
-  """
-  updateDocumentNumberingConfig(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateDocumentNumberingConfigInput!
-  ): UpdateDocumentNumberingConfigPayload
-
-  """Updates a single `Company` using its globally unique id and a patch."""
-  updateCompanyById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyByIdInput!
-  ): UpdateCompanyPayload
-
-  """Updates a single `Company` using a unique key and a patch."""
-  updateCompany(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyInput!
-  ): UpdateCompanyPayload
-
-  """Updates a single `Person` using its globally unique id and a patch."""
-  updatePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonByIdInput!
-  ): UpdatePersonPayload
-
-  """Updates a single `Person` using a unique key and a patch."""
-  updatePerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonInput!
-  ): UpdatePersonPayload
-
-  """
-  Updates a single `QuoteLineItem` using its globally unique id and a patch.
-  """
-  updateQuoteLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteLineItemByIdInput!
-  ): UpdateQuoteLineItemPayload
-
-  """Updates a single `QuoteLineItem` using a unique key and a patch."""
-  updateQuoteLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteLineItemInput!
-  ): UpdateQuoteLineItemPayload
-
-  """Updates a single `Invoice` using its globally unique id and a patch."""
-  updateInvoiceById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceByIdInput!
-  ): UpdateInvoicePayload
-
-  """Updates a single `Invoice` using a unique key and a patch."""
-  updateInvoice(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceInput!
-  ): UpdateInvoicePayload
-
-  """Updates a single `Product` using its globally unique id and a patch."""
-  updateProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductByIdInput!
-  ): UpdateProductPayload
-
-  """Updates a single `Product` using a unique key and a patch."""
-  updateProduct(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductInput!
-  ): UpdateProductPayload
-
-  """Updates a single `Quote` using its globally unique id and a patch."""
-  updateQuoteById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteByIdInput!
-  ): UpdateQuotePayload
-
-  """Updates a single `Quote` using a unique key and a patch."""
-  updateQuote(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteInput!
-  ): UpdateQuotePayload
-
-  """Deletes a single `CompanyMember` using its globally unique id."""
-  deleteCompanyMemberById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyMemberByIdInput!
-  ): DeleteCompanyMemberPayload
-
-  """Deletes a single `CompanyMember` using a unique key."""
-  deleteCompanyMember(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyMemberInput!
-  ): DeleteCompanyMemberPayload
-
-  """Deletes a single `InventoryAdjustment` using its globally unique id."""
-  deleteInventoryAdjustmentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInventoryAdjustmentByIdInput!
-  ): DeleteInventoryAdjustmentPayload
-
-  """Deletes a single `InventoryAdjustment` using a unique key."""
-  deleteInventoryAdjustment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInventoryAdjustmentInput!
-  ): DeleteInventoryAdjustmentPayload
-
-  """Deletes a single `PersonExternalLink` using its globally unique id."""
-  deletePersonExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonExternalLinkByIdInput!
-  ): DeletePersonExternalLinkPayload
-
-  """Deletes a single `PersonExternalLink` using a unique key."""
-  deletePersonExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonExternalLinkInput!
-  ): DeletePersonExternalLinkPayload
-
-  """Deletes a single `InvoiceLineItem` using its globally unique id."""
-  deleteInvoiceLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceLineItemByIdInput!
-  ): DeleteInvoiceLineItemPayload
-
-  """Deletes a single `InvoiceLineItem` using a unique key."""
-  deleteInvoiceLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceLineItemInput!
-  ): DeleteInvoiceLineItemPayload
-
-  """Deletes a single `OrganizationSetting` using its globally unique id."""
-  deleteOrganizationSettingById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationSettingByIdInput!
-  ): DeleteOrganizationSettingPayload
-
-  """Deletes a single `OrganizationSetting` using a unique key."""
-  deleteOrganizationSetting(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationSettingInput!
-  ): DeleteOrganizationSettingPayload
-
-  """Deletes a single `ProductExternalLink` using its globally unique id."""
-  deleteProductExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductExternalLinkByIdInput!
-  ): DeleteProductExternalLinkPayload
-
-  """Deletes a single `ProductExternalLink` using a unique key."""
-  deleteProductExternalLink(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductExternalLinkInput!
-  ): DeleteProductExternalLinkPayload
-
-  """Deletes a single `Supplier` using its globally unique id."""
-  deleteSupplierById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSupplierByIdInput!
-  ): DeleteSupplierPayload
-
-  """Deletes a single `Supplier` using a unique key."""
-  deleteSupplier(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSupplierInput!
-  ): DeleteSupplierPayload
-
-  """
-  Deletes a single `DocumentNumberingConfig` using its globally unique id.
-  """
-  deleteDocumentNumberingConfigById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteDocumentNumberingConfigByIdInput!
-  ): DeleteDocumentNumberingConfigPayload
-
-  """Deletes a single `DocumentNumberingConfig` using a unique key."""
-  deleteDocumentNumberingConfig(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteDocumentNumberingConfigInput!
-  ): DeleteDocumentNumberingConfigPayload
-
-  """Deletes a single `Company` using its globally unique id."""
-  deleteCompanyById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyByIdInput!
-  ): DeleteCompanyPayload
-
-  """Deletes a single `Company` using a unique key."""
-  deleteCompany(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyInput!
-  ): DeleteCompanyPayload
-
-  """Deletes a single `Person` using its globally unique id."""
-  deletePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonByIdInput!
-  ): DeletePersonPayload
-
-  """Deletes a single `Person` using a unique key."""
-  deletePerson(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonInput!
-  ): DeletePersonPayload
-
-  """Deletes a single `QuoteLineItem` using its globally unique id."""
-  deleteQuoteLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteLineItemByIdInput!
-  ): DeleteQuoteLineItemPayload
-
-  """Deletes a single `QuoteLineItem` using a unique key."""
-  deleteQuoteLineItem(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteLineItemInput!
-  ): DeleteQuoteLineItemPayload
-
-  """Deletes a single `Invoice` using its globally unique id."""
-  deleteInvoiceById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceByIdInput!
-  ): DeleteInvoicePayload
-
-  """Deletes a single `Invoice` using a unique key."""
-  deleteInvoice(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceInput!
-  ): DeleteInvoicePayload
-
-  """Deletes a single `Product` using its globally unique id."""
-  deleteProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductByIdInput!
-  ): DeleteProductPayload
-
-  """Deletes a single `Product` using a unique key."""
-  deleteProduct(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductInput!
-  ): DeleteProductPayload
-
-  """Deletes a single `Quote` using its globally unique id."""
-  deleteQuoteById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteByIdInput!
-  ): DeleteQuotePayload
-
-  """Deletes a single `Quote` using a unique key."""
-  deleteQuote(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteInput!
-  ): DeleteQuotePayload
-  generateDocumentNumber(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: GenerateDocumentNumberInput!
-  ): GenerateDocumentNumberPayload
 }
 
 """The output of our create `CompanyMember` mutation."""
@@ -3921,6 +2837,56 @@ input DocumentNumberingConfigInput {
   globalPrefix: String
 }
 
+"""The output of our create `ChannelConnection` mutation."""
+type CreateChannelConnectionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ChannelConnection` that was created by this mutation."""
+  channelConnection: ChannelConnection
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ChannelConnection`. May be used by Relay 1."""
+  channelConnectionEdge(
+    """The method to use when ordering `ChannelConnection`."""
+    orderBy: [ChannelConnectionOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ChannelConnectionEdge
+}
+
+"""All input for the create `ChannelConnection` mutation."""
+input CreateChannelConnectionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ChannelConnection` to be created by this mutation."""
+  channelConnection: ChannelConnectionInput!
+}
+
+"""An input for mutations affecting `ChannelConnection`"""
+input ChannelConnectionInput {
+  rowId: UUID
+  organizationId: String!
+  provider: String!
+  status: String
+  externalShopId: String
+  credentials: JSON
+  scopes: [String]
+  syncConfig: JSON
+  lastSyncedAt: Datetime
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
 """The output of our create `Company` mutation."""
 type CreateCompanyPayload {
   """
@@ -4028,6 +2994,65 @@ input PersonInput {
   emailConsent: Boolean
 }
 
+"""The output of our create `Invoice` mutation."""
+type CreateInvoicePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Invoice` that was created by this mutation."""
+  invoice: Invoice
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Invoice`. May be used by Relay 1."""
+  invoiceEdge(
+    """The method to use when ordering `Invoice`."""
+    orderBy: [InvoiceOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): InvoiceEdge
+}
+
+"""All input for the create `Invoice` mutation."""
+input CreateInvoiceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Invoice` to be created by this mutation."""
+  invoice: InvoiceInput!
+}
+
+"""An input for mutations affecting `Invoice`"""
+input InvoiceInput {
+  rowId: UUID
+  organizationId: String!
+  invoiceNumber: String!
+  companyId: UUID
+  contactId: UUID
+  status: String
+  issueDate: Date!
+  dueDate: Date
+  notes: String
+  subtotal: BigFloat
+  taxRate: BigFloat
+  taxAmount: BigFloat
+  total: BigFloat
+  currency: String
+  paidAt: Datetime
+  paymentReference: String
+  paymentLinkUrl: String
+  createdAt: Datetime
+  updatedAt: Datetime
+  billTo: String
+}
+
 """The output of our create `QuoteLineItem` mutation."""
 type CreateQuoteLineItemPayload {
   """
@@ -4086,65 +3111,8 @@ input QuoteLineItemInput {
   royaltyBuyoutAmount: BigFloat
   subtitle: String
   minimumBillingMinutes: Int
-}
-
-"""The output of our create `Invoice` mutation."""
-type CreateInvoicePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Invoice` that was created by this mutation."""
-  invoice: Invoice
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `Invoice`. May be used by Relay 1."""
-  invoiceEdge(
-    """The method to use when ordering `Invoice`."""
-    orderBy: [InvoiceOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): InvoiceEdge
-}
-
-"""All input for the create `Invoice` mutation."""
-input CreateInvoiceInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `Invoice` to be created by this mutation."""
-  invoice: InvoiceInput!
-}
-
-"""An input for mutations affecting `Invoice`"""
-input InvoiceInput {
-  rowId: UUID
-  organizationId: String!
-  invoiceNumber: String!
-  companyId: UUID
-  contactId: UUID
-  status: String
-  issueDate: Date!
-  dueDate: Date
-  notes: String
-  subtotal: BigFloat
-  taxRate: BigFloat
-  taxAmount: BigFloat
-  total: BigFloat
-  currency: String
-  paidAt: Datetime
-  paymentReference: String
-  paymentLinkUrl: String
-  createdAt: Datetime
-  updatedAt: Datetime
-  billTo: String
+  deliverables: [String]
+  acceptanceCriteria: [String]
 }
 
 """The output of our create `Product` mutation."""
@@ -4841,6 +3809,80 @@ input UpdateDocumentNumberingConfigInput {
   patch: DocumentNumberingConfigPatch!
 }
 
+"""The output of our update `ChannelConnection` mutation."""
+type UpdateChannelConnectionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ChannelConnection` that was updated by this mutation."""
+  channelConnection: ChannelConnection
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ChannelConnection`. May be used by Relay 1."""
+  channelConnectionEdge(
+    """The method to use when ordering `ChannelConnection`."""
+    orderBy: [ChannelConnectionOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ChannelConnectionEdge
+}
+
+"""All input for the `updateChannelConnectionById` mutation."""
+input UpdateChannelConnectionByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ChannelConnection` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `ChannelConnection` being updated.
+  """
+  patch: ChannelConnectionPatch!
+}
+
+"""
+Represents an update to a `ChannelConnection`. Fields that are set will be updated.
+"""
+input ChannelConnectionPatch {
+  rowId: UUID
+  organizationId: String
+  provider: String
+  status: String
+  externalShopId: String
+  credentials: JSON
+  scopes: [String]
+  syncConfig: JSON
+  lastSyncedAt: Datetime
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""All input for the `updateChannelConnection` mutation."""
+input UpdateChannelConnectionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `ChannelConnection` being updated.
+  """
+  patch: ChannelConnectionPatch!
+}
+
 """The output of our update `Company` mutation."""
 type UpdateCompanyPayload {
   """
@@ -4996,90 +4038,6 @@ input UpdatePersonInput {
   patch: PersonPatch!
 }
 
-"""The output of our update `QuoteLineItem` mutation."""
-type UpdateQuoteLineItemPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `QuoteLineItem` that was updated by this mutation."""
-  quoteLineItem: QuoteLineItem
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `QuoteLineItem`. May be used by Relay 1."""
-  quoteLineItemEdge(
-    """The method to use when ordering `QuoteLineItem`."""
-    orderBy: [QuoteLineItemOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): QuoteLineItemEdge
-}
-
-"""All input for the `updateQuoteLineItemById` mutation."""
-input UpdateQuoteLineItemByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `QuoteLineItem` to be updated.
-  """
-  id: ID!
-
-  """
-  An object where the defined keys will be set on the `QuoteLineItem` being updated.
-  """
-  patch: QuoteLineItemPatch!
-}
-
-"""
-Represents an update to a `QuoteLineItem`. Fields that are set will be updated.
-"""
-input QuoteLineItemPatch {
-  rowId: UUID
-  quoteId: UUID
-  productId: UUID
-  description: String
-  quantity: BigFloat
-  unitPrice: BigFloat
-  amount: BigFloat
-  pricingType: String
-  estimatedHours: BigFloat
-  royaltyPercentage: BigFloat
-  sortOrder: Int
-  hourlyRate: BigFloat
-  weeklyCapHours: Int
-  monthlyCapHours: Int
-  maxCapHours: Int
-  royaltyTimeframe: Int
-  royaltyTimeframeUnit: String
-  royaltyThreshold: BigFloat
-  royaltyBuyoutAmount: BigFloat
-  subtitle: String
-  minimumBillingMinutes: Int
-}
-
-"""All input for the `updateQuoteLineItem` mutation."""
-input UpdateQuoteLineItemInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `QuoteLineItem` being updated.
-  """
-  patch: QuoteLineItemPatch!
-}
-
 """The output of our update `Invoice` mutation."""
 type UpdateInvoicePayload {
   """
@@ -5161,6 +4119,92 @@ input UpdateInvoiceInput {
   An object where the defined keys will be set on the `Invoice` being updated.
   """
   patch: InvoicePatch!
+}
+
+"""The output of our update `QuoteLineItem` mutation."""
+type UpdateQuoteLineItemPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `QuoteLineItem` that was updated by this mutation."""
+  quoteLineItem: QuoteLineItem
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `QuoteLineItem`. May be used by Relay 1."""
+  quoteLineItemEdge(
+    """The method to use when ordering `QuoteLineItem`."""
+    orderBy: [QuoteLineItemOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): QuoteLineItemEdge
+}
+
+"""All input for the `updateQuoteLineItemById` mutation."""
+input UpdateQuoteLineItemByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `QuoteLineItem` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `QuoteLineItem` being updated.
+  """
+  patch: QuoteLineItemPatch!
+}
+
+"""
+Represents an update to a `QuoteLineItem`. Fields that are set will be updated.
+"""
+input QuoteLineItemPatch {
+  rowId: UUID
+  quoteId: UUID
+  productId: UUID
+  description: String
+  quantity: BigFloat
+  unitPrice: BigFloat
+  amount: BigFloat
+  pricingType: String
+  estimatedHours: BigFloat
+  royaltyPercentage: BigFloat
+  sortOrder: Int
+  hourlyRate: BigFloat
+  weeklyCapHours: Int
+  monthlyCapHours: Int
+  maxCapHours: Int
+  royaltyTimeframe: Int
+  royaltyTimeframeUnit: String
+  royaltyThreshold: BigFloat
+  royaltyBuyoutAmount: BigFloat
+  subtitle: String
+  minimumBillingMinutes: Int
+  deliverables: [String]
+  acceptanceCriteria: [String]
+}
+
+"""All input for the `updateQuoteLineItem` mutation."""
+input UpdateQuoteLineItemInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `QuoteLineItem` being updated.
+  """
+  patch: QuoteLineItemPatch!
 }
 
 """The output of our update `Product` mutation."""
@@ -5723,6 +4767,54 @@ input DeleteDocumentNumberingConfigInput {
   rowId: UUID!
 }
 
+"""The output of our delete `ChannelConnection` mutation."""
+type DeleteChannelConnectionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ChannelConnection` that was deleted by this mutation."""
+  channelConnection: ChannelConnection
+  deletedChannelConnectionId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ChannelConnection`. May be used by Relay 1."""
+  channelConnectionEdge(
+    """The method to use when ordering `ChannelConnection`."""
+    orderBy: [ChannelConnectionOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): ChannelConnectionEdge
+}
+
+"""All input for the `deleteChannelConnectionById` mutation."""
+input DeleteChannelConnectionByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ChannelConnection` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deleteChannelConnection` mutation."""
+input DeleteChannelConnectionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
 """The output of our delete `Company` mutation."""
 type DeleteCompanyPayload {
   """
@@ -5819,54 +4911,6 @@ input DeletePersonInput {
   rowId: UUID!
 }
 
-"""The output of our delete `QuoteLineItem` mutation."""
-type DeleteQuoteLineItemPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `QuoteLineItem` that was deleted by this mutation."""
-  quoteLineItem: QuoteLineItem
-  deletedQuoteLineItemId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `QuoteLineItem`. May be used by Relay 1."""
-  quoteLineItemEdge(
-    """The method to use when ordering `QuoteLineItem`."""
-    orderBy: [QuoteLineItemOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): QuoteLineItemEdge
-}
-
-"""All input for the `deleteQuoteLineItemById` mutation."""
-input DeleteQuoteLineItemByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `QuoteLineItem` to be deleted.
-  """
-  id: ID!
-}
-
-"""All input for the `deleteQuoteLineItem` mutation."""
-input DeleteQuoteLineItemInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-}
-
 """The output of our delete `Invoice` mutation."""
 type DeleteInvoicePayload {
   """
@@ -5907,6 +4951,54 @@ input DeleteInvoiceByIdInput {
 
 """All input for the `deleteInvoice` mutation."""
 input DeleteInvoiceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete `QuoteLineItem` mutation."""
+type DeleteQuoteLineItemPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `QuoteLineItem` that was deleted by this mutation."""
+  quoteLineItem: QuoteLineItem
+  deletedQuoteLineItemId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `QuoteLineItem`. May be used by Relay 1."""
+  quoteLineItemEdge(
+    """The method to use when ordering `QuoteLineItem`."""
+    orderBy: [QuoteLineItemOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): QuoteLineItemEdge
+}
+
+"""All input for the `deleteQuoteLineItemById` mutation."""
+input DeleteQuoteLineItemByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `QuoteLineItem` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deleteQuoteLineItem` mutation."""
+input DeleteQuoteLineItemInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -6019,4 +5111,1337 @@ input GenerateDocumentNumberInput {
 
 type GenerateDocumentNumberPayload {
   documentNumber: String!
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """
+  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
+  """
+  id: ID!
+
+  """Fetches an object given its globally unique `ID`."""
+  node(
+    """The globally unique `ID`."""
+    id: ID!
+  ): Node
+
+  """Get a single `CompanyMember`."""
+  companyMember(rowId: UUID!): CompanyMember
+
+  """Get a single `InventoryAdjustment`."""
+  inventoryAdjustment(rowId: UUID!): InventoryAdjustment
+
+  """Get a single `PersonExternalLink`."""
+  personExternalLink(rowId: UUID!): PersonExternalLink
+
+  """Get a single `InvoiceLineItem`."""
+  invoiceLineItem(rowId: UUID!): InvoiceLineItem
+
+  """Get a single `OrganizationSetting`."""
+  organizationSetting(rowId: UUID!): OrganizationSetting
+
+  """Get a single `ProductExternalLink`."""
+  productExternalLink(rowId: UUID!): ProductExternalLink
+
+  """Get a single `Supplier`."""
+  supplier(rowId: UUID!): Supplier
+
+  """Get a single `DocumentNumberingConfig`."""
+  documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
+
+  """Get a single `ChannelConnection`."""
+  channelConnection(rowId: UUID!): ChannelConnection
+
+  """Get a single `Company`."""
+  company(rowId: UUID!): Company
+
+  """Get a single `Person`."""
+  person(rowId: UUID!): Person
+
+  """Get a single `Invoice`."""
+  invoice(rowId: UUID!): Invoice
+
+  """Get a single `QuoteLineItem`."""
+  quoteLineItem(rowId: UUID!): QuoteLineItem
+
+  """Get a single `Product`."""
+  product(rowId: UUID!): Product
+
+  """Get a single `Quote`."""
+  quote(rowId: UUID!): Quote
+
+  """Reads a single `CompanyMember` using its globally unique `ID`."""
+  companyMemberById(
+    """
+    The globally unique `ID` to be used in selecting a single `CompanyMember`.
+    """
+    id: ID!
+  ): CompanyMember
+
+  """Reads a single `InventoryAdjustment` using its globally unique `ID`."""
+  inventoryAdjustmentById(
+    """
+    The globally unique `ID` to be used in selecting a single `InventoryAdjustment`.
+    """
+    id: ID!
+  ): InventoryAdjustment
+
+  """Reads a single `PersonExternalLink` using its globally unique `ID`."""
+  personExternalLinkById(
+    """
+    The globally unique `ID` to be used in selecting a single `PersonExternalLink`.
+    """
+    id: ID!
+  ): PersonExternalLink
+
+  """Reads a single `InvoiceLineItem` using its globally unique `ID`."""
+  invoiceLineItemById(
+    """
+    The globally unique `ID` to be used in selecting a single `InvoiceLineItem`.
+    """
+    id: ID!
+  ): InvoiceLineItem
+
+  """Reads a single `OrganizationSetting` using its globally unique `ID`."""
+  organizationSettingById(
+    """
+    The globally unique `ID` to be used in selecting a single `OrganizationSetting`.
+    """
+    id: ID!
+  ): OrganizationSetting
+
+  """Reads a single `ProductExternalLink` using its globally unique `ID`."""
+  productExternalLinkById(
+    """
+    The globally unique `ID` to be used in selecting a single `ProductExternalLink`.
+    """
+    id: ID!
+  ): ProductExternalLink
+
+  """Reads a single `Supplier` using its globally unique `ID`."""
+  supplierById(
+    """The globally unique `ID` to be used in selecting a single `Supplier`."""
+    id: ID!
+  ): Supplier
+
+  """
+  Reads a single `DocumentNumberingConfig` using its globally unique `ID`.
+  """
+  documentNumberingConfigById(
+    """
+    The globally unique `ID` to be used in selecting a single `DocumentNumberingConfig`.
+    """
+    id: ID!
+  ): DocumentNumberingConfig
+
+  """Reads a single `ChannelConnection` using its globally unique `ID`."""
+  channelConnectionById(
+    """
+    The globally unique `ID` to be used in selecting a single `ChannelConnection`.
+    """
+    id: ID!
+  ): ChannelConnection
+
+  """Reads a single `Company` using its globally unique `ID`."""
+  companyById(
+    """The globally unique `ID` to be used in selecting a single `Company`."""
+    id: ID!
+  ): Company
+
+  """Reads a single `Person` using its globally unique `ID`."""
+  personById(
+    """The globally unique `ID` to be used in selecting a single `Person`."""
+    id: ID!
+  ): Person
+
+  """Reads a single `Invoice` using its globally unique `ID`."""
+  invoiceById(
+    """The globally unique `ID` to be used in selecting a single `Invoice`."""
+    id: ID!
+  ): Invoice
+
+  """Reads a single `QuoteLineItem` using its globally unique `ID`."""
+  quoteLineItemById(
+    """
+    The globally unique `ID` to be used in selecting a single `QuoteLineItem`.
+    """
+    id: ID!
+  ): QuoteLineItem
+
+  """Reads a single `Product` using its globally unique `ID`."""
+  productById(
+    """The globally unique `ID` to be used in selecting a single `Product`."""
+    id: ID!
+  ): Product
+
+  """Reads a single `Quote` using its globally unique `ID`."""
+  quoteById(
+    """The globally unique `ID` to be used in selecting a single `Quote`."""
+    id: ID!
+  ): Quote
+
+  """Reads and enables pagination through a set of `CompanyMember`."""
+  companyMembers(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CompanyMemberCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: CompanyMemberFilter
+
+    """The method to use when ordering `CompanyMember`."""
+    orderBy: [CompanyMemberOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CompanyMemberConnection
+
+  """Reads and enables pagination through a set of `InventoryAdjustment`."""
+  inventoryAdjustments(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: InventoryAdjustmentCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: InventoryAdjustmentFilter
+
+    """The method to use when ordering `InventoryAdjustment`."""
+    orderBy: [InventoryAdjustmentOrderBy!] = [PRIMARY_KEY_ASC]
+  ): InventoryAdjustmentConnection
+
+  """Reads and enables pagination through a set of `PersonExternalLink`."""
+  personExternalLinks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PersonExternalLinkCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PersonExternalLinkFilter
+
+    """The method to use when ordering `PersonExternalLink`."""
+    orderBy: [PersonExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PersonExternalLinkConnection
+
+  """Reads and enables pagination through a set of `InvoiceLineItem`."""
+  invoiceLineItems(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: InvoiceLineItemCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: InvoiceLineItemFilter
+
+    """The method to use when ordering `InvoiceLineItem`."""
+    orderBy: [InvoiceLineItemOrderBy!] = [PRIMARY_KEY_ASC]
+  ): InvoiceLineItemConnection
+
+  """Reads and enables pagination through a set of `OrganizationSetting`."""
+  organizationSettings(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OrganizationSettingCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OrganizationSettingFilter
+
+    """The method to use when ordering `OrganizationSetting`."""
+    orderBy: [OrganizationSettingOrderBy!] = [PRIMARY_KEY_ASC]
+  ): OrganizationSettingConnection
+
+  """Reads and enables pagination through a set of `ProductExternalLink`."""
+  productExternalLinks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductExternalLinkCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductExternalLinkFilter
+
+    """The method to use when ordering `ProductExternalLink`."""
+    orderBy: [ProductExternalLinkOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductExternalLinkConnection
+
+  """Reads and enables pagination through a set of `Supplier`."""
+  suppliers(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SupplierCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SupplierFilter
+
+    """The method to use when ordering `Supplier`."""
+    orderBy: [SupplierOrderBy!] = [PRIMARY_KEY_ASC]
+  ): SupplierConnection
+
+  """
+  Reads and enables pagination through a set of `DocumentNumberingConfig`.
+  """
+  documentNumberingConfigs(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DocumentNumberingConfigCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DocumentNumberingConfigFilter
+
+    """The method to use when ordering `DocumentNumberingConfig`."""
+    orderBy: [DocumentNumberingConfigOrderBy!] = [PRIMARY_KEY_ASC]
+  ): DocumentNumberingConfigConnection
+
+  """Reads and enables pagination through a set of `ChannelConnection`."""
+  channelConnections(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ChannelConnectionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ChannelConnectionFilter
+
+    """The method to use when ordering `ChannelConnection`."""
+    orderBy: [ChannelConnectionOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ChannelConnectionConnection
+
+  """Reads and enables pagination through a set of `Company`."""
+  companies(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CompanyCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: CompanyFilter
+
+    """The method to use when ordering `Company`."""
+    orderBy: [CompanyOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CompanyConnection
+
+  """Reads and enables pagination through a set of `Person`."""
+  people(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PersonCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PersonFilter
+
+    """The method to use when ordering `Person`."""
+    orderBy: [PersonOrderBy!] = [PRIMARY_KEY_ASC]
+  ): PersonConnection
+
+  """Reads and enables pagination through a set of `Invoice`."""
+  invoices(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: InvoiceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: InvoiceFilter
+
+    """The method to use when ordering `Invoice`."""
+    orderBy: [InvoiceOrderBy!] = [PRIMARY_KEY_ASC]
+  ): InvoiceConnection
+
+  """Reads and enables pagination through a set of `QuoteLineItem`."""
+  quoteLineItems(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: QuoteLineItemCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: QuoteLineItemFilter
+
+    """The method to use when ordering `QuoteLineItem`."""
+    orderBy: [QuoteLineItemOrderBy!] = [PRIMARY_KEY_ASC]
+  ): QuoteLineItemConnection
+
+  """Reads and enables pagination through a set of `Product`."""
+  products(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductFilter
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductConnection
+
+  """Reads and enables pagination through a set of `Quote`."""
+  quotes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: QuoteCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: QuoteFilter
+
+    """The method to use when ordering `Quote`."""
+    orderBy: [QuoteOrderBy!] = [PRIMARY_KEY_ASC]
+  ): QuoteConnection
+
+  """
+  Render an invoice as a self-contained HTML document suitable for
+  print-to-PDF or embedding in an iframe. The caller must have
+  access to the invoice's organization.
+  """
+  invoiceHtml(invoiceId: UUID!): InvoiceHtmlPayload
+}
+
+"""
+The root mutation type which contains root level fields which mutate data.
+"""
+type Mutation {
+  """Creates a single `CompanyMember`."""
+  createCompanyMember(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateCompanyMemberInput!
+  ): CreateCompanyMemberPayload
+
+  """Creates a single `InventoryAdjustment`."""
+  createInventoryAdjustment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateInventoryAdjustmentInput!
+  ): CreateInventoryAdjustmentPayload
+
+  """Creates a single `PersonExternalLink`."""
+  createPersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePersonExternalLinkInput!
+  ): CreatePersonExternalLinkPayload
+
+  """Creates a single `InvoiceLineItem`."""
+  createInvoiceLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateInvoiceLineItemInput!
+  ): CreateInvoiceLineItemPayload
+
+  """Creates a single `OrganizationSetting`."""
+  createOrganizationSetting(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateOrganizationSettingInput!
+  ): CreateOrganizationSettingPayload
+
+  """Creates a single `ProductExternalLink`."""
+  createProductExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductExternalLinkInput!
+  ): CreateProductExternalLinkPayload
+
+  """Creates a single `Supplier`."""
+  createSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateSupplierInput!
+  ): CreateSupplierPayload
+
+  """Creates a single `DocumentNumberingConfig`."""
+  createDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateDocumentNumberingConfigInput!
+  ): CreateDocumentNumberingConfigPayload
+
+  """Creates a single `ChannelConnection`."""
+  createChannelConnection(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateChannelConnectionInput!
+  ): CreateChannelConnectionPayload
+
+  """Creates a single `Company`."""
+  createCompany(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateCompanyInput!
+  ): CreateCompanyPayload
+
+  """Creates a single `Person`."""
+  createPerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePersonInput!
+  ): CreatePersonPayload
+
+  """Creates a single `Invoice`."""
+  createInvoice(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateInvoiceInput!
+  ): CreateInvoicePayload
+
+  """Creates a single `QuoteLineItem`."""
+  createQuoteLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateQuoteLineItemInput!
+  ): CreateQuoteLineItemPayload
+
+  """Creates a single `Product`."""
+  createProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductInput!
+  ): CreateProductPayload
+
+  """Creates a single `Quote`."""
+  createQuote(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateQuoteInput!
+  ): CreateQuotePayload
+
+  """
+  Updates a single `CompanyMember` using its globally unique id and a patch.
+  """
+  updateCompanyMemberById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCompanyMemberByIdInput!
+  ): UpdateCompanyMemberPayload
+
+  """Updates a single `CompanyMember` using a unique key and a patch."""
+  updateCompanyMember(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCompanyMemberInput!
+  ): UpdateCompanyMemberPayload
+
+  """
+  Updates a single `InventoryAdjustment` using its globally unique id and a patch.
+  """
+  updateInventoryAdjustmentById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInventoryAdjustmentByIdInput!
+  ): UpdateInventoryAdjustmentPayload
+
+  """Updates a single `InventoryAdjustment` using a unique key and a patch."""
+  updateInventoryAdjustment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInventoryAdjustmentInput!
+  ): UpdateInventoryAdjustmentPayload
+
+  """
+  Updates a single `PersonExternalLink` using its globally unique id and a patch.
+  """
+  updatePersonExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonExternalLinkByIdInput!
+  ): UpdatePersonExternalLinkPayload
+
+  """Updates a single `PersonExternalLink` using a unique key and a patch."""
+  updatePersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonExternalLinkInput!
+  ): UpdatePersonExternalLinkPayload
+
+  """
+  Updates a single `InvoiceLineItem` using its globally unique id and a patch.
+  """
+  updateInvoiceLineItemById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInvoiceLineItemByIdInput!
+  ): UpdateInvoiceLineItemPayload
+
+  """Updates a single `InvoiceLineItem` using a unique key and a patch."""
+  updateInvoiceLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInvoiceLineItemInput!
+  ): UpdateInvoiceLineItemPayload
+
+  """
+  Updates a single `OrganizationSetting` using its globally unique id and a patch.
+  """
+  updateOrganizationSettingById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateOrganizationSettingByIdInput!
+  ): UpdateOrganizationSettingPayload
+
+  """Updates a single `OrganizationSetting` using a unique key and a patch."""
+  updateOrganizationSetting(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateOrganizationSettingInput!
+  ): UpdateOrganizationSettingPayload
+
+  """
+  Updates a single `ProductExternalLink` using its globally unique id and a patch.
+  """
+  updateProductExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductExternalLinkByIdInput!
+  ): UpdateProductExternalLinkPayload
+
+  """Updates a single `ProductExternalLink` using a unique key and a patch."""
+  updateProductExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductExternalLinkInput!
+  ): UpdateProductExternalLinkPayload
+
+  """Updates a single `Supplier` using its globally unique id and a patch."""
+  updateSupplierById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSupplierByIdInput!
+  ): UpdateSupplierPayload
+
+  """Updates a single `Supplier` using a unique key and a patch."""
+  updateSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSupplierInput!
+  ): UpdateSupplierPayload
+
+  """
+  Updates a single `DocumentNumberingConfig` using its globally unique id and a patch.
+  """
+  updateDocumentNumberingConfigById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateDocumentNumberingConfigByIdInput!
+  ): UpdateDocumentNumberingConfigPayload
+
+  """
+  Updates a single `DocumentNumberingConfig` using a unique key and a patch.
+  """
+  updateDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateDocumentNumberingConfigInput!
+  ): UpdateDocumentNumberingConfigPayload
+
+  """
+  Updates a single `ChannelConnection` using its globally unique id and a patch.
+  """
+  updateChannelConnectionById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateChannelConnectionByIdInput!
+  ): UpdateChannelConnectionPayload
+
+  """Updates a single `ChannelConnection` using a unique key and a patch."""
+  updateChannelConnection(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateChannelConnectionInput!
+  ): UpdateChannelConnectionPayload
+
+  """Updates a single `Company` using its globally unique id and a patch."""
+  updateCompanyById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCompanyByIdInput!
+  ): UpdateCompanyPayload
+
+  """Updates a single `Company` using a unique key and a patch."""
+  updateCompany(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCompanyInput!
+  ): UpdateCompanyPayload
+
+  """Updates a single `Person` using its globally unique id and a patch."""
+  updatePersonById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonByIdInput!
+  ): UpdatePersonPayload
+
+  """Updates a single `Person` using a unique key and a patch."""
+  updatePerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePersonInput!
+  ): UpdatePersonPayload
+
+  """Updates a single `Invoice` using its globally unique id and a patch."""
+  updateInvoiceById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInvoiceByIdInput!
+  ): UpdateInvoicePayload
+
+  """Updates a single `Invoice` using a unique key and a patch."""
+  updateInvoice(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateInvoiceInput!
+  ): UpdateInvoicePayload
+
+  """
+  Updates a single `QuoteLineItem` using its globally unique id and a patch.
+  """
+  updateQuoteLineItemById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateQuoteLineItemByIdInput!
+  ): UpdateQuoteLineItemPayload
+
+  """Updates a single `QuoteLineItem` using a unique key and a patch."""
+  updateQuoteLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateQuoteLineItemInput!
+  ): UpdateQuoteLineItemPayload
+
+  """Updates a single `Product` using its globally unique id and a patch."""
+  updateProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductByIdInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Product` using a unique key and a patch."""
+  updateProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Quote` using its globally unique id and a patch."""
+  updateQuoteById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateQuoteByIdInput!
+  ): UpdateQuotePayload
+
+  """Updates a single `Quote` using a unique key and a patch."""
+  updateQuote(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateQuoteInput!
+  ): UpdateQuotePayload
+
+  """Deletes a single `CompanyMember` using its globally unique id."""
+  deleteCompanyMemberById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCompanyMemberByIdInput!
+  ): DeleteCompanyMemberPayload
+
+  """Deletes a single `CompanyMember` using a unique key."""
+  deleteCompanyMember(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCompanyMemberInput!
+  ): DeleteCompanyMemberPayload
+
+  """Deletes a single `InventoryAdjustment` using its globally unique id."""
+  deleteInventoryAdjustmentById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInventoryAdjustmentByIdInput!
+  ): DeleteInventoryAdjustmentPayload
+
+  """Deletes a single `InventoryAdjustment` using a unique key."""
+  deleteInventoryAdjustment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInventoryAdjustmentInput!
+  ): DeleteInventoryAdjustmentPayload
+
+  """Deletes a single `PersonExternalLink` using its globally unique id."""
+  deletePersonExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonExternalLinkByIdInput!
+  ): DeletePersonExternalLinkPayload
+
+  """Deletes a single `PersonExternalLink` using a unique key."""
+  deletePersonExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonExternalLinkInput!
+  ): DeletePersonExternalLinkPayload
+
+  """Deletes a single `InvoiceLineItem` using its globally unique id."""
+  deleteInvoiceLineItemById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInvoiceLineItemByIdInput!
+  ): DeleteInvoiceLineItemPayload
+
+  """Deletes a single `InvoiceLineItem` using a unique key."""
+  deleteInvoiceLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInvoiceLineItemInput!
+  ): DeleteInvoiceLineItemPayload
+
+  """Deletes a single `OrganizationSetting` using its globally unique id."""
+  deleteOrganizationSettingById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteOrganizationSettingByIdInput!
+  ): DeleteOrganizationSettingPayload
+
+  """Deletes a single `OrganizationSetting` using a unique key."""
+  deleteOrganizationSetting(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteOrganizationSettingInput!
+  ): DeleteOrganizationSettingPayload
+
+  """Deletes a single `ProductExternalLink` using its globally unique id."""
+  deleteProductExternalLinkById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductExternalLinkByIdInput!
+  ): DeleteProductExternalLinkPayload
+
+  """Deletes a single `ProductExternalLink` using a unique key."""
+  deleteProductExternalLink(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductExternalLinkInput!
+  ): DeleteProductExternalLinkPayload
+
+  """Deletes a single `Supplier` using its globally unique id."""
+  deleteSupplierById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSupplierByIdInput!
+  ): DeleteSupplierPayload
+
+  """Deletes a single `Supplier` using a unique key."""
+  deleteSupplier(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSupplierInput!
+  ): DeleteSupplierPayload
+
+  """
+  Deletes a single `DocumentNumberingConfig` using its globally unique id.
+  """
+  deleteDocumentNumberingConfigById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteDocumentNumberingConfigByIdInput!
+  ): DeleteDocumentNumberingConfigPayload
+
+  """Deletes a single `DocumentNumberingConfig` using a unique key."""
+  deleteDocumentNumberingConfig(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteDocumentNumberingConfigInput!
+  ): DeleteDocumentNumberingConfigPayload
+
+  """Deletes a single `ChannelConnection` using its globally unique id."""
+  deleteChannelConnectionById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteChannelConnectionByIdInput!
+  ): DeleteChannelConnectionPayload
+
+  """Deletes a single `ChannelConnection` using a unique key."""
+  deleteChannelConnection(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteChannelConnectionInput!
+  ): DeleteChannelConnectionPayload
+
+  """Deletes a single `Company` using its globally unique id."""
+  deleteCompanyById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCompanyByIdInput!
+  ): DeleteCompanyPayload
+
+  """Deletes a single `Company` using a unique key."""
+  deleteCompany(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCompanyInput!
+  ): DeleteCompanyPayload
+
+  """Deletes a single `Person` using its globally unique id."""
+  deletePersonById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonByIdInput!
+  ): DeletePersonPayload
+
+  """Deletes a single `Person` using a unique key."""
+  deletePerson(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePersonInput!
+  ): DeletePersonPayload
+
+  """Deletes a single `Invoice` using its globally unique id."""
+  deleteInvoiceById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInvoiceByIdInput!
+  ): DeleteInvoicePayload
+
+  """Deletes a single `Invoice` using a unique key."""
+  deleteInvoice(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteInvoiceInput!
+  ): DeleteInvoicePayload
+
+  """Deletes a single `QuoteLineItem` using its globally unique id."""
+  deleteQuoteLineItemById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteQuoteLineItemByIdInput!
+  ): DeleteQuoteLineItemPayload
+
+  """Deletes a single `QuoteLineItem` using a unique key."""
+  deleteQuoteLineItem(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteQuoteLineItemInput!
+  ): DeleteQuoteLineItemPayload
+
+  """Deletes a single `Product` using its globally unique id."""
+  deleteProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductByIdInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Product` using a unique key."""
+  deleteProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Quote` using its globally unique id."""
+  deleteQuoteById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteQuoteByIdInput!
+  ): DeleteQuotePayload
+
+  """Deletes a single `Quote` using a unique key."""
+  deleteQuote(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteQuoteInput!
+  ): DeleteQuotePayload
+  generateDocumentNumber(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: GenerateDocumentNumberInput!
+  ): GenerateDocumentNumberPayload
+}
+
+type InvoiceHtmlPayload {
+  html: String!
+  invoiceNumber: String!
+  filename: String!
 }

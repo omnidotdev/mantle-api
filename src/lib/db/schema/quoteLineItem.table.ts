@@ -69,6 +69,7 @@ export const quoteLineItemTable = pgTable(
   (table) => [
     uniqueIndex().on(table.id),
     index("quote_line_item_quote_id_idx").on(table.quoteId),
+    index("quote_line_item_sort_order_idx").on(table.sortOrder),
   ],
 );
 
