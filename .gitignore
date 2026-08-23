@@ -13,3 +13,6 @@ src/generated/*
 .vscode
 .zed
 *.pem
+
+# graphql:generate schema hash cache
+.cache/

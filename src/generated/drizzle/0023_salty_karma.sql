@@ -1,0 +1,1 @@
+CREATE INDEX "quote_line_item_sort_order_idx" ON "quote_line_item" USING btree ("sort_order");
