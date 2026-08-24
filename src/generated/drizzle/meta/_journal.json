@@ -169,6 +169,13 @@
       "when": 1787520343596,
       "tag": "0023_salty_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1787532189446,
+      "tag": "0024_normalize_phone",
+      "breakpoints": true
     }
   ]
 }
