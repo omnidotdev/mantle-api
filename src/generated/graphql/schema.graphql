@@ -2158,6 +2158,12 @@ type DocumentNumberingConfig implements Node {
   createdAt: Datetime
   updatedAt: Datetime
   globalPrefix: String
+  companyId: UUID
+
+  """
+  Reads a single `Company` that is related to this `DocumentNumberingConfig`.
+  """
+  company: Company
 }
 
 type ChannelConnection implements Node {
@@ -2358,6 +2364,12 @@ input DocumentNumberingConfigFilter {
 
   """Filter by the object’s `documentType` field."""
   documentType: StringFilter
+
+  """Filter by the object’s `company` relation."""
+  company: CompanyFilter
+
+  """A related `company` exists."""
+  companyExists: Boolean
 
   """Checks for all expressions in this list."""
   and: [DocumentNumberingConfigFilter!]
@@ -3027,6 +3039,7 @@ input DocumentNumberingConfigInput {
   createdAt: Datetime
   updatedAt: Datetime
   globalPrefix: String
+  companyId: UUID
 }
 
 """The output of our create `ChannelConnection` mutation."""
@@ -4053,6 +4066,7 @@ input DocumentNumberingConfigPatch {
   createdAt: Datetime
   updatedAt: Datetime
   globalPrefix: String
+  companyId: UUID
 }
 
 """All input for the `updateDocumentNumberingConfig` mutation."""
@@ -5415,6 +5429,7 @@ input DeleteQuoteInput {
 input GenerateDocumentNumberInput {
   organizationId: String!
   documentType: String!
+  companyId: UUID
   idStrategy: String
 }
 

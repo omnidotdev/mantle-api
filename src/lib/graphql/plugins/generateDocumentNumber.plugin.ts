@@ -75,6 +75,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
 		input GenerateDocumentNumberInput {
 			organizationId: String!
 			documentType: String!
+			companyId: UUID
 			idStrategy: String
 		}
 
@@ -98,6 +99,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
               input: {
                 organizationId: string;
                 documentType: string;
+                companyId?: string;
                 idStrategy?: string;
               };
             },
@@ -109,34 +111,46 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
               "lib/db/schema"
             );
 
-            const { organizationId, documentType, idStrategy } = args.input;
+            const { organizationId, documentType, companyId, idStrategy } =
+              args.input;
 
             const documentNumber = await dbPool.transaction(async (tx) => {
-              // Upsert default config if none exists
-              await tx
-                .insert(documentNumberingConfigTable)
-                .values({
-                  organizationId,
-                  documentType,
-                  prefix: defaultPrefix(documentType),
-                  separator: "-",
-                  idStrategy: "sequential",
-                  sequentialPadding: 4,
-                  randomLength: 8,
-                  nextSequentialNumber: 1,
-                })
-                .onConflictDoNothing({
-                  target: [
-                    documentNumberingConfigTable.organizationId,
-                    documentNumberingConfigTable.documentType,
-                  ],
-                });
+              // Resolve the config to use: a per-client override when one exists
+              // for this company, otherwise the workspace-wide default
+              let config: Record<string, unknown> | undefined;
 
-              // Lock and fetch config
-              const result = await tx.execute(
-                sql`SELECT * FROM document_numbering_config WHERE organization_id = ${organizationId} AND document_type = ${documentType} FOR UPDATE`,
-              );
-              const config = result.rows[0];
+              if (companyId) {
+                const clientResult = await tx.execute(
+                  sql`SELECT * FROM document_numbering_config WHERE organization_id = ${organizationId} AND document_type = ${documentType} AND company_id = ${companyId}::uuid FOR UPDATE`,
+                );
+                config = clientResult.rows[0];
+              }
+
+              if (!config) {
+                // Ensure the workspace default exists, then lock it
+                await tx
+                  .insert(documentNumberingConfigTable)
+                  .values({
+                    organizationId,
+                    documentType,
+                    prefix: defaultPrefix(documentType),
+                    separator: "-",
+                    idStrategy: "sequential",
+                    sequentialPadding: 4,
+                    randomLength: 8,
+                    nextSequentialNumber: 1,
+                  })
+                  .onConflictDoNothing();
+
+                const defaultResult = await tx.execute(
+                  sql`SELECT * FROM document_numbering_config WHERE organization_id = ${organizationId} AND document_type = ${documentType} AND company_id IS NULL FOR UPDATE`,
+                );
+                config = defaultResult.rows[0];
+              }
+
+              if (!config) {
+                throw new Error("Failed to resolve document numbering config");
+              }
 
               const datePart = buildDatePart(
                 config.date_format as string | null,

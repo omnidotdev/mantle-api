@@ -1,0 +1,1 @@
+CREATE INDEX "doc_numbering_org_id_doc_type_lookup_idx" ON "document_numbering_config" USING btree ("organization_id","document_type");
