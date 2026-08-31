@@ -307,6 +307,147 @@ describe("invoice total recomputation", () => {
 		expect(invoice?.total).toBe("60.00");
 	});
 
+	test("freezes totals on a paid invoice when a line is edited", async () => {
+		const invoiceId = await createInvoice("INV-PAID-FROZEN");
+
+		const lineId = await addLineItem(invoiceId, {
+			description: "Item",
+			quantity: "2",
+			unitPrice: "75.00",
+			amount: "150.00",
+		});
+
+		// Totals reflect the line while still editable
+		expect((await dbInvoice(invoiceId))?.subtotal).toBe("150.00");
+
+		// The customer pays: mark the invoice settled out of band
+		await ctx.pool.query("UPDATE invoice SET status = 'paid' WHERE id = $1", [
+			invoiceId,
+		]);
+
+		// Editing a line on the paid invoice must NOT rewrite the recorded totals
+		const updated = await ctx
+			.graphqlAs(observer)
+			.execute<UpdateLineItemData>(UPDATE_LINE_ITEM, {
+				input: {
+					rowId: lineId,
+					patch: { quantity: "10", unitPrice: "75.00", amount: "750.00" },
+				},
+			});
+		expect(updated.errors).toBeUndefined();
+
+		// The paid total is frozen at what the customer was charged
+		const invoice = await dbInvoice(invoiceId);
+		expect(invoice?.subtotal).toBe("150.00");
+		expect(invoice?.total).toBe("150.00");
+	});
+
+	test("reparenting a line recomputes both the origin and destination", async () => {
+		const origin = await createInvoice("INV-REPARENT-SRC");
+		const destination = await createInvoice("INV-REPARENT-DST");
+
+		// Origin holds two lines: subtotal = 100 + 60 = 160
+		await addLineItem(origin, {
+			description: "Stays",
+			quantity: "1",
+			unitPrice: "100.00",
+			amount: "100.00",
+		});
+		const moveId = await addLineItem(origin, {
+			description: "Moves",
+			quantity: "1",
+			unitPrice: "60.00",
+			amount: "60.00",
+		});
+
+		expect((await dbInvoice(origin))?.subtotal).toBe("160.00");
+		expect((await dbInvoice(destination))?.subtotal).toBe("0.00");
+
+		// Move the second line to the destination invoice
+		const moved = await ctx
+			.graphqlAs(observer)
+			.execute<UpdateLineItemData>(UPDATE_LINE_ITEM, {
+				input: { rowId: moveId, patch: { invoiceId: destination } },
+			});
+		expect(moved.errors).toBeUndefined();
+
+		// Origin drops the moved line (was left overstated before this fix)
+		const originInvoice = await dbInvoice(origin);
+		expect(originInvoice?.subtotal).toBe("100.00");
+		expect(originInvoice?.total).toBe("100.00");
+
+		// Destination gains it
+		const destinationInvoice = await dbInvoice(destination);
+		expect(destinationInvoice?.subtotal).toBe("60.00");
+		expect(destinationInvoice?.total).toBe("60.00");
+	});
+
+	test("reparenting the only line zeroes the emptied origin", async () => {
+		const origin = await createInvoice("INV-REPARENT-EMPTY-SRC");
+		const destination = await createInvoice("INV-REPARENT-EMPTY-DST");
+
+		const moveId = await addLineItem(origin, {
+			description: "Only line",
+			quantity: "1",
+			unitPrice: "80.00",
+			amount: "80.00",
+		});
+		expect((await dbInvoice(origin))?.subtotal).toBe("80.00");
+
+		const moved = await ctx
+			.graphqlAs(observer)
+			.execute<UpdateLineItemData>(UPDATE_LINE_ITEM, {
+				input: { rowId: moveId, patch: { invoiceId: destination } },
+			});
+		expect(moved.errors).toBeUndefined();
+
+		// Emptied origin is recomputed to zero, not left overstated at 80
+		const originInvoice = await dbInvoice(origin);
+		expect(originInvoice?.subtotal).toBe("0.00");
+		expect(originInvoice?.total).toBe("0.00");
+		expect((await dbInvoice(destination))?.subtotal).toBe("80.00");
+	});
+
+	test("concurrent line inserts both land in the total", async () => {
+		const invoiceId = await createInvoice("INV-CONCURRENT");
+
+		// Two inserts issued in parallel on separate connections. Without the
+		// per-invoice row lock each recompute could sum without the other's
+		// just-inserted line and one would clobber the other; the lock serializes
+		// them so both land
+		const [a, b] = await Promise.all([
+			ctx.graphqlAs(observer).execute<CreateLineItemData>(CREATE_LINE_ITEM, {
+				input: {
+					invoiceLineItem: {
+						invoiceId,
+						description: "Parallel A",
+						quantity: "1",
+						unitPrice: "70.00",
+						amount: "70.00",
+					},
+				},
+			}),
+			ctx.graphqlAs(observer).execute<CreateLineItemData>(CREATE_LINE_ITEM, {
+				input: {
+					invoiceLineItem: {
+						invoiceId,
+						description: "Parallel B",
+						quantity: "1",
+						unitPrice: "30.00",
+						amount: "30.00",
+					},
+				},
+			}),
+		]);
+		expect(a.errors).toBeUndefined();
+		expect(b.errors).toBeUndefined();
+
+		// Both lines are reflected: subtotal = 70 + 30 = 100
+		const invoice = await dbInvoice(invoiceId);
+		expect(invoice?.subtotal).toBe("100.00");
+		expect(invoice?.total).toBe("100.00");
+	});
+
 	test("leaves a manual invoice with no line items untouched", async () => {
 		const invoiceId = await createInvoice("INV-MANUAL", {
 			subtotal: "500.00",
