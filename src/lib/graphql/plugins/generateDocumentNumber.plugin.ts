@@ -177,6 +177,13 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
                   config.sequential_padding as number,
                   "0",
                 );
+              } else if (strategy === "timestamp") {
+                // e.g. 20260203-115447, joined with the configured separator
+                const now = new Date();
+                const pad = (value: number) => String(value).padStart(2, "0");
+                const day = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+                const time = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+                idPart = `${day}${config.separator as string}${time}`;
               } else {
                 idPart = generateRandomHex(config.random_length as number);
               }

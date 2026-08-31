@@ -270,4 +270,23 @@ describe("generateDocumentNumber mutation", () => {
 			"ACME-0002",
 		);
 	});
+
+	test("generates a timestamp-style number when configured", async () => {
+		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+			GENERATE_MUTATION,
+			{
+				input: {
+					organizationId: "timestamp-org",
+					documentType: "invoice",
+					idStrategy: "timestamp",
+				},
+			},
+		);
+
+		expect(result.errors).toBeUndefined();
+		// e.g. INV-20260203-115447
+		expect(result.data?.generateDocumentNumber?.documentNumber).toMatch(
+			/^INV-\d{8}-\d{6}$/,
+		);
+	});
 });
