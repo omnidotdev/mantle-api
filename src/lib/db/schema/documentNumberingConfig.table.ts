@@ -14,7 +14,7 @@ import { companyTable } from "./company.table";
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
-export const idStrategies = ["sequential", "random"] as const;
+export const idStrategies = ["sequential", "random", "timestamp"] as const;
 
 export type IdStrategy = (typeof idStrategies)[number];
 
