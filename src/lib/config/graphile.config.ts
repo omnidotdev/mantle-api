@@ -12,6 +12,7 @@ import {
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
 import InvoicePdfPlugin from "lib/graphql/plugins/invoicePdf.plugin";
+import RecomputeInvoiceTotalsPlugin from "lib/graphql/plugins/recomputeInvoiceTotals.plugin";
 import { DATABASE_URL, isDevEnv } from "./env.config";
 
 /**
@@ -33,6 +34,7 @@ const graphilePreset: GraphileConfig.Preset = {
     EventEmissionPlugin,
     GenerateDocumentNumberPlugin,
     InvoicePdfPlugin,
+    RecomputeInvoiceTotalsPlugin,
   ],
   schema: {
     defaultBehavior: "+manyRelation:resource:connection",
