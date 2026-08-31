@@ -1,12 +1,16 @@
+import { sql } from "drizzle-orm";
 import {
+  index,
   integer,
   pgTable,
   text,
   uniqueIndex,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
 import { generateDefaultDate, generateDefaultId } from "lib/db/util";
+import { companyTable } from "./company.table";
 
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
@@ -19,6 +23,11 @@ export const documentNumberingConfigTable = pgTable(
   {
     id: generateDefaultId(),
     organizationId: text("organization_id").notNull(),
+    // Null = the workspace-wide default for this document type; a company id =
+    // a per-client override that takes precedence for that client
+    companyId: uuid("company_id").references(() => companyTable.id, {
+      onDelete: "cascade",
+    }),
     globalPrefix: text("global_prefix").default(""),
     documentType: text("document_type").notNull(),
     prefix: text().default("").notNull(),
@@ -38,10 +47,19 @@ export const documentNumberingConfigTable = pgTable(
   },
   (table) => [
     uniqueIndex().on(table.id),
-    uniqueIndex("doc_numbering_org_id_doc_type_idx").on(
+    // Lookup + keeps (org, document type) filterable in GraphQL
+    index("doc_numbering_org_id_doc_type_lookup_idx").on(
       table.organizationId,
       table.documentType,
     ),
+    // One workspace default per (org, document type)
+    uniqueIndex("doc_numbering_org_doc_type_default_idx")
+      .on(table.organizationId, table.documentType)
+      .where(sql`${table.companyId} is null`),
+    // One override per (org, document type, client)
+    uniqueIndex("doc_numbering_org_doc_type_company_idx")
+      .on(table.organizationId, table.documentType, table.companyId)
+      .where(sql`${table.companyId} is not null`),
   ],
 );
 

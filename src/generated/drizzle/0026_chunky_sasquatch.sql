@@ -1,0 +1,5 @@
+DROP INDEX "doc_numbering_org_id_doc_type_idx";--> statement-breakpoint
+ALTER TABLE "document_numbering_config" ADD COLUMN "company_id" uuid;--> statement-breakpoint
+ALTER TABLE "document_numbering_config" ADD CONSTRAINT "document_numbering_config_company_id_company_id_fk" FOREIGN KEY ("company_id") REFERENCES "public"."company"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE UNIQUE INDEX "doc_numbering_org_doc_type_default_idx" ON "document_numbering_config" USING btree ("organization_id","document_type") WHERE "document_numbering_config"."company_id" is null;--> statement-breakpoint
+CREATE UNIQUE INDEX "doc_numbering_org_doc_type_company_idx" ON "document_numbering_config" USING btree ("organization_id","document_type","company_id") WHERE "document_numbering_config"."company_id" is not null;
