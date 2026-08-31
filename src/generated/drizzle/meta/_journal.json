@@ -176,6 +176,13 @@
       "when": 1787532189446,
       "tag": "0024_normalize_phone",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1788151632659,
+      "tag": "0025_premium_sunspot",
+      "breakpoints": true
     }
   ]
 }
