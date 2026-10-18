@@ -23,7 +23,7 @@ const enforceInvoiceLimit = EXPORTABLE(
         if (!observer) throw new Error("Unauthorized");
 
         const organizationId = input?.organizationId;
-        if (!organizationId) throw new Error("Organization ID required");
+        if (!organizationId) throw new Error("Workspace ID required");
 
         // Count invoices created this month for this organization
         const now = new Date();

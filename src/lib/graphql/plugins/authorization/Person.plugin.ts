@@ -26,7 +26,7 @@ const enforceContactLimit = EXPORTABLE(
         if (input?.internal === true) return;
 
         const organizationId = input?.organizationId;
-        if (!organizationId) throw new Error("Organization ID required");
+        if (!organizationId) throw new Error("Workspace ID required");
 
         // Count existing external contacts for this organization
         const existingContacts = await db.query.personTable.findMany({
