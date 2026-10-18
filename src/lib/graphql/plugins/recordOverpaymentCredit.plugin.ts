@@ -76,7 +76,12 @@ const recordOverpaymentCredit = EXPORTABLE(
       // floored at zero, minus overpayment credit already recorded for this
       // invoice. Inserted only when positive, so an exact or under payment, and
       // a re-run over the same state, add nothing
-      await pgClient.query({
+      const inserted = await pgClient.query<{
+        id: string;
+        amount: string;
+        organization_id: string;
+        currency: string;
+      }>({
         text: `INSERT INTO credit_transaction
 				         (organization_id, currency, amount, kind, invoice_id, payment_id)
 				       SELECT $2, $3, c.new_credit, 'overpayment', $1, $4
@@ -93,7 +98,8 @@ const recordOverpaymentCredit = EXPORTABLE(
 				                         2
 				                       ) AS new_credit
 				              ) c
-				        WHERE c.new_credit > 0`,
+				        WHERE c.new_credit > 0
+				      RETURNING id, amount, organization_id, currency`,
         values: [
           invoiceId,
           row.organization_id,
@@ -102,6 +108,29 @@ const recordOverpaymentCredit = EXPORTABLE(
           row.total,
         ],
       });
+
+      // Emit the overpayment credit so MyFi can book it. `credit.issued` is the
+      // stable cross-product suffix; emission is swallowed so it never fails the
+      // payment that produced the credit
+      const credited = inserted.rows[0];
+      if (credited) {
+        const { events } = await import("lib/providers");
+        void events
+          .emit({
+            type: "mantle.credit.issued",
+            data: {
+              id: credited.id,
+              organizationId: credited.organization_id,
+              currency: credited.currency,
+              invoiceId,
+              paymentId,
+              amount: credited.amount,
+              kind: "overpayment",
+            },
+            subject: credited.id,
+          })
+          .catch(() => {});
+      }
     },
   [],
 );

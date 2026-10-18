@@ -87,7 +87,7 @@ const ApplyInvoiceCreditPlugin = makeExtendSchemaPlugin({
               throw new Error("Credit amount must be a positive value");
             }
 
-            return dbPool.transaction(async (tx) => {
+            const outcome = await dbPool.transaction(async (tx) => {
               // Resolve the invoice's workspace and currency first so the
               // advisory lock below can serialize spend for this balance
               const invoiceResult = await tx.execute(
@@ -168,11 +168,41 @@ const ApplyInvoiceCreditPlugin = makeExtendSchemaPlugin({
 
               return {
                 creditTransactionId,
+                organizationId,
+                currency,
                 amountApplied: fromCents(appliedCents),
                 remainingCredit: fromCents(availableCents - appliedCents),
                 invoiceOutstanding: fromCents(outstandingCents - appliedCents),
               };
             });
+
+            // Emit after the transaction commits, so a rolled-back apply never
+            // publishes a credit event. Emission must never fail the user's
+            // mutation, so provider errors are swallowed. The `credit.applied`
+            // suffix is the stable cross-product contract (see the invoicing
+            // consolidation design); `amount` is the signed ledger value
+            const { events } = await import("lib/providers");
+            void events
+              .emit({
+                type: "mantle.credit.applied",
+                data: {
+                  id: outcome.creditTransactionId,
+                  organizationId: outcome.organizationId,
+                  currency: outcome.currency,
+                  invoiceId,
+                  amount: fromCents(-appliedCents),
+                  kind: "application",
+                },
+                subject: outcome.creditTransactionId,
+              })
+              .catch(() => {});
+
+            return {
+              creditTransactionId: outcome.creditTransactionId,
+              amountApplied: outcome.amountApplied,
+              remainingCredit: outcome.remainingCredit,
+              invoiceOutstanding: outcome.invoiceOutstanding,
+            };
           },
         [toCents, fromCents],
       ),
