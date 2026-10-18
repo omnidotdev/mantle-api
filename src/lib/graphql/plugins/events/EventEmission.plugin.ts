@@ -125,6 +125,45 @@ const emitInvoiceEvent = (
   );
 
 /**
+ * Emit an enriched payment event with fields needed by MyFi to book per-payment
+ * facts. Mantle is the system of record for payments against an invoice; MyFi
+ * correlates each payment to the invoice it already tracks via `invoiceId`, so
+ * the event carries the payment's own columns rather than re-reading the parent.
+ *
+ * Closes the Mantle to MyFi payment gap: without this, MyFi only ever sees an
+ * invoice flip to `paid` and books the whole total at once, never the partial
+ * or per-payment detail. The `<entity>.<action>` shape (`payment.created` etc.)
+ * is the stable cross-product contract; the `mantle.` prefix is provenance.
+ */
+const emitPaymentEvent = (
+  action: "created" | "updated" | "deleted",
+): PlanWrapperFn =>
+  EXPORTABLE(
+    (sideEffect, emitEvent, action): PlanWrapperFn =>
+      (plan, $record) => {
+        sideEffect([$record], ([record]) => {
+          if (!record?.id) return;
+
+          emitEvent(
+            `mantle.payment.${action}`,
+            {
+              id: record.id,
+              invoiceId: record.invoiceId,
+              amount: record.amount,
+              paidAt: record.paidAt,
+              reference: record.reference,
+              method: record.method,
+            },
+            record.id,
+          );
+        });
+
+        return plan();
+      },
+    [sideEffect, emitEvent, action],
+  );
+
+/**
  * Emit an enriched quote event with fields needed by MyFi for journal entries.
  */
 const emitQuoteEvent = (
@@ -162,7 +201,7 @@ const emitQuoteEvent = (
 /**
  * Event emission plugin for Mantle mutations.
  *
- * Emits CloudEvents to Vortex for company, invoice, quote, product, and person lifecycle.
+ * Emits CloudEvents to Vortex for company, invoice, payment, quote, product, and person lifecycle.
  */
 const EventEmissionPlugin = wrapPlans({
   Mutation: {
@@ -175,6 +214,9 @@ const EventEmissionPlugin = wrapPlans({
     createQuote: emitQuoteEvent("created"),
     updateQuote: emitQuoteEvent("updated"),
     deleteQuote: emitQuoteEvent("deleted"),
+    createPayment: emitPaymentEvent("created"),
+    updatePayment: emitPaymentEvent("updated"),
+    deletePayment: emitPaymentEvent("deleted"),
     createProduct: emitProductEvent("created"),
     updateProduct: emitProductEvent("updated"),
     deleteProduct: emitOnMutate("product", "deleted"),
