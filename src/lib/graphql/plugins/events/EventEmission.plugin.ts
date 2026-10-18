@@ -126,9 +126,10 @@ const emitInvoiceEvent = (
 
 /**
  * Emit an enriched payment event with fields needed by MyFi to book per-payment
- * facts. Mantle is the system of record for payments against an invoice; MyFi
- * correlates each payment to the invoice it already tracks via `invoiceId`, so
- * the event carries the payment's own columns rather than re-reading the parent.
+ * facts. The payment row carries no workspace or currency of its own, so this
+ * reads them from the parent invoice and includes `organizationId` + `currency`
+ * (MyFi resolves the book by `organizationId`); without them MyFi cannot book
+ * the payment.
  *
  * Closes the Mantle to MyFi payment gap: without this, MyFi only ever sees an
  * invoice flip to `paid` and books the whole total at once, never the partial
@@ -139,28 +140,54 @@ const emitPaymentEvent = (
   action: "created" | "updated" | "deleted",
 ): PlanWrapperFn =>
   EXPORTABLE(
-    (sideEffect, emitEvent, action): PlanWrapperFn =>
+    (sideEffect, action): PlanWrapperFn =>
       (plan, $record) => {
         sideEffect([$record], ([record]) => {
           if (!record?.id) return;
 
-          emitEvent(
-            `mantle.payment.${action}`,
-            {
-              id: record.id,
-              invoiceId: record.invoiceId,
-              amount: record.amount,
-              paidAt: record.paidAt,
-              reference: record.reference,
-              method: record.method,
-            },
-            record.id,
-          );
+          // Resolve the invoice's workspace + currency (absent on the payment
+          // row) and emit after the mutation. Fire-and-forget with errors
+          // swallowed so emission never fails the payment that produced it
+          void (async () => {
+            try {
+              const { events } = await import("lib/providers");
+              const { dbPool } = await import("lib/db/db");
+              const { sql } = await import("drizzle-orm");
+
+              let organizationId: string | undefined;
+              let currency: string | undefined;
+              if (record.invoiceId) {
+                const result = await dbPool.execute(
+                  sql`SELECT organization_id, currency FROM invoice WHERE id = ${record.invoiceId}::uuid`,
+                );
+                const row = result.rows[0] as
+                  | { organization_id: string; currency: string | null }
+                  | undefined;
+                organizationId = row?.organization_id;
+                currency = row?.currency ?? undefined;
+              }
+
+              await events.emit({
+                type: `mantle.payment.${action}`,
+                data: {
+                  id: record.id,
+                  invoiceId: record.invoiceId,
+                  organizationId,
+                  currency,
+                  amount: record.amount,
+                  paidAt: record.paidAt,
+                  reference: record.reference,
+                  method: record.method,
+                },
+                subject: record.id,
+              });
+            } catch {}
+          })();
         });
 
         return plan();
       },
-    [sideEffect, emitEvent, action],
+    [sideEffect, action],
   );
 
 /**
