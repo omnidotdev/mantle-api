@@ -1,3 +1,4 @@
+import { CREDIT_TRANSACTION_KINDS } from "@omnidotdev/providers/invoicing";
 import {
   index,
   numeric,
@@ -12,26 +13,23 @@ import { generateDefaultDate, generateDefaultId } from "lib/db/util";
 import { invoiceTable } from "./invoice.table";
 import { paymentTable } from "./payment.table";
 
+import type { CreditTransactionKind } from "@omnidotdev/providers/invoicing";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 /**
- * How a credit entry came to exist. Kept as app-validated text rather than a
- * pgEnum so the set can evolve without a migration:
+ * How a credit entry came to exist (the shared cross-product credit contract):
  * - overpayment: excess of payments over an invoice total, recorded as credit
  * - creditNote: credit issued by a credit-note document (refund/adjustment)
  * - application: credit consumed against an invoice (a negative amount)
  * - adjustment: manual correction
  * - void: reversal of a prior entry (a negative amount)
+ *
+ * Sourced from `@omnidotdev/providers/invoicing` so Mantle and MyFi cannot
+ * drift; kept as app-validated text (not a pgEnum) so the set can evolve.
  */
-export const creditTransactionKinds = [
-  "overpayment",
-  "creditNote",
-  "application",
-  "adjustment",
-  "void",
-] as const;
+export const creditTransactionKinds = CREDIT_TRANSACTION_KINDS;
 
-export type CreditTransactionKind = (typeof creditTransactionKinds)[number];
+export type { CreditTransactionKind };
 
 /**
  * Append-only credit ledger scoped to a workspace (organization) and currency.
