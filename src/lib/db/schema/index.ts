@@ -1,6 +1,7 @@
 export * from "./channelConnection.table";
 export * from "./company.table";
 export * from "./companyMember.table";
+export * from "./creditTransaction.table";
 export * from "./documentNumberingConfig.table";
 export * from "./inventoryAdjustment.table";
 export * from "./invoice.table";
