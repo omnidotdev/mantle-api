@@ -3,6 +3,7 @@ import { makePgService } from "postgraphile/adaptors/pg";
 import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
 import { PostGraphileConnectionFilterPreset } from "postgraphile-plugin-connection-filter";
 
+import ApplyInvoiceCreditPlugin from "lib/graphql/plugins/applyInvoiceCredit.plugin";
 import {
   CompanyMemberPlugin,
   InvoicePlugin,
@@ -37,6 +38,7 @@ const graphilePreset: GraphileConfig.Preset = {
     InvoicePdfPlugin,
     RecomputeInvoiceTotalsPlugin,
     RecordOverpaymentCreditPlugin,
+    ApplyInvoiceCreditPlugin,
   ],
   schema: {
     defaultBehavior: "+manyRelation:resource:connection",
