@@ -13,6 +13,7 @@ import {
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
 import InvoicePdfPlugin from "lib/graphql/plugins/invoicePdf.plugin";
+import IssueCreditPlugin from "lib/graphql/plugins/issueCredit.plugin";
 import RecomputeInvoiceTotalsPlugin from "lib/graphql/plugins/recomputeInvoiceTotals.plugin";
 import RecordOverpaymentCreditPlugin from "lib/graphql/plugins/recordOverpaymentCredit.plugin";
 import { DATABASE_URL, isDevEnv } from "./env.config";
@@ -39,6 +40,7 @@ const graphilePreset: GraphileConfig.Preset = {
     RecomputeInvoiceTotalsPlugin,
     RecordOverpaymentCreditPlugin,
     ApplyInvoiceCreditPlugin,
+    IssueCreditPlugin,
   ],
   schema: {
     defaultBehavior: "+manyRelation:resource:connection",

@@ -5852,6 +5852,19 @@ type InvoiceHtmlPayload {
   filename: String!
 }
 
+input ApplyInvoiceCreditInput {
+  invoiceId: UUID!
+  amount: String!
+  note: String
+}
+
+type ApplyInvoiceCreditPayload {
+  creditTransactionId: UUID!
+  amountApplied: String!
+  remainingCredit: String!
+  invoiceOutstanding: String!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query implements Node {
   """
@@ -7356,17 +7369,25 @@ type Mutation {
     """
     input: ApplyInvoiceCreditInput!
   ): ApplyInvoiceCreditPayload
+  issueCredit(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: IssueCreditInput!
+  ): IssueCreditPayload
 }
 
-input ApplyInvoiceCreditInput {
-  invoiceId: UUID!
+input IssueCreditInput {
+  organizationId: String!
   amount: String!
+  currency: String
+  kind: String
+  invoiceId: UUID
   note: String
 }
 
-type ApplyInvoiceCreditPayload {
+type IssueCreditPayload {
   creditTransactionId: UUID!
-  amountApplied: String!
-  remainingCredit: String!
-  invoiceOutstanding: String!
+  amountIssued: String!
+  balance: String!
 }
