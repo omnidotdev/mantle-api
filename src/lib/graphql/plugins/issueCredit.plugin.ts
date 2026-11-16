@@ -73,11 +73,28 @@ const IssueCreditPlugin = makeExtendSchemaPlugin({
                 note?: string;
               };
             },
+            context: { observer?: unknown; organizationIds?: string[] },
           ) => {
             const { sql } = await import("drizzle-orm");
             const { dbPool } = await import("lib/db/db");
+            const { assertWorkspaceAccess } = await import(
+              "lib/graphql/workspaceAccess"
+            );
 
             const { organizationId, amount, invoiceId, note } = args.input;
+
+            // Issuing credit is a write to the workspace's balance: the caller
+            // must belong to it, and a linked invoice must be the same
+            // workspace's
+            assertWorkspaceAccess(context, organizationId);
+            if (invoiceId) {
+              const linked = await dbPool.execute(
+                sql`SELECT organization_id FROM invoice WHERE id = ${invoiceId}::uuid`,
+              );
+              if (linked.rows[0]?.organization_id !== organizationId) {
+                assertWorkspaceAccess(context, null);
+              }
+            }
             const currency = args.input.currency ?? "USD";
             const kind = args.input.kind ?? "creditNote";
 

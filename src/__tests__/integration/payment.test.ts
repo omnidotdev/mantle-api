@@ -2,6 +2,10 @@ import { describe, expect, test } from "bun:test";
 
 import { setupTestContext } from "test/setup/testContext";
 
+// Writes need an authenticated caller; this one acts with trusted service
+// scope so the test exercises behavior, not authorization
+const SERVICE_OBSERVER = { id: "test-service", name: "Test" };
+
 interface CreateInvoiceData {
 	createInvoice?: {
 		invoice?: {
@@ -144,7 +148,7 @@ describe("invoice payments", () => {
 		// Send paidAt as the full ISO datetime string graphql-request produces
 		// from a JS Date, exactly as the app does, to prove the Date scalar
 		// stores the calendar date
-		const first = await ctx.graphql.execute<CreatePaymentData>(
+		const first = await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePaymentData>(
 			CREATE_PAYMENT,
 			{
 				input: {
@@ -161,7 +165,7 @@ describe("invoice payments", () => {
 		expect(first.errors).toBeUndefined();
 		expect(first.data?.createPayment?.payment?.paidAt).toBe("2026-08-05");
 
-		const second = await ctx.graphql.execute<CreatePaymentData>(
+		const second = await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePaymentData>(
 			CREATE_PAYMENT,
 			{
 				input: {
@@ -177,7 +181,7 @@ describe("invoice payments", () => {
 		);
 		expect(second.errors).toBeUndefined();
 
-		const result = await ctx.graphql.execute<InvoiceWithPaymentsData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<InvoiceWithPaymentsData>(
 			INVOICE_WITH_PAYMENTS,
 			{ rowId: invoiceId },
 		);
@@ -205,7 +209,7 @@ describe("invoice payments", () => {
 	test("cascade deletes payments when the invoice is deleted", async () => {
 		const invoiceId = await createInvoice("INV-PAY-2", "1000.00");
 
-		await ctx.graphql.execute<CreatePaymentData>(CREATE_PAYMENT, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePaymentData>(CREATE_PAYMENT, {
 			input: {
 				payment: {
 					invoiceId,
@@ -217,13 +221,13 @@ describe("invoice payments", () => {
 			},
 		});
 
-		const deleteResult = await ctx.graphql.execute<DeleteInvoiceData>(
+		const deleteResult = await ctx.graphqlAs(SERVICE_OBSERVER).execute<DeleteInvoiceData>(
 			DELETE_INVOICE,
 			{ input: { rowId: invoiceId } },
 		);
 		expect(deleteResult.errors).toBeUndefined();
 
-		const result = await ctx.graphql.execute<PaymentsByInvoiceData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<PaymentsByInvoiceData>(
 			PAYMENTS_BY_INVOICE,
 			{ invoiceId },
 		);

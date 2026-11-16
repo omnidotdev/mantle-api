@@ -76,9 +76,13 @@ const ApplyInvoiceCreditPlugin = makeExtendSchemaPlugin({
             args: {
               input: { invoiceId: string; amount: string; note?: string };
             },
+            context: { observer?: unknown; organizationIds?: string[] },
           ) => {
             const { sql } = await import("drizzle-orm");
             const { dbPool } = await import("lib/db/db");
+            const { assertWorkspaceAccess } = await import(
+              "lib/graphql/workspaceAccess"
+            );
 
             const { invoiceId, amount, note } = args.input;
 
@@ -101,6 +105,8 @@ const ApplyInvoiceCreditPlugin = makeExtendSchemaPlugin({
               }
 
               const organizationId = invoiceMeta.organization_id;
+              // Spending a workspace's credit requires belonging to it
+              assertWorkspaceAccess(context, organizationId);
               const currency = invoiceMeta.currency ?? "USD";
 
               // Serialize credit spend for this (workspace, currency): two

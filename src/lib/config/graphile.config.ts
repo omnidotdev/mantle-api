@@ -7,8 +7,11 @@ import ApplyInvoiceCreditPlugin from "lib/graphql/plugins/applyInvoiceCredit.plu
 import {
   CompanyMemberPlugin,
   InvoicePlugin,
+  OrgMutationGuardPlugin,
+  OrganizationScopeNestedPlugin,
   OrganizationScopePlugin,
   PersonPlugin,
+  RemoveQueryNodePlugin,
 } from "lib/graphql/plugins/authorization";
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
@@ -31,6 +34,9 @@ const graphilePreset: GraphileConfig.Preset = {
   grafast: { explain: isDevEnv },
   plugins: [
     OrganizationScopePlugin,
+    OrganizationScopeNestedPlugin,
+    RemoveQueryNodePlugin,
+    OrgMutationGuardPlugin,
     CompanyMemberPlugin,
     InvoicePlugin,
     PersonPlugin,
@@ -43,7 +49,10 @@ const graphilePreset: GraphileConfig.Preset = {
     IssueCreditPlugin,
   ],
   schema: {
-    defaultBehavior: "+manyRelation:resource:connection",
+    // Relay node-id update/delete variants have no rowId for the mutation
+    // guard to resolve; only the primary-key variants are exposed
+    defaultBehavior:
+      "+manyRelation:resource:connection -nodeId:resource:update -nodeId:resource:delete",
   },
 };
 

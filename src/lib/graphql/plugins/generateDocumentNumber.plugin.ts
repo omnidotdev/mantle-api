@@ -103,6 +103,7 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
                 idStrategy?: string;
               };
             },
+            context: { observer?: unknown; organizationIds?: string[] },
           ) => {
             // Lazy imports to avoid capturing class instances in EXPORTABLE
             const { sql } = await import("drizzle-orm");
@@ -113,6 +114,12 @@ const GenerateDocumentNumberPlugin = makeExtendSchemaPlugin({
 
             const { organizationId, documentType, companyId, idStrategy } =
               args.input;
+
+            const { assertWorkspaceAccess } = await import(
+              "lib/graphql/workspaceAccess"
+            );
+            // Advances the workspace's numbering sequence: members only
+            assertWorkspaceAccess(context, args.input.organizationId);
 
             const documentNumber = await dbPool.transaction(async (tx) => {
               // Resolve the config to use: a per-client override when one exists

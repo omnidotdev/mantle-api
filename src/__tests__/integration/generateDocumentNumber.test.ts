@@ -2,6 +2,10 @@ import { describe, expect, test } from "bun:test";
 
 import { setupTestContext } from "test/setup/testContext";
 
+// Writes need an authenticated caller; this one acts with trusted service
+// scope so the test exercises behavior, not authorization
+const SERVICE_OBSERVER = { id: "test-service", name: "Test" };
+
 interface GenerateDocumentNumberData {
 	generateDocumentNumber?: { documentNumber?: string };
 }
@@ -84,7 +88,7 @@ describe("generateDocumentNumber mutation", () => {
 	`;
 
 	test("generates sequential quote number with default config", async () => {
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "quote" },
 		});
 
@@ -95,7 +99,7 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("generates sequential invoice number with default config", async () => {
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "invoice" },
 		});
 
@@ -108,28 +112,28 @@ describe("generateDocumentNumber mutation", () => {
 	test("increments sequential number on each call", async () => {
 		const orgId = "test-org-seq";
 
-		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r1 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r2 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("QT-0002");
 
-		const r3 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r3 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: orgId, documentType: "quote" },
 		});
 		expect(r3.data?.generateDocumentNumber?.documentNumber).toBe("QT-0003");
 	});
 
 	test("auto-creates config on first call", async () => {
-		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "new-org", documentType: "invoice" },
 		});
 
-		const configResult = await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+		const configResult = await ctx.graphqlAs(SERVICE_OBSERVER).execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 			organizationId: "new-org",
 		});
 
@@ -144,19 +148,19 @@ describe("generateDocumentNumber mutation", () => {
 
 	test("generates random document number when configured", async () => {
 		// First generate to create the config
-		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "random-org", documentType: "quote" },
 		});
 
 		// Get the config rowId
-		const configResult = await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+		const configResult = await ctx.graphqlAs(SERVICE_OBSERVER).execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 			organizationId: "random-org",
 		});
 		const configRowId =
 			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
 
 		// Update to random strategy
-		await ctx.graphql.execute<UpdateDocumentNumberingConfigData>(UPDATE_CONFIG_MUTATION, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<UpdateDocumentNumberingConfigData>(UPDATE_CONFIG_MUTATION, {
 			input: {
 				rowId: configRowId,
 				patch: { idStrategy: "random" },
@@ -164,7 +168,7 @@ describe("generateDocumentNumber mutation", () => {
 		});
 
 		// Generate with random strategy
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "random-org", documentType: "quote" },
 		});
 
@@ -175,24 +179,24 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("isolates numbering between organizations", async () => {
-		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r1 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "org-a", documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r2 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "org-b", documentType: "quote" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 	});
 
 	test("isolates numbering between document types", async () => {
-		const r1 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r1 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "quote" },
 		});
 		expect(r1.data?.generateDocumentNumber?.documentNumber).toBe("QT-0001");
 
-		const r2 = await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		const r2 = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "test-org", documentType: "invoice" },
 		});
 		expect(r2.data?.generateDocumentNumber?.documentNumber).toBe("INV-0001");
@@ -200,20 +204,20 @@ describe("generateDocumentNumber mutation", () => {
 
 	test("prepends global prefix to document number", async () => {
 		// Generate first to auto-create config
-		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "global-prefix-org", documentType: "quote" },
 		});
 
 		// Get config rowId
 		const configResult =
-			await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 				organizationId: "global-prefix-org",
 			});
 		const configRowId =
 			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
 
 		// Set global prefix
-		await ctx.graphql.execute(UPDATE_CONFIG_MUTATION_FULL, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute(UPDATE_CONFIG_MUTATION_FULL, {
 			input: {
 				rowId: configRowId,
 				patch: { globalPrefix: "ACME" },
@@ -221,7 +225,7 @@ describe("generateDocumentNumber mutation", () => {
 		});
 
 		// Generate again - should include global prefix
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(
 			GENERATE_MUTATION,
 			{
 				input: {
@@ -237,26 +241,26 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("global prefix works with empty doc-type prefix", async () => {
-		await ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE_MUTATION, {
 			input: { organizationId: "gp-no-doc-prefix", documentType: "quote" },
 		});
 
 		const configResult =
-			await ctx.graphql.execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<DocumentNumberingConfigsData>(CONFIG_QUERY, {
 				organizationId: "gp-no-doc-prefix",
 			});
 		const configRowId =
 			configResult.data?.documentNumberingConfigs?.nodes?.[0]?.rowId;
 
 		// Set global prefix but clear doc-type prefix
-		await ctx.graphql.execute(UPDATE_CONFIG_MUTATION_FULL, {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute(UPDATE_CONFIG_MUTATION_FULL, {
 			input: {
 				rowId: configRowId,
 				patch: { globalPrefix: "ACME", prefix: "" },
 			},
 		});
 
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(
 			GENERATE_MUTATION,
 			{
 				input: {
@@ -272,7 +276,7 @@ describe("generateDocumentNumber mutation", () => {
 	});
 
 	test("generates a timestamp-style number when configured", async () => {
-		const result = await ctx.graphql.execute<GenerateDocumentNumberData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(
 			GENERATE_MUTATION,
 			{
 				input: {

@@ -14,7 +14,7 @@ export interface TestContext {
 	db: TestDatabase["db"];
 	pool: Pool;
 	graphql: GraphQLTestClient;
-	graphqlAs: (observer: Observer) => GraphQLTestClient;
+	graphqlAs: (observer: Observer, organizationIds?: string[]) => GraphQLTestClient;
 }
 
 export const setupTestContext = (): TestContext => {
@@ -44,8 +44,8 @@ export const setupTestContext = (): TestContext => {
 			if (prop === "pool") return pool;
 			if (prop === "graphql") return createTestGraphQLClient({ pool, db });
 			if (prop === "graphqlAs") {
-				return (observer: Observer) =>
-					createTestGraphQLClient({ pool, db, observer });
+				return (observer: Observer, organizationIds?: string[]) =>
+					createTestGraphQLClient({ pool, db, observer, organizationIds });
 			}
 
 			return undefined;

@@ -9,14 +9,14 @@ import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
 import appConfig from "lib/config/app.config";
 
 const resource = resourceFromAttributes({
-	[ATTR_SERVICE_NAME]: appConfig.name,
+  [ATTR_SERVICE_NAME]: appConfig.name,
 });
 
 const sdk = new NodeSDK({
-	resource,
-	traceExporter: new OTLPTraceExporter(),
-	logRecordProcessor: new BatchLogRecordProcessor(new OTLPLogExporter()),
-	instrumentations: [getNodeAutoInstrumentations()],
+  resource,
+  traceExporter: new OTLPTraceExporter(),
+  logRecordProcessor: new BatchLogRecordProcessor(new OTLPLogExporter()),
+  instrumentations: [getNodeAutoInstrumentations()],
 });
 
 sdk.start();

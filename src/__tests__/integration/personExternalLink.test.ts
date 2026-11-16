@@ -2,6 +2,10 @@ import { describe, expect, test } from "bun:test";
 
 import { setupTestContext } from "test/setup/testContext";
 
+// Writes need an authenticated caller; this one acts with trusted service
+// scope so the test exercises behavior, not authorization
+const SERVICE_OBSERVER = { id: "test-service", name: "Test" };
+
 interface CreatePersonData {
 	createPerson?: {
 		person?: {
@@ -169,7 +173,7 @@ describe("person external linking", () => {
 		);
 
 		const result =
-			await ctx.graphql.execute<CreatePersonExternalLinkData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 				CREATE_EXTERNAL_LINK,
 				{
 					input: {
@@ -198,7 +202,7 @@ describe("person external linking", () => {
 			"linked@example.com",
 		);
 
-		await ctx.graphql.execute<CreatePersonExternalLinkData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 			CREATE_EXTERNAL_LINK,
 			{
 				input: {
@@ -212,7 +216,7 @@ describe("person external linking", () => {
 		);
 
 		const result =
-			await ctx.graphql.execute<PersonExternalLinksData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<PersonExternalLinksData>(
 				QUERY_LINKS_BY_PROVIDER,
 				{
 					provider: "gatekeeper",
@@ -234,7 +238,7 @@ describe("person external linking", () => {
 			"multi@example.com",
 		);
 
-		await ctx.graphql.execute<CreatePersonExternalLinkData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 			CREATE_EXTERNAL_LINK,
 			{
 				input: {
@@ -247,7 +251,7 @@ describe("person external linking", () => {
 			},
 		);
 
-		await ctx.graphql.execute<CreatePersonExternalLinkData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 			CREATE_EXTERNAL_LINK,
 			{
 				input: {
@@ -260,7 +264,7 @@ describe("person external linking", () => {
 			},
 		);
 
-		const result = await ctx.graphql.execute<PersonWithLinksData>(
+		const result = await ctx.graphqlAs(SERVICE_OBSERVER).execute<PersonWithLinksData>(
 			QUERY_PERSON_WITH_LINKS,
 			{ rowId: personId },
 		);
@@ -288,7 +292,7 @@ describe("person external linking", () => {
 			"second@example.com",
 		);
 
-		await ctx.graphql.execute<CreatePersonExternalLinkData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 			CREATE_EXTERNAL_LINK,
 			{
 				input: {
@@ -302,7 +306,7 @@ describe("person external linking", () => {
 		);
 
 		const result =
-			await ctx.graphql.execute<CreatePersonExternalLinkData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 				CREATE_EXTERNAL_LINK,
 				{
 					input: {
@@ -325,7 +329,7 @@ describe("person external linking", () => {
 			"cascade@example.com",
 		);
 
-		await ctx.graphql.execute<CreatePersonExternalLinkData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreatePersonExternalLinkData>(
 			CREATE_EXTERNAL_LINK,
 			{
 				input: {
@@ -338,7 +342,7 @@ describe("person external linking", () => {
 			},
 		);
 
-		const deleteResult = await ctx.graphql.execute<DeletePersonData>(
+		const deleteResult = await ctx.graphqlAs(SERVICE_OBSERVER).execute<DeletePersonData>(
 			DELETE_PERSON,
 			{ input: { rowId: personId } },
 		);
@@ -346,7 +350,7 @@ describe("person external linking", () => {
 		expect(deleteResult.errors).toBeUndefined();
 
 		const result =
-			await ctx.graphql.execute<PersonExternalLinksData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<PersonExternalLinksData>(
 				QUERY_LINKS_BY_PROVIDER,
 				{
 					provider: "gatekeeper",

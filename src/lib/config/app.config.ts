@@ -2,7 +2,7 @@
  * API configuration.
  */
 const app = {
-	name: "Mantle",
+  name: "Mantle",
 };
 
 export default app;
