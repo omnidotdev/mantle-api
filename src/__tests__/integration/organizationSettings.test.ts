@@ -2,6 +2,10 @@ import { describe, expect, test } from "bun:test";
 
 import { setupTestContext } from "test/setup/testContext";
 
+// Writes need an authenticated caller; this one acts with trusted service
+// scope so the test exercises behavior, not authorization
+const SERVICE_OBSERVER = { id: "test-service", name: "Test" };
+
 interface OrganizationSettingsData {
 	organizationSettings?: {
 		nodes: Array<{
@@ -77,7 +81,7 @@ describe("organization settings", () => {
 
 	test("creates org settings with default accent color", async () => {
 		const result =
-			await ctx.graphql.execute<CreateOrganizationSettingsData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 				CREATE_MUTATION,
 				{
 					input: {
@@ -97,7 +101,7 @@ describe("organization settings", () => {
 
 	test("creates org settings with custom accent color", async () => {
 		const result =
-			await ctx.graphql.execute<CreateOrganizationSettingsData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 				CREATE_MUTATION,
 				{
 					input: {
@@ -118,7 +122,7 @@ describe("organization settings", () => {
 
 	test("updates accent color", async () => {
 		const createResult =
-			await ctx.graphql.execute<CreateOrganizationSettingsData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 				CREATE_MUTATION,
 				{
 					input: {
@@ -134,7 +138,7 @@ describe("organization settings", () => {
 				?.rowId;
 
 		const updateResult =
-			await ctx.graphql.execute<UpdateOrganizationSettingsData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<UpdateOrganizationSettingsData>(
 				UPDATE_MUTATION,
 				{
 					input: {
@@ -152,7 +156,7 @@ describe("organization settings", () => {
 	});
 
 	test("queries org settings by organization ID", async () => {
-		await ctx.graphql.execute<CreateOrganizationSettingsData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 			CREATE_MUTATION,
 			{
 				input: {
@@ -165,7 +169,7 @@ describe("organization settings", () => {
 		);
 
 		const result =
-			await ctx.graphql.execute<OrganizationSettingsData>(QUERY, {
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<OrganizationSettingsData>(QUERY, {
 				organizationId: "query-org",
 			});
 
@@ -176,7 +180,7 @@ describe("organization settings", () => {
 	});
 
 	test("enforces unique organization ID", async () => {
-		await ctx.graphql.execute<CreateOrganizationSettingsData>(
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 			CREATE_MUTATION,
 			{
 				input: {
@@ -188,7 +192,7 @@ describe("organization settings", () => {
 		);
 
 		const result =
-			await ctx.graphql.execute<CreateOrganizationSettingsData>(
+			await ctx.graphqlAs(SERVICE_OBSERVER).execute<CreateOrganizationSettingsData>(
 				CREATE_MUTATION,
 				{
 					input: {

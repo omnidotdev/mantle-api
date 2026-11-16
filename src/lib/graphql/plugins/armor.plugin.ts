@@ -7,21 +7,21 @@ import { GRAPHQL_MAX_COMPLEXITY_COST, isProdEnv } from "lib/config/env.config";
  * @see https://github.com/escape-technologies/graphql-armor
  */
 const armor = new EnvelopArmor({
-	blockFieldSuggestion: {
-		enabled: isProdEnv,
-	},
-	maxDepth: {
-		enabled: true,
-		n: 10,
-	},
-	costLimit: {
-		enabled: true,
-		maxCost: Number(GRAPHQL_MAX_COMPLEXITY_COST),
-		objectCost: 2,
-		scalarCost: 1,
-		depthCostFactor: 1.5,
-		ignoreIntrospection: true,
-	},
+  blockFieldSuggestion: {
+    enabled: isProdEnv,
+  },
+  maxDepth: {
+    enabled: true,
+    n: 10,
+  },
+  costLimit: {
+    enabled: true,
+    maxCost: Number(GRAPHQL_MAX_COMPLEXITY_COST),
+    objectCost: 2,
+    scalarCost: 1,
+    depthCostFactor: 1.5,
+    ignoreIntrospection: true,
+  },
 });
 
 const { plugins: armorPlugin } = armor.protect();

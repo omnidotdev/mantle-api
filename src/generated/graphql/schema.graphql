@@ -3760,18 +3760,14 @@ type UpdateCompanyMemberPayload {
   ): CompanyMemberEdge
 }
 
-"""All input for the `updateCompanyMemberById` mutation."""
-input UpdateCompanyMemberByIdInput {
+"""All input for the `updateCompanyMember` mutation."""
+input UpdateCompanyMemberInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `CompanyMember` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `CompanyMember` being updated.
@@ -3789,21 +3785,6 @@ input CompanyMemberPatch {
   title: String
   isPrimary: Boolean
   createdAt: Datetime
-}
-
-"""All input for the `updateCompanyMember` mutation."""
-input UpdateCompanyMemberInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `CompanyMember` being updated.
-  """
-  patch: CompanyMemberPatch!
 }
 
 """The output of our update `InventoryAdjustment` mutation."""
@@ -3829,18 +3810,14 @@ type UpdateInventoryAdjustmentPayload {
   ): InventoryAdjustmentEdge
 }
 
-"""All input for the `updateInventoryAdjustmentById` mutation."""
-input UpdateInventoryAdjustmentByIdInput {
+"""All input for the `updateInventoryAdjustment` mutation."""
+input UpdateInventoryAdjustmentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `InventoryAdjustment` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `InventoryAdjustment` being updated.
@@ -3858,21 +3835,6 @@ input InventoryAdjustmentPatch {
   reason: String
   referenceId: UUID
   createdAt: Datetime
-}
-
-"""All input for the `updateInventoryAdjustment` mutation."""
-input UpdateInventoryAdjustmentInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `InventoryAdjustment` being updated.
-  """
-  patch: InventoryAdjustmentPatch!
 }
 
 """The output of our update `PersonExternalLink` mutation."""
@@ -3898,18 +3860,14 @@ type UpdatePersonExternalLinkPayload {
   ): PersonExternalLinkEdge
 }
 
-"""All input for the `updatePersonExternalLinkById` mutation."""
-input UpdatePersonExternalLinkByIdInput {
+"""All input for the `updatePersonExternalLink` mutation."""
+input UpdatePersonExternalLinkInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PersonExternalLink` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `PersonExternalLink` being updated.
@@ -3927,21 +3885,6 @@ input PersonExternalLinkPatch {
   externalId: String
   metadata: JSON
   createdAt: Datetime
-}
-
-"""All input for the `updatePersonExternalLink` mutation."""
-input UpdatePersonExternalLinkInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `PersonExternalLink` being updated.
-  """
-  patch: PersonExternalLinkPatch!
 }
 
 """The output of our update `InvoiceLineItem` mutation."""
@@ -3967,18 +3910,14 @@ type UpdateInvoiceLineItemPayload {
   ): InvoiceLineItemEdge
 }
 
-"""All input for the `updateInvoiceLineItemById` mutation."""
-input UpdateInvoiceLineItemByIdInput {
+"""All input for the `updateInvoiceLineItem` mutation."""
+input UpdateInvoiceLineItemInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `InvoiceLineItem` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `InvoiceLineItem` being updated.
@@ -3998,21 +3937,6 @@ input InvoiceLineItemPatch {
   unitPrice: BigFloat
   amount: BigFloat
   sortOrder: Int
-}
-
-"""All input for the `updateInvoiceLineItem` mutation."""
-input UpdateInvoiceLineItemInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `InvoiceLineItem` being updated.
-  """
-  patch: InvoiceLineItemPatch!
 }
 
 """The output of our update `OrganizationSetting` mutation."""
@@ -4038,18 +3962,14 @@ type UpdateOrganizationSettingPayload {
   ): OrganizationSettingEdge
 }
 
-"""All input for the `updateOrganizationSettingById` mutation."""
-input UpdateOrganizationSettingByIdInput {
+"""All input for the `updateOrganizationSetting` mutation."""
+input UpdateOrganizationSettingInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationSetting` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `OrganizationSetting` being updated.
@@ -4066,21 +3986,6 @@ input OrganizationSettingPatch {
   accentColor: String
   createdAt: Datetime
   updatedAt: Datetime
-}
-
-"""All input for the `updateOrganizationSetting` mutation."""
-input UpdateOrganizationSettingInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationSetting` being updated.
-  """
-  patch: OrganizationSettingPatch!
 }
 
 """The output of our update `ProductExternalLink` mutation."""
@@ -4106,18 +4011,14 @@ type UpdateProductExternalLinkPayload {
   ): ProductExternalLinkEdge
 }
 
-"""All input for the `updateProductExternalLinkById` mutation."""
-input UpdateProductExternalLinkByIdInput {
+"""All input for the `updateProductExternalLink` mutation."""
+input UpdateProductExternalLinkInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `ProductExternalLink` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `ProductExternalLink` being updated.
@@ -4136,21 +4037,6 @@ input ProductExternalLinkPatch {
   metadata: JSON
   createdAt: Datetime
   updatedAt: Datetime
-}
-
-"""All input for the `updateProductExternalLink` mutation."""
-input UpdateProductExternalLinkInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `ProductExternalLink` being updated.
-  """
-  patch: ProductExternalLinkPatch!
 }
 
 """The output of our update `Payment` mutation."""
@@ -4176,18 +4062,14 @@ type UpdatePaymentPayload {
   ): PaymentEdge
 }
 
-"""All input for the `updatePaymentById` mutation."""
-input UpdatePaymentByIdInput {
+"""All input for the `updatePayment` mutation."""
+input UpdatePaymentInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Payment` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Payment` being updated.
@@ -4205,21 +4087,6 @@ input PaymentPatch {
   paidAt: Date
   reference: String
   method: String
-}
-
-"""All input for the `updatePayment` mutation."""
-input UpdatePaymentInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Payment` being updated.
-  """
-  patch: PaymentPatch!
 }
 
 """The output of our update `CreditTransaction` mutation."""
@@ -4245,18 +4112,14 @@ type UpdateCreditTransactionPayload {
   ): CreditTransactionEdge
 }
 
-"""All input for the `updateCreditTransactionById` mutation."""
-input UpdateCreditTransactionByIdInput {
+"""All input for the `updateCreditTransaction` mutation."""
+input UpdateCreditTransactionInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `CreditTransaction` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `CreditTransaction` being updated.
@@ -4277,21 +4140,6 @@ input CreditTransactionPatch {
   paymentId: UUID
   note: String
   createdAt: Datetime
-}
-
-"""All input for the `updateCreditTransaction` mutation."""
-input UpdateCreditTransactionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `CreditTransaction` being updated.
-  """
-  patch: CreditTransactionPatch!
 }
 
 """The output of our update `Supplier` mutation."""
@@ -4317,18 +4165,14 @@ type UpdateSupplierPayload {
   ): SupplierEdge
 }
 
-"""All input for the `updateSupplierById` mutation."""
-input UpdateSupplierByIdInput {
+"""All input for the `updateSupplier` mutation."""
+input UpdateSupplierInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Supplier` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Supplier` being updated.
@@ -4351,21 +4195,6 @@ input SupplierPatch {
   isActive: Boolean
   createdAt: Datetime
   updatedAt: Datetime
-}
-
-"""All input for the `updateSupplier` mutation."""
-input UpdateSupplierInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Supplier` being updated.
-  """
-  patch: SupplierPatch!
 }
 
 """The output of our update `DocumentNumberingConfig` mutation."""
@@ -4391,18 +4220,14 @@ type UpdateDocumentNumberingConfigPayload {
   ): DocumentNumberingConfigEdge
 }
 
-"""All input for the `updateDocumentNumberingConfigById` mutation."""
-input UpdateDocumentNumberingConfigByIdInput {
+"""All input for the `updateDocumentNumberingConfig` mutation."""
+input UpdateDocumentNumberingConfigInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `DocumentNumberingConfig` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `DocumentNumberingConfig` being updated.
@@ -4430,21 +4255,6 @@ input DocumentNumberingConfigPatch {
   companyId: UUID
 }
 
-"""All input for the `updateDocumentNumberingConfig` mutation."""
-input UpdateDocumentNumberingConfigInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `DocumentNumberingConfig` being updated.
-  """
-  patch: DocumentNumberingConfigPatch!
-}
-
 """The output of our update `ChannelConnection` mutation."""
 type UpdateChannelConnectionPayload {
   """
@@ -4468,18 +4278,14 @@ type UpdateChannelConnectionPayload {
   ): ChannelConnectionEdge
 }
 
-"""All input for the `updateChannelConnectionById` mutation."""
-input UpdateChannelConnectionByIdInput {
+"""All input for the `updateChannelConnection` mutation."""
+input UpdateChannelConnectionInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `ChannelConnection` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `ChannelConnection` being updated.
@@ -4502,21 +4308,6 @@ input ChannelConnectionPatch {
   lastSyncedAt: Datetime
   createdAt: Datetime
   updatedAt: Datetime
-}
-
-"""All input for the `updateChannelConnection` mutation."""
-input UpdateChannelConnectionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `ChannelConnection` being updated.
-  """
-  patch: ChannelConnectionPatch!
 }
 
 """The output of our update `Company` mutation."""
@@ -4542,18 +4333,14 @@ type UpdateCompanyPayload {
   ): CompanyEdge
 }
 
-"""All input for the `updateCompanyById` mutation."""
-input UpdateCompanyByIdInput {
+"""All input for the `updateCompany` mutation."""
+input UpdateCompanyInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Company` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Company` being updated.
@@ -4583,21 +4370,6 @@ input CompanyPatch {
   updatedAt: Datetime
 }
 
-"""All input for the `updateCompany` mutation."""
-input UpdateCompanyInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Company` being updated.
-  """
-  patch: CompanyPatch!
-}
-
 """The output of our update `Person` mutation."""
 type UpdatePersonPayload {
   """
@@ -4621,18 +4393,14 @@ type UpdatePersonPayload {
   ): PersonEdge
 }
 
-"""All input for the `updatePersonById` mutation."""
-input UpdatePersonByIdInput {
+"""All input for the `updatePerson` mutation."""
+input UpdatePersonInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Person` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Person` being updated.
@@ -4659,21 +4427,6 @@ input PersonPatch {
   emailConsent: Boolean
 }
 
-"""All input for the `updatePerson` mutation."""
-input UpdatePersonInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Person` being updated.
-  """
-  patch: PersonPatch!
-}
-
 """The output of our update `Invoice` mutation."""
 type UpdateInvoicePayload {
   """
@@ -4697,18 +4450,14 @@ type UpdateInvoicePayload {
   ): InvoiceEdge
 }
 
-"""All input for the `updateInvoiceById` mutation."""
-input UpdateInvoiceByIdInput {
+"""All input for the `updateInvoice` mutation."""
+input UpdateInvoiceInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Invoice` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Invoice` being updated.
@@ -4742,21 +4491,6 @@ input InvoicePatch {
   billTo: String
 }
 
-"""All input for the `updateInvoice` mutation."""
-input UpdateInvoiceInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Invoice` being updated.
-  """
-  patch: InvoicePatch!
-}
-
 """The output of our update `QuoteLineItem` mutation."""
 type UpdateQuoteLineItemPayload {
   """
@@ -4780,18 +4514,14 @@ type UpdateQuoteLineItemPayload {
   ): QuoteLineItemEdge
 }
 
-"""All input for the `updateQuoteLineItemById` mutation."""
-input UpdateQuoteLineItemByIdInput {
+"""All input for the `updateQuoteLineItem` mutation."""
+input UpdateQuoteLineItemInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `QuoteLineItem` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `QuoteLineItem` being updated.
@@ -4828,21 +4558,6 @@ input QuoteLineItemPatch {
   acceptanceCriteria: [String]
 }
 
-"""All input for the `updateQuoteLineItem` mutation."""
-input UpdateQuoteLineItemInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `QuoteLineItem` being updated.
-  """
-  patch: QuoteLineItemPatch!
-}
-
 """The output of our update `Product` mutation."""
 type UpdateProductPayload {
   """
@@ -4866,18 +4581,14 @@ type UpdateProductPayload {
   ): ProductEdge
 }
 
-"""All input for the `updateProductById` mutation."""
-input UpdateProductByIdInput {
+"""All input for the `updateProduct` mutation."""
+input UpdateProductInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Product` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Product` being updated.
@@ -4916,21 +4627,6 @@ input ProductPatch {
   channels: [String]
 }
 
-"""All input for the `updateProduct` mutation."""
-input UpdateProductInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Product` being updated.
-  """
-  patch: ProductPatch!
-}
-
 """The output of our update `Quote` mutation."""
 type UpdateQuotePayload {
   """
@@ -4954,18 +4650,14 @@ type UpdateQuotePayload {
   ): QuoteEdge
 }
 
-"""All input for the `updateQuoteById` mutation."""
-input UpdateQuoteByIdInput {
+"""All input for the `updateQuote` mutation."""
+input UpdateQuoteInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Quote` to be updated.
-  """
-  id: ID!
+  rowId: UUID!
 
   """
   An object where the defined keys will be set on the `Quote` being updated.
@@ -5004,21 +4696,6 @@ input QuotePatch {
   additionalItemsLabel: String
 }
 
-"""All input for the `updateQuote` mutation."""
-input UpdateQuoteInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `Quote` being updated.
-  """
-  patch: QuotePatch!
-}
-
 """The output of our delete `CompanyMember` mutation."""
 type DeleteCompanyMemberPayload {
   """
@@ -5041,20 +4718,6 @@ type DeleteCompanyMemberPayload {
     """The method to use when ordering `CompanyMember`."""
     orderBy: [CompanyMemberOrderBy!]! = [PRIMARY_KEY_ASC]
   ): CompanyMemberEdge
-}
-
-"""All input for the `deleteCompanyMemberById` mutation."""
-input DeleteCompanyMemberByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `CompanyMember` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteCompanyMember` mutation."""
@@ -5091,20 +4754,6 @@ type DeleteInventoryAdjustmentPayload {
   ): InventoryAdjustmentEdge
 }
 
-"""All input for the `deleteInventoryAdjustmentById` mutation."""
-input DeleteInventoryAdjustmentByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `InventoryAdjustment` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteInventoryAdjustment` mutation."""
 input DeleteInventoryAdjustmentInput {
   """
@@ -5137,20 +4786,6 @@ type DeletePersonExternalLinkPayload {
     """The method to use when ordering `PersonExternalLink`."""
     orderBy: [PersonExternalLinkOrderBy!]! = [PRIMARY_KEY_ASC]
   ): PersonExternalLinkEdge
-}
-
-"""All input for the `deletePersonExternalLinkById` mutation."""
-input DeletePersonExternalLinkByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PersonExternalLink` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deletePersonExternalLink` mutation."""
@@ -5187,20 +4822,6 @@ type DeleteInvoiceLineItemPayload {
   ): InvoiceLineItemEdge
 }
 
-"""All input for the `deleteInvoiceLineItemById` mutation."""
-input DeleteInvoiceLineItemByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `InvoiceLineItem` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteInvoiceLineItem` mutation."""
 input DeleteInvoiceLineItemInput {
   """
@@ -5233,20 +4854,6 @@ type DeleteOrganizationSettingPayload {
     """The method to use when ordering `OrganizationSetting`."""
     orderBy: [OrganizationSettingOrderBy!]! = [PRIMARY_KEY_ASC]
   ): OrganizationSettingEdge
-}
-
-"""All input for the `deleteOrganizationSettingById` mutation."""
-input DeleteOrganizationSettingByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationSetting` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteOrganizationSetting` mutation."""
@@ -5283,20 +4890,6 @@ type DeleteProductExternalLinkPayload {
   ): ProductExternalLinkEdge
 }
 
-"""All input for the `deleteProductExternalLinkById` mutation."""
-input DeleteProductExternalLinkByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `ProductExternalLink` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteProductExternalLink` mutation."""
 input DeleteProductExternalLinkInput {
   """
@@ -5329,20 +4922,6 @@ type DeletePaymentPayload {
     """The method to use when ordering `Payment`."""
     orderBy: [PaymentOrderBy!]! = [PRIMARY_KEY_ASC]
   ): PaymentEdge
-}
-
-"""All input for the `deletePaymentById` mutation."""
-input DeletePaymentByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Payment` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deletePayment` mutation."""
@@ -5379,20 +4958,6 @@ type DeleteCreditTransactionPayload {
   ): CreditTransactionEdge
 }
 
-"""All input for the `deleteCreditTransactionById` mutation."""
-input DeleteCreditTransactionByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `CreditTransaction` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteCreditTransaction` mutation."""
 input DeleteCreditTransactionInput {
   """
@@ -5425,20 +4990,6 @@ type DeleteSupplierPayload {
     """The method to use when ordering `Supplier`."""
     orderBy: [SupplierOrderBy!]! = [PRIMARY_KEY_ASC]
   ): SupplierEdge
-}
-
-"""All input for the `deleteSupplierById` mutation."""
-input DeleteSupplierByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Supplier` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteSupplier` mutation."""
@@ -5475,20 +5026,6 @@ type DeleteDocumentNumberingConfigPayload {
   ): DocumentNumberingConfigEdge
 }
 
-"""All input for the `deleteDocumentNumberingConfigById` mutation."""
-input DeleteDocumentNumberingConfigByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `DocumentNumberingConfig` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteDocumentNumberingConfig` mutation."""
 input DeleteDocumentNumberingConfigInput {
   """
@@ -5521,20 +5058,6 @@ type DeleteChannelConnectionPayload {
     """The method to use when ordering `ChannelConnection`."""
     orderBy: [ChannelConnectionOrderBy!]! = [PRIMARY_KEY_ASC]
   ): ChannelConnectionEdge
-}
-
-"""All input for the `deleteChannelConnectionById` mutation."""
-input DeleteChannelConnectionByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `ChannelConnection` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteChannelConnection` mutation."""
@@ -5571,20 +5094,6 @@ type DeleteCompanyPayload {
   ): CompanyEdge
 }
 
-"""All input for the `deleteCompanyById` mutation."""
-input DeleteCompanyByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Company` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteCompany` mutation."""
 input DeleteCompanyInput {
   """
@@ -5617,20 +5126,6 @@ type DeletePersonPayload {
     """The method to use when ordering `Person`."""
     orderBy: [PersonOrderBy!]! = [PRIMARY_KEY_ASC]
   ): PersonEdge
-}
-
-"""All input for the `deletePersonById` mutation."""
-input DeletePersonByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Person` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deletePerson` mutation."""
@@ -5667,20 +5162,6 @@ type DeleteInvoicePayload {
   ): InvoiceEdge
 }
 
-"""All input for the `deleteInvoiceById` mutation."""
-input DeleteInvoiceByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Invoice` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteInvoice` mutation."""
 input DeleteInvoiceInput {
   """
@@ -5713,20 +5194,6 @@ type DeleteQuoteLineItemPayload {
     """The method to use when ordering `QuoteLineItem`."""
     orderBy: [QuoteLineItemOrderBy!]! = [PRIMARY_KEY_ASC]
   ): QuoteLineItemEdge
-}
-
-"""All input for the `deleteQuoteLineItemById` mutation."""
-input DeleteQuoteLineItemByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `QuoteLineItem` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteQuoteLineItem` mutation."""
@@ -5763,20 +5230,6 @@ type DeleteProductPayload {
   ): ProductEdge
 }
 
-"""All input for the `deleteProductById` mutation."""
-input DeleteProductByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Product` to be deleted.
-  """
-  id: ID!
-}
-
 """All input for the `deleteProduct` mutation."""
 input DeleteProductInput {
   """
@@ -5809,20 +5262,6 @@ type DeleteQuotePayload {
     """The method to use when ordering `Quote`."""
     orderBy: [QuoteOrderBy!]! = [PRIMARY_KEY_ASC]
   ): QuoteEdge
-}
-
-"""All input for the `deleteQuoteById` mutation."""
-input DeleteQuoteByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Quote` to be deleted.
-  """
-  id: ID!
 }
 
 """All input for the `deleteQuote` mutation."""
@@ -5877,12 +5316,6 @@ type Query implements Node {
   The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
   """
   id: ID!
-
-  """Fetches an object given its globally unique `ID`."""
-  node(
-    """The globally unique `ID`."""
-    id: ID!
-  ): Node
 
   """Get a single `CompanyMember`."""
   companyMember(rowId: UUID!): CompanyMember
@@ -6790,16 +6223,6 @@ type Mutation {
     input: CreateQuoteInput!
   ): CreateQuotePayload
 
-  """
-  Updates a single `CompanyMember` using its globally unique id and a patch.
-  """
-  updateCompanyMemberById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyMemberByIdInput!
-  ): UpdateCompanyMemberPayload
-
   """Updates a single `CompanyMember` using a unique key and a patch."""
   updateCompanyMember(
     """
@@ -6807,16 +6230,6 @@ type Mutation {
     """
     input: UpdateCompanyMemberInput!
   ): UpdateCompanyMemberPayload
-
-  """
-  Updates a single `InventoryAdjustment` using its globally unique id and a patch.
-  """
-  updateInventoryAdjustmentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInventoryAdjustmentByIdInput!
-  ): UpdateInventoryAdjustmentPayload
 
   """Updates a single `InventoryAdjustment` using a unique key and a patch."""
   updateInventoryAdjustment(
@@ -6826,16 +6239,6 @@ type Mutation {
     input: UpdateInventoryAdjustmentInput!
   ): UpdateInventoryAdjustmentPayload
 
-  """
-  Updates a single `PersonExternalLink` using its globally unique id and a patch.
-  """
-  updatePersonExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonExternalLinkByIdInput!
-  ): UpdatePersonExternalLinkPayload
-
   """Updates a single `PersonExternalLink` using a unique key and a patch."""
   updatePersonExternalLink(
     """
@@ -6843,16 +6246,6 @@ type Mutation {
     """
     input: UpdatePersonExternalLinkInput!
   ): UpdatePersonExternalLinkPayload
-
-  """
-  Updates a single `InvoiceLineItem` using its globally unique id and a patch.
-  """
-  updateInvoiceLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceLineItemByIdInput!
-  ): UpdateInvoiceLineItemPayload
 
   """Updates a single `InvoiceLineItem` using a unique key and a patch."""
   updateInvoiceLineItem(
@@ -6862,16 +6255,6 @@ type Mutation {
     input: UpdateInvoiceLineItemInput!
   ): UpdateInvoiceLineItemPayload
 
-  """
-  Updates a single `OrganizationSetting` using its globally unique id and a patch.
-  """
-  updateOrganizationSettingById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationSettingByIdInput!
-  ): UpdateOrganizationSettingPayload
-
   """Updates a single `OrganizationSetting` using a unique key and a patch."""
   updateOrganizationSetting(
     """
@@ -6879,16 +6262,6 @@ type Mutation {
     """
     input: UpdateOrganizationSettingInput!
   ): UpdateOrganizationSettingPayload
-
-  """
-  Updates a single `ProductExternalLink` using its globally unique id and a patch.
-  """
-  updateProductExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductExternalLinkByIdInput!
-  ): UpdateProductExternalLinkPayload
 
   """Updates a single `ProductExternalLink` using a unique key and a patch."""
   updateProductExternalLink(
@@ -6898,14 +6271,6 @@ type Mutation {
     input: UpdateProductExternalLinkInput!
   ): UpdateProductExternalLinkPayload
 
-  """Updates a single `Payment` using its globally unique id and a patch."""
-  updatePaymentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePaymentByIdInput!
-  ): UpdatePaymentPayload
-
   """Updates a single `Payment` using a unique key and a patch."""
   updatePayment(
     """
@@ -6913,16 +6278,6 @@ type Mutation {
     """
     input: UpdatePaymentInput!
   ): UpdatePaymentPayload
-
-  """
-  Updates a single `CreditTransaction` using its globally unique id and a patch.
-  """
-  updateCreditTransactionById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCreditTransactionByIdInput!
-  ): UpdateCreditTransactionPayload
 
   """Updates a single `CreditTransaction` using a unique key and a patch."""
   updateCreditTransaction(
@@ -6932,14 +6287,6 @@ type Mutation {
     input: UpdateCreditTransactionInput!
   ): UpdateCreditTransactionPayload
 
-  """Updates a single `Supplier` using its globally unique id and a patch."""
-  updateSupplierById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSupplierByIdInput!
-  ): UpdateSupplierPayload
-
   """Updates a single `Supplier` using a unique key and a patch."""
   updateSupplier(
     """
@@ -6947,16 +6294,6 @@ type Mutation {
     """
     input: UpdateSupplierInput!
   ): UpdateSupplierPayload
-
-  """
-  Updates a single `DocumentNumberingConfig` using its globally unique id and a patch.
-  """
-  updateDocumentNumberingConfigById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateDocumentNumberingConfigByIdInput!
-  ): UpdateDocumentNumberingConfigPayload
 
   """
   Updates a single `DocumentNumberingConfig` using a unique key and a patch.
@@ -6968,16 +6305,6 @@ type Mutation {
     input: UpdateDocumentNumberingConfigInput!
   ): UpdateDocumentNumberingConfigPayload
 
-  """
-  Updates a single `ChannelConnection` using its globally unique id and a patch.
-  """
-  updateChannelConnectionById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateChannelConnectionByIdInput!
-  ): UpdateChannelConnectionPayload
-
   """Updates a single `ChannelConnection` using a unique key and a patch."""
   updateChannelConnection(
     """
@@ -6985,14 +6312,6 @@ type Mutation {
     """
     input: UpdateChannelConnectionInput!
   ): UpdateChannelConnectionPayload
-
-  """Updates a single `Company` using its globally unique id and a patch."""
-  updateCompanyById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCompanyByIdInput!
-  ): UpdateCompanyPayload
 
   """Updates a single `Company` using a unique key and a patch."""
   updateCompany(
@@ -7002,14 +6321,6 @@ type Mutation {
     input: UpdateCompanyInput!
   ): UpdateCompanyPayload
 
-  """Updates a single `Person` using its globally unique id and a patch."""
-  updatePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePersonByIdInput!
-  ): UpdatePersonPayload
-
   """Updates a single `Person` using a unique key and a patch."""
   updatePerson(
     """
@@ -7017,14 +6328,6 @@ type Mutation {
     """
     input: UpdatePersonInput!
   ): UpdatePersonPayload
-
-  """Updates a single `Invoice` using its globally unique id and a patch."""
-  updateInvoiceById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateInvoiceByIdInput!
-  ): UpdateInvoicePayload
 
   """Updates a single `Invoice` using a unique key and a patch."""
   updateInvoice(
@@ -7034,16 +6337,6 @@ type Mutation {
     input: UpdateInvoiceInput!
   ): UpdateInvoicePayload
 
-  """
-  Updates a single `QuoteLineItem` using its globally unique id and a patch.
-  """
-  updateQuoteLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteLineItemByIdInput!
-  ): UpdateQuoteLineItemPayload
-
   """Updates a single `QuoteLineItem` using a unique key and a patch."""
   updateQuoteLineItem(
     """
@@ -7051,14 +6344,6 @@ type Mutation {
     """
     input: UpdateQuoteLineItemInput!
   ): UpdateQuoteLineItemPayload
-
-  """Updates a single `Product` using its globally unique id and a patch."""
-  updateProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductByIdInput!
-  ): UpdateProductPayload
 
   """Updates a single `Product` using a unique key and a patch."""
   updateProduct(
@@ -7068,14 +6353,6 @@ type Mutation {
     input: UpdateProductInput!
   ): UpdateProductPayload
 
-  """Updates a single `Quote` using its globally unique id and a patch."""
-  updateQuoteById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateQuoteByIdInput!
-  ): UpdateQuotePayload
-
   """Updates a single `Quote` using a unique key and a patch."""
   updateQuote(
     """
@@ -7083,14 +6360,6 @@ type Mutation {
     """
     input: UpdateQuoteInput!
   ): UpdateQuotePayload
-
-  """Deletes a single `CompanyMember` using its globally unique id."""
-  deleteCompanyMemberById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyMemberByIdInput!
-  ): DeleteCompanyMemberPayload
 
   """Deletes a single `CompanyMember` using a unique key."""
   deleteCompanyMember(
@@ -7100,14 +6369,6 @@ type Mutation {
     input: DeleteCompanyMemberInput!
   ): DeleteCompanyMemberPayload
 
-  """Deletes a single `InventoryAdjustment` using its globally unique id."""
-  deleteInventoryAdjustmentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInventoryAdjustmentByIdInput!
-  ): DeleteInventoryAdjustmentPayload
-
   """Deletes a single `InventoryAdjustment` using a unique key."""
   deleteInventoryAdjustment(
     """
@@ -7115,14 +6376,6 @@ type Mutation {
     """
     input: DeleteInventoryAdjustmentInput!
   ): DeleteInventoryAdjustmentPayload
-
-  """Deletes a single `PersonExternalLink` using its globally unique id."""
-  deletePersonExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonExternalLinkByIdInput!
-  ): DeletePersonExternalLinkPayload
 
   """Deletes a single `PersonExternalLink` using a unique key."""
   deletePersonExternalLink(
@@ -7132,14 +6385,6 @@ type Mutation {
     input: DeletePersonExternalLinkInput!
   ): DeletePersonExternalLinkPayload
 
-  """Deletes a single `InvoiceLineItem` using its globally unique id."""
-  deleteInvoiceLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceLineItemByIdInput!
-  ): DeleteInvoiceLineItemPayload
-
   """Deletes a single `InvoiceLineItem` using a unique key."""
   deleteInvoiceLineItem(
     """
@@ -7147,14 +6392,6 @@ type Mutation {
     """
     input: DeleteInvoiceLineItemInput!
   ): DeleteInvoiceLineItemPayload
-
-  """Deletes a single `OrganizationSetting` using its globally unique id."""
-  deleteOrganizationSettingById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationSettingByIdInput!
-  ): DeleteOrganizationSettingPayload
 
   """Deletes a single `OrganizationSetting` using a unique key."""
   deleteOrganizationSetting(
@@ -7164,14 +6401,6 @@ type Mutation {
     input: DeleteOrganizationSettingInput!
   ): DeleteOrganizationSettingPayload
 
-  """Deletes a single `ProductExternalLink` using its globally unique id."""
-  deleteProductExternalLinkById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductExternalLinkByIdInput!
-  ): DeleteProductExternalLinkPayload
-
   """Deletes a single `ProductExternalLink` using a unique key."""
   deleteProductExternalLink(
     """
@@ -7179,14 +6408,6 @@ type Mutation {
     """
     input: DeleteProductExternalLinkInput!
   ): DeleteProductExternalLinkPayload
-
-  """Deletes a single `Payment` using its globally unique id."""
-  deletePaymentById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePaymentByIdInput!
-  ): DeletePaymentPayload
 
   """Deletes a single `Payment` using a unique key."""
   deletePayment(
@@ -7196,14 +6417,6 @@ type Mutation {
     input: DeletePaymentInput!
   ): DeletePaymentPayload
 
-  """Deletes a single `CreditTransaction` using its globally unique id."""
-  deleteCreditTransactionById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCreditTransactionByIdInput!
-  ): DeleteCreditTransactionPayload
-
   """Deletes a single `CreditTransaction` using a unique key."""
   deleteCreditTransaction(
     """
@@ -7211,14 +6424,6 @@ type Mutation {
     """
     input: DeleteCreditTransactionInput!
   ): DeleteCreditTransactionPayload
-
-  """Deletes a single `Supplier` using its globally unique id."""
-  deleteSupplierById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSupplierByIdInput!
-  ): DeleteSupplierPayload
 
   """Deletes a single `Supplier` using a unique key."""
   deleteSupplier(
@@ -7228,16 +6433,6 @@ type Mutation {
     input: DeleteSupplierInput!
   ): DeleteSupplierPayload
 
-  """
-  Deletes a single `DocumentNumberingConfig` using its globally unique id.
-  """
-  deleteDocumentNumberingConfigById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteDocumentNumberingConfigByIdInput!
-  ): DeleteDocumentNumberingConfigPayload
-
   """Deletes a single `DocumentNumberingConfig` using a unique key."""
   deleteDocumentNumberingConfig(
     """
@@ -7245,14 +6440,6 @@ type Mutation {
     """
     input: DeleteDocumentNumberingConfigInput!
   ): DeleteDocumentNumberingConfigPayload
-
-  """Deletes a single `ChannelConnection` using its globally unique id."""
-  deleteChannelConnectionById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteChannelConnectionByIdInput!
-  ): DeleteChannelConnectionPayload
 
   """Deletes a single `ChannelConnection` using a unique key."""
   deleteChannelConnection(
@@ -7262,14 +6449,6 @@ type Mutation {
     input: DeleteChannelConnectionInput!
   ): DeleteChannelConnectionPayload
 
-  """Deletes a single `Company` using its globally unique id."""
-  deleteCompanyById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCompanyByIdInput!
-  ): DeleteCompanyPayload
-
   """Deletes a single `Company` using a unique key."""
   deleteCompany(
     """
@@ -7277,14 +6456,6 @@ type Mutation {
     """
     input: DeleteCompanyInput!
   ): DeleteCompanyPayload
-
-  """Deletes a single `Person` using its globally unique id."""
-  deletePersonById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePersonByIdInput!
-  ): DeletePersonPayload
 
   """Deletes a single `Person` using a unique key."""
   deletePerson(
@@ -7294,14 +6465,6 @@ type Mutation {
     input: DeletePersonInput!
   ): DeletePersonPayload
 
-  """Deletes a single `Invoice` using its globally unique id."""
-  deleteInvoiceById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteInvoiceByIdInput!
-  ): DeleteInvoicePayload
-
   """Deletes a single `Invoice` using a unique key."""
   deleteInvoice(
     """
@@ -7309,14 +6472,6 @@ type Mutation {
     """
     input: DeleteInvoiceInput!
   ): DeleteInvoicePayload
-
-  """Deletes a single `QuoteLineItem` using its globally unique id."""
-  deleteQuoteLineItemById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteLineItemByIdInput!
-  ): DeleteQuoteLineItemPayload
 
   """Deletes a single `QuoteLineItem` using a unique key."""
   deleteQuoteLineItem(
@@ -7326,14 +6481,6 @@ type Mutation {
     input: DeleteQuoteLineItemInput!
   ): DeleteQuoteLineItemPayload
 
-  """Deletes a single `Product` using its globally unique id."""
-  deleteProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductByIdInput!
-  ): DeleteProductPayload
-
   """Deletes a single `Product` using a unique key."""
   deleteProduct(
     """
@@ -7341,14 +6488,6 @@ type Mutation {
     """
     input: DeleteProductInput!
   ): DeleteProductPayload
-
-  """Deletes a single `Quote` using its globally unique id."""
-  deleteQuoteById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteQuoteByIdInput!
-  ): DeleteQuotePayload
 
   """Deletes a single `Quote` using a unique key."""
   deleteQuote(

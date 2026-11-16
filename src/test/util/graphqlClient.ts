@@ -20,12 +20,19 @@ export interface CreateTestGraphQLClientOptions {
 	pool: Pool;
 	db: TestDatabase["db"];
 	observer?: Observer | null;
+	/**
+	 * The caller's organizations. Defaults to `["*"]` (trusted service scope)
+	 * so functional tests exercise behavior, not authorization; authorization
+	 * tests pass the caller's real memberships
+	 */
+	organizationIds?: string[];
 }
 
 export const createTestGraphQLClient = (
 	options: CreateTestGraphQLClientOptions,
 ): GraphQLTestClient => {
-	const { pool, db, observer = null } = options;
+	const { pool, db, observer = null, organizationIds = ["*"] } = options;
+	const isService = organizationIds.includes("*");
 
 	const withPgClient = createWithPgClient({ pool });
 
@@ -36,8 +43,16 @@ export const createTestGraphQLClient = (
 		context: async () => ({
 			db,
 			observer,
+			organizationIds: observer ? organizationIds : [],
 			withPgClient,
-			pgSettings: {},
+			pgSettings: observer
+				? isService
+					? { "app.service_auth": "true", "app.organization_ids": "{}" }
+					: {
+							"app.service_auth": "false",
+							"app.organization_ids": `{${organizationIds.join(",")}}`,
+						}
+				: { "app.organization_ids": "{}" },
 			pgSubscriber: null,
 			request: new Request("http://localhost:4001/graphql"),
 		}),

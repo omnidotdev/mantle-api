@@ -86,9 +86,7 @@ interface EtsyListing {
   images: EtsyImage[];
 }
 
-async function fetchListingImages(
-  listingId: number,
-): Promise<EtsyImage[]> {
+async function fetchListingImages(listingId: number): Promise<EtsyImage[]> {
   const data = await fetchJson<{ results: EtsyImage[] }>(
     `${ETSY_API_BASE}/listings/${listingId}/images`,
   );

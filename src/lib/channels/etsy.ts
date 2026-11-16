@@ -1,5 +1,4 @@
 import type { SelectChannelConnection } from "lib/db/schema/channelConnection.table";
-
 import type { ChannelListing, ChannelProvider, ChannelUpdate } from "./types";
 
 const ETSY_API_BASE = "https://openapi.etsy.com/v3/application";

@@ -3,6 +3,10 @@ import { describe, expect, test } from "bun:test";
 import { companyTable, documentNumberingConfigTable } from "lib/db/schema";
 import { setupTestContext } from "test/setup/testContext";
 
+// Writes need an authenticated caller; this one acts with trusted service
+// scope so the test exercises behavior, not authorization
+const SERVICE_OBSERVER = { id: "test-service", name: "Test" };
+
 interface GenerateDocumentNumberData {
 	generateDocumentNumber?: { documentNumber?: string };
 }
@@ -27,7 +31,7 @@ describe("generateDocumentNumber per-client overrides", () => {
 	};
 
 	const generate = (organizationId: string, companyId?: string) =>
-		ctx.graphql.execute<GenerateDocumentNumberData>(GENERATE, {
+		ctx.graphqlAs(SERVICE_OBSERVER).execute<GenerateDocumentNumberData>(GENERATE, {
 			input: { organizationId, documentType: "invoice", companyId },
 		});
 
