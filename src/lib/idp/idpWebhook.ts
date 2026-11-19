@@ -22,7 +22,7 @@ const verifySignature = (
   }
 };
 
-export interface IdpWebhookDeps {
+interface IdpWebhookDeps {
   /** Database client, defaults to the production pool */
   db?: typeof dbPool;
   /**

@@ -15,7 +15,7 @@ import {
 } from "lib/db/schema";
 
 /** Rows deleted per table */
-export type OrganizationDeletionCounts = Record<string, number>;
+type OrganizationDeletionCounts = Record<string, number>;
 
 /**
  * Delete everything Mantle keeps for a deleted workspace (Gatekeeper
