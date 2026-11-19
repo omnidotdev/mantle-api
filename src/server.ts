@@ -25,6 +25,7 @@ import graphilePreset from "lib/config/graphile.config";
 import { dbPool, pgPool } from "lib/db/db";
 import createGraphqlContext from "lib/graphql/createGraphqlContext";
 import { armorPlugin, authenticationPlugin } from "lib/graphql/plugins";
+import idpWebhook from "lib/idp/idpWebhook";
 import { maintenanceMiddleware } from "lib/middleware/maintenance";
 
 const commit = (() => {
@@ -75,7 +76,9 @@ const app = new Elysia()
         timestamp: Date.now(),
       };
     }
-  });
+  })
+  // Gatekeeper identity events (a deleted workspace's data goes with it)
+  .use(idpWebhook);
 
 const { schema } = await makeSchema(graphilePreset);
 
