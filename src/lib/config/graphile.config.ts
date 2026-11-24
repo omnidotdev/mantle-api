@@ -44,7 +44,6 @@ const graphilePreset: GraphileConfig.Preset = {
     OrgMutationGuardPlugin,
     PlanLimitsPlugin,
     ValidatePaymentLinkPlugin,
-    EventEmissionPlugin,
     GenerateDocumentNumberPlugin,
     InvoicePdfPlugin,
     InventoryAdjustmentPlugin,
@@ -55,6 +54,9 @@ const graphilePreset: GraphileConfig.Preset = {
     IssueCreditPlugin,
     ConvertQuoteToInvoicePlugin,
     WorkspacePlanPlugin,
+    // Last, so it wraps every other mutation plugin: events are emitted only
+    // after all of their side effects succeed, with the final row state
+    EventEmissionPlugin,
   ],
   schema: {
     // Relay node-id update/delete variants have no rowId for the mutation
