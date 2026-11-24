@@ -1,15 +1,20 @@
 import { useGenericAuth } from "@envelop/generic-auth";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import { AUTH_JWKS_URL, SERVICE_KEY } from "lib/config/env.config";
+import {
+  OMNI_CLAIMS_ORGANIZATIONS,
+  resolveOrganizationIds,
+  toPgTextArray,
+} from "lib/auth/workspaceClaims";
+import {
+  AUTH_JWKS_URL,
+  SERVICE_KEY,
+  personalWorkspaceFallback,
+} from "lib/config/env.config";
 
 import type { ResolveUserFn } from "@envelop/generic-auth";
 import type { JWTPayload } from "jose";
 import type { GraphQLContext } from "lib/graphql/createGraphqlContext";
-
-/** Claim key for organization claims in JWT. */
-const OMNI_CLAIMS_ORGANIZATIONS =
-  "https://manifold.omni.dev/@omni/claims/organizations";
 
 interface OrganizationClaim {
   id: string;
@@ -89,14 +94,14 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
     const claims = payload as MantleJWTPayload;
 
     // Extract organization IDs from JWT claims
-    const orgClaims = claims[OMNI_CLAIMS_ORGANIZATIONS];
-    const orgIds =
-      orgClaims && Array.isArray(orgClaims) ? orgClaims.map((o) => o.id) : [];
+    const orgIds = resolveOrganizationIds(claims, {
+      personalFallback: personalWorkspaceFallback,
+    });
 
     (ctx as GraphQLContext).organizationIds = orgIds;
     (ctx as GraphQLContext).pgSettings = {
       "app.user_id": claims.sub,
-      "app.organization_ids": `{${orgIds.join(",")}}`,
+      "app.organization_ids": toPgTextArray(orgIds),
     };
 
     return {

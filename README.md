@@ -1,101 +1,74 @@
-# Mantle API
+# 🌋 Mantle API
 
-GraphQL API server for [Mantle](https://mantle.omni.dev), powered by [Elysia](https://elysiajs.com).
+GraphQL API for [Mantle](https://mantle.omni.dev), the Omni business operations suite. Built with [Elysia](https://elysiajs.com), [PostGraphile](https://postgraphile.org), and [Drizzle](https://orm.drizzle.team).
 
-## Features
+Product documentation lives at [docs.omni.dev](https://docs.omni.dev/products/mantle). To run the whole stack (database, API, and app) together, see the [Mantle metarepo](https://github.com/omnidotdev/mantle-stack).
 
-- **Modern Stack**: Built with [Bun](https://bun.sh), [Elysia](https://elysiajs.com), and TypeScript for fast development and runtime performance
-- **Powerful GraphQL API**:
-  - Integration with [PostGraphile](https://postgraphile.org) for auto-generated GraphQL APIs from PostgreSQL schema
-  - [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server) for flexible GraphQL server setup and easy access to [Envelop](https://the-guild.dev/graphql/envelop) plugin ecosystem
-  - [Grafast](https://grafast.org) for efficient GraphQL execution (query planning)
-  - [Relay](https://relay.dev/docs/guides/graphql-server-specification) specification compliance
-  - [Connection filter plugin](https://github.com/graphile-contrib/postgraphile-plugin-connection-filter) for advanced filtering
-  - [Simplify inflection](https://github.com/graphile/simplify-inflection) for cleaner schema naming
-  - [Aggregate plugin](https://github.com/graphile/pg-aggregates) for aggregate queries
-  - No [N+1 problem](https://hygraph.com/blog/graphql-n-1-problem)
-- **Security**:
-  - [GraphQL Armor](https://escape.tech/graphql-armor) for securing GraphQL endpoints with operation complexity limits, depth limits, and more
-  - Schema-wide perimeter authentication support via [`useGenericAuth`](https://the-guild.dev/graphql/envelop/plugins/use-generic-auth)
-  - JWT validation with remote JWKS support via [jose](https://github.com/panva/jose)
-  - CORS with configurable allowed origins
-  - GraphQL schema introspection disabled in production environments
-- **Optimal Performance**:
-  - GraphQL parser and validation caching via Envelop plugins
-  - PostgreSQL connection pooling
-  - Optimized GraphQL execution with Grafast
-- **Database Management**:
-  - [Drizzle ORM](https://orm.drizzle.team) for type-safe database operations
-  - Automated migrations with `drizzle-kit`
-  - Database seeding with [drizzle-seed](https://orm.drizzle.team/docs/seed)
-  - [Drizzle Studio](https://orm.drizzle.team/drizzle-studio) for visual database management
-- **Observability**:
-  - [OpenTelemetry](https://opentelemetry.io) integration for tracing and logging
-  - [Unleash](https://www.getunleash.io) feature flags
-  - Health check endpoints (`/health`, `/ready`) for container orchestration
-  - Graceful shutdown handling (SIGTERM/SIGINT)
-- **Developer Experience**:
-  - Hot reloading during development
-  - Code quality with [Biome](https://biomejs.dev) for linting and formatting
-  - Git hooks with [Husky](https://typicode.github.io/husky)
-  - TypeScript strict mode with comprehensive type safety
-  - [Knip](https://knip.dev) for unused dependency detection
-  - Automated updates with [Renovate](https://docs.renovatebot.com)
-  - Easy spin up with [Tilt](https://tilt.dev)
+## Prerequisites
+
+- [Bun](https://bun.sh)
+- [PostgreSQL](https://www.postgresql.org) (or [Docker](https://www.docker.com) to run it in a container)
+- [mkcert](https://github.com/FiloSottile/mkcert), for the local TLS certificate the dev server serves over HTTPS
 
 ## Local Development
 
-First, `cp .env.local.template .env.local` and fill in the values.
+1. Copy the environment template and fill in the values:
 
-### Building and Running
+   ```sh
+   cp .env.local.template .env.local
+   ```
 
-Run `tilt up`, or:
+   `DATABASE_URL` is required. `AUTH_JWKS_URL` points at the identity provider's JWKS endpoint; without it, every request is anonymous. Optional integrations (billing, events, feature flags, workspace deletion) log a warning on boot and stay disabled when their variables are unset.
 
-Install dependencies:
+2. Generate the local TLS certificate (`key.pem` and `cert.pem` in the repository root):
 
-```sh
-bun install
-```
+   ```sh
+   mkcert -key-file key.pem -cert-file cert.pem localhost
+   ```
 
-Set up the database (only required once, to create the database):
+3. Install dependencies, create the database, and run migrations:
 
-```sh
-bun db:setup
-```
+   ```sh
+   bun install
+   bun db:setup
+   bun db:migrate
+   ```
 
-Run database migrations:
+4. Start the dev server (or run `tilt up`):
 
-```sh
-bun db:migrate
-```
+   ```sh
+   bun dev
+   ```
 
-Run the dev server:
+The API serves GraphQL at `https://localhost:4000/graphql`.
 
-```sh
-bun dev
-```
+## Diagnostics
 
-### Database Scripts
+- `GET /health` reports liveness and the running commit
+- `GET /ready` checks the database connection and returns `503` when it is unreachable
+- Missing optional configuration is reported on boot as `<VAR> not set, <feature> disabled`
 
-| Script | Description |
-|--------|-------------|
-| `bun db:setup` | Create the database (first-time setup) |
-| `bun db:generate` | Generate migration files from schema changes |
-| `bun db:migrate` | Run pending migrations |
-| `bun db:migrate:drop` | Drop a migration |
-| `bun db:pull` | Introspect existing database schema |
-| `bun db:push` | Push schema changes directly (dev only) |
-| `bun db:seed` | Seed database with test data |
+## Common Commands
+
+| Command | Description |
+|---------|-------------|
+| `bun dev` | Start the dev server with hot reloading |
+| `bun test` | Run the test suite (starts a disposable PostgreSQL container) |
+| `bun check` | Lint and format check with Biome |
+| `bun knip` | Find unused files, exports, and dependencies |
+| `bun db:generate` | Generate a migration from schema changes |
+| `bun db:migrate` | Apply pending migrations and regenerate the GraphQL schema |
 | `bun db:studio` | Open Drizzle Studio |
+| `bun graphql:generate` | Regenerate `schema.graphql` from the database |
 
 ## Docker
 
-Build and run with Docker:
-
 ```sh
 docker build -t mantle-api .
-docker run -p 4000:4000 mantle-api
+docker run -p 4000:4000 -e DATABASE_URL=... mantle-api
 ```
+
+Migrations run on boot.
 
 ## License
 

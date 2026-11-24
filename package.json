@@ -6,6 +6,7 @@
   "main": "build/server.js",
   "module": "build/server.js",
   "type": "module",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "release": "changeset publish",
     "dev": "NODE_ENV=development GRAPHILE_ENV=development bun run --watch src/server.ts",
@@ -23,7 +24,6 @@
     "db:migrate:drop": "bun --env-file .env.local drizzle-kit drop --config src/lib/config/drizzle.config.ts",
     "db:pull": "bun --env-file .env.local drizzle-kit introspect --config src/lib/config/drizzle.config.ts",
     "db:push": "bun --env-file .env.local drizzle-kit push --config src/lib/config/drizzle.config.ts",
-    "db:seed": "NODE_ENV=development bun run --env-file .env.local src/scripts/db/seedDatabase.ts",
     "db:studio": "bun --env-file .env.local drizzle-kit studio --config src/lib/config/drizzle.config.ts",
     "db:up": "bun --env-file .env.local drizzle-kit up --config src/lib/config/drizzle.config.ts",
     "graphql:generate": "GRAPHILE_ENV=development bun run --env-file .env.local src/scripts/generateGraphqlSchema.ts",
