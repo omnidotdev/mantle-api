@@ -8,6 +8,9 @@ export const {
   DATABASE_URL,
   CORS_ALLOWED_ORIGINS,
   AUTH_JWKS_URL,
+  // Gatekeeper userinfo, for the caller's workspace roles (access tokens carry
+  // workspace ids only). Defaults to /oauth2/userinfo on the JWKS host
+  AUTH_USERINFO_URL,
   GRAPHQL_MAX_COMPLEXITY_COST = "5000",
   UNLEASH_SERVER_API_URL,
   UNLEASH_SERVER_API_TOKEN,

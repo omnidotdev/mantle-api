@@ -123,6 +123,39 @@ export const assertWorkspaceAdmin = async (
     throw forbidden();
 };
 
+/**
+ * Fill in the caller's role in each workspace from a richer source (userinfo)
+ * when the token's claim lists workspace ids only. Membership never changes:
+ * a workspace userinfo lists but the token does not is ignored, and a failed
+ * lookup leaves the roles empty, so admin-only actions fail closed
+ */
+export const withHydratedRoles = async (
+  claims: OrganizationClaim[],
+  hydrate?: () => Promise<Array<{ id: string; roles?: string[] }> | undefined>,
+): Promise<OrganizationClaim[]> => {
+  if (!hydrate || claims.every((org) => org.roles.length > 0)) return claims;
+
+  let rich: Array<{ id: string; roles?: string[] }> | undefined;
+  try {
+    rich = await hydrate();
+  } catch (err) {
+    console.warn(
+      "[auth] workspace role lookup failed:",
+      err instanceof Error ? err.message : err,
+    );
+  }
+  if (!rich) return claims;
+
+  return claims.map((org) => {
+    if (org.roles.length > 0) return org;
+    const roles = rich.find((r) => r.id === org.id)?.roles;
+
+    return Array.isArray(roles)
+      ? { ...org, roles: roles.filter((r) => typeof r === "string") }
+      : org;
+  });
+};
+
 /** Workspaces in which the claims make the caller an owner or admin */
 export const adminOrganizationIds = (claims: OrganizationClaim[]): string[] =>
   claims
