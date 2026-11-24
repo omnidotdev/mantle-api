@@ -18,7 +18,12 @@ export const {
   // Shared secret Vortex signs Gatekeeper identity events (workspace deletion)
   // with, for POST /webhooks/idp
   IDP_WEBHOOK_SECRET,
+  // Self-host with a non-Omni OpenID Connect provider: give a caller whose
+  // token carries no workspace claims a personal workspace ("true" to enable)
+  PERSONAL_WORKSPACE_FALLBACK,
 } = process.env;
+
+export const personalWorkspaceFallback = PERSONAL_WORKSPACE_FALLBACK === "true";
 
 export const isDevEnv = NODE_ENV === "development",
   isProdEnv = NODE_ENV === "production";
@@ -34,3 +39,7 @@ if (!IDP_WEBHOOK_SECRET)
   );
 if (!UNLEASH_SERVER_API_URL)
   console.warn("UNLEASH_SERVER_API_URL not set, feature flags disabled");
+if (personalWorkspaceFallback)
+  console.warn(
+    "PERSONAL_WORKSPACE_FALLBACK enabled, callers without workspace claims get a personal workspace",
+  );

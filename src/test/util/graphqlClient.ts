@@ -4,6 +4,8 @@ import { useGrafast } from "grafast/envelop";
 import { createYoga } from "graphql-yoga";
 import { createWithPgClient } from "postgraphile/adaptors/pg";
 
+import { toPgTextArray } from "lib/auth/workspaceClaims";
+
 import type { ExecutionResult } from "graphql";
 import type { Observer } from "lib/graphql/plugins/authentication.plugin";
 import type { Pool } from "pg";
@@ -50,7 +52,7 @@ export const createTestGraphQLClient = (
 					? { "app.service_auth": "true", "app.organization_ids": "{}" }
 					: {
 							"app.service_auth": "false",
-							"app.organization_ids": `{${organizationIds.join(",")}}`,
+							"app.organization_ids": toPgTextArray(organizationIds),
 						}
 				: { "app.organization_ids": "{}" },
 			pgSubscriber: null,
