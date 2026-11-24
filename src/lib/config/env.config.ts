@@ -11,6 +11,12 @@ export const {
   // Gatekeeper userinfo, for the caller's workspace roles (access tokens carry
   // workspace ids only). Defaults to /oauth2/userinfo on the JWKS host
   AUTH_USERINFO_URL,
+  // Accepted access token audience(s), comma-separated: the API resource the
+  // identity provider mints Mantle's tokens for (Omni: the Mantle API URL).
+  // Unset accepts a token minted for any audience the provider signs
+  AUTH_AUDIENCE,
+  // Expected access token issuer. Unset accepts any issuer the JWKS signs for
+  AUTH_ISSUER,
   GRAPHQL_MAX_COMPLEXITY_COST = "5000",
   UNLEASH_SERVER_API_URL,
   UNLEASH_SERVER_API_TOKEN,
@@ -61,6 +67,10 @@ if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === "0") {
 }
 
 // Startup warnings for optional integrations
+if (AUTH_JWKS_URL && !AUTH_AUDIENCE)
+  console.warn(
+    "AUTH_AUDIENCE not set, access tokens minted for any audience are accepted (set it to this API's resource)",
+  );
 if (!BILLING_BASE_URL)
   console.warn(
     "BILLING_BASE_URL not set, billing disabled (no plan limits apply)",

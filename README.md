@@ -18,7 +18,7 @@ Product documentation lives at [docs.omni.dev](https://docs.omni.dev/products/ma
    cp .env.local.template .env.local
    ```
 
-   `DATABASE_URL` is required. `AUTH_JWKS_URL` points at the identity provider's JWKS endpoint; without it, every request is anonymous. Optional integrations (billing, events, feature flags, workspace deletion) log a warning on boot and stay disabled when their variables are unset.
+   `DATABASE_URL` is required. `AUTH_JWKS_URL` points at the identity provider's JWKS endpoint; without it, every request is anonymous. Set `AUTH_AUDIENCE` to the resource the provider mints this API's tokens for, so a token minted for another API is refused. Optional integrations (billing, events, feature flags, workspace deletion) log a warning on boot and stay disabled when their variables are unset.
 
 2. Generate the local TLS certificate (`key.pem` and `cert.pem` in the repository root):
 

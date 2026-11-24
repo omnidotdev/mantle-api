@@ -19,7 +19,8 @@ import type { SchemaSurfacePolicy } from "@omnidotdev/providers/graphql-surface"
  * OrganizationScopeNestedPlugin (relations). Every generated create, update and
  * delete goes through OrgMutationGuardPlugin, matched by the generated-mutation
  * scope: the caller must belong to the row's workspace, to the workspace it
- * creates into or moves to, and to every row it references. The Relay node-id
+ * creates into, and every row it references must be in that same workspace
+ * (a record's workspace is set once). The Relay node-id
  * variants and root `node` are removed. A new root field fails here until it
  * is reviewed
  */
@@ -51,6 +52,8 @@ const POLICY: SchemaSurfacePolicy = {
     issueCredit: "member of the credited workspace (assertWorkspaceAccess)",
     applyInvoiceCredit: "member of the invoice's workspace",
     generateDocumentNumber: "member of the workspace",
+    convertQuoteToInvoice:
+      "member of the quote's workspace (assertWorkspaceAccess), monthly invoice limit",
   },
 };
 

@@ -3025,54 +3025,6 @@ input CompanyMemberInput {
   createdAt: Datetime
 }
 
-"""The output of our create `CreditTransaction` mutation."""
-type CreateCreditTransactionPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `CreditTransaction` that was created by this mutation."""
-  creditTransaction: CreditTransaction
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `CreditTransaction`. May be used by Relay 1."""
-  creditTransactionEdge(
-    """The method to use when ordering `CreditTransaction`."""
-    orderBy: [CreditTransactionOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): CreditTransactionEdge
-}
-
-"""All input for the create `CreditTransaction` mutation."""
-input CreateCreditTransactionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `CreditTransaction` to be created by this mutation."""
-  creditTransaction: CreditTransactionInput!
-}
-
-"""An input for mutations affecting `CreditTransaction`"""
-input CreditTransactionInput {
-  rowId: UUID
-  organizationId: String!
-  currency: String
-  amount: BigFloat!
-  kind: String!
-  invoiceId: UUID
-  paymentId: UUID
-  note: String
-  createdAt: Datetime
-}
-
 """The output of our create `DocumentNumberingConfig` mutation."""
 type CreateDocumentNumberingConfigPayload {
   """
@@ -3806,7 +3758,6 @@ Represents an update to a `ChannelConnection`. Fields that are set will be updat
 """
 input ChannelConnectionPatch {
   rowId: UUID
-  organizationId: String
   provider: String
   status: String
   externalShopId: String
@@ -3860,7 +3811,6 @@ Represents an update to a `Company`. Fields that are set will be updated.
 """
 input CompanyPatch {
   rowId: UUID
-  organizationId: String
   name: String
   website: String
   industry: String
@@ -3927,59 +3877,6 @@ input CompanyMemberPatch {
   createdAt: Datetime
 }
 
-"""The output of our update `CreditTransaction` mutation."""
-type UpdateCreditTransactionPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `CreditTransaction` that was updated by this mutation."""
-  creditTransaction: CreditTransaction
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `CreditTransaction`. May be used by Relay 1."""
-  creditTransactionEdge(
-    """The method to use when ordering `CreditTransaction`."""
-    orderBy: [CreditTransactionOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): CreditTransactionEdge
-}
-
-"""All input for the `updateCreditTransaction` mutation."""
-input UpdateCreditTransactionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-
-  """
-  An object where the defined keys will be set on the `CreditTransaction` being updated.
-  """
-  patch: CreditTransactionPatch!
-}
-
-"""
-Represents an update to a `CreditTransaction`. Fields that are set will be updated.
-"""
-input CreditTransactionPatch {
-  rowId: UUID
-  organizationId: String
-  currency: String
-  amount: BigFloat
-  kind: String
-  invoiceId: UUID
-  paymentId: UUID
-  note: String
-  createdAt: Datetime
-}
-
 """The output of our update `DocumentNumberingConfig` mutation."""
 type UpdateDocumentNumberingConfigPayload {
   """
@@ -4023,7 +3920,6 @@ Represents an update to a `DocumentNumberingConfig`. Fields that are set will be
 """
 input DocumentNumberingConfigPatch {
   rowId: UUID
-  organizationId: String
   documentType: String
   prefix: String
   separator: String
@@ -4129,7 +4025,6 @@ Represents an update to a `Invoice`. Fields that are set will be updated.
 """
 input InvoicePatch {
   rowId: UUID
-  organizationId: String
   invoiceNumber: String
   companyId: UUID
   contactId: UUID
@@ -4245,7 +4140,6 @@ Represents an update to a `OrganizationSetting`. Fields that are set will be upd
 """
 input OrganizationSettingPatch {
   rowId: UUID
-  organizationId: String
   accentColor: String
   createdAt: Datetime
   updatedAt: Datetime
@@ -4358,7 +4252,6 @@ Represents an update to a `Person`. Fields that are set will be updated.
 """
 input PersonPatch {
   rowId: UUID
-  organizationId: String
   firstName: String
   lastName: String
   phone: String
@@ -4465,7 +4358,6 @@ Represents an update to a `Product`. Fields that are set will be updated.
 """
 input ProductPatch {
   rowId: UUID
-  organizationId: String
   name: String
   description: String
   sku: String
@@ -4585,7 +4477,6 @@ Represents an update to a `Quote`. Fields that are set will be updated.
 """
 input QuotePatch {
   rowId: UUID
-  organizationId: String
   quoteNumber: String
   companyId: UUID
   contactId: UUID
@@ -4721,7 +4612,6 @@ Represents an update to a `Supplier`. Fields that are set will be updated.
 """
 input SupplierPatch {
   rowId: UUID
-  organizationId: String
   name: String
   code: String
   contactEmail: String
@@ -4827,40 +4717,6 @@ type DeleteCompanyMemberPayload {
 
 """All input for the `deleteCompanyMember` mutation."""
 input DeleteCompanyMemberInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  rowId: UUID!
-}
-
-"""The output of our delete `CreditTransaction` mutation."""
-type DeleteCreditTransactionPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `CreditTransaction` that was deleted by this mutation."""
-  creditTransaction: CreditTransaction
-  deletedCreditTransactionId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """An edge for our `CreditTransaction`. May be used by Relay 1."""
-  creditTransactionEdge(
-    """The method to use when ordering `CreditTransaction`."""
-    orderBy: [CreditTransactionOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): CreditTransactionEdge
-}
-
-"""All input for the `deleteCreditTransaction` mutation."""
-input DeleteCreditTransactionInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -6182,14 +6038,6 @@ type Mutation {
     input: CreateCompanyMemberInput!
   ): CreateCompanyMemberPayload
 
-  """Creates a single `CreditTransaction`."""
-  createCreditTransaction(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateCreditTransactionInput!
-  ): CreateCreditTransactionPayload
-
   """Creates a single `DocumentNumberingConfig`."""
   createDocumentNumberingConfig(
     """
@@ -6317,14 +6165,6 @@ type Mutation {
     """
     input: UpdateCompanyMemberInput!
   ): UpdateCompanyMemberPayload
-
-  """Updates a single `CreditTransaction` using a unique key and a patch."""
-  updateCreditTransaction(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCreditTransactionInput!
-  ): UpdateCreditTransactionPayload
 
   """
   Updates a single `DocumentNumberingConfig` using a unique key and a patch.
@@ -6455,14 +6295,6 @@ type Mutation {
     """
     input: DeleteCompanyMemberInput!
   ): DeleteCompanyMemberPayload
-
-  """Deletes a single `CreditTransaction` using a unique key."""
-  deleteCreditTransaction(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCreditTransactionInput!
-  ): DeleteCreditTransactionPayload
 
   """Deletes a single `DocumentNumberingConfig` using a unique key."""
   deleteDocumentNumberingConfig(
