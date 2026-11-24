@@ -211,6 +211,20 @@
       "when": 1795502365045,
       "tag": "0029_clear_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1795505538616,
+      "tag": "0030_wealthy_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795505542153,
+      "tag": "0031_bright_forgotten_one",
+      "breakpoints": true
     }
   ]
 }

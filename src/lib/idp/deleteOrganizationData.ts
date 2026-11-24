@@ -6,6 +6,7 @@ import {
   companyTable,
   creditTransactionTable,
   documentNumberingConfigTable,
+  entitlementSnapshotTable,
   invoiceTable,
   organizationSettingsTable,
   personTable,
@@ -24,8 +25,8 @@ type OrganizationDeletionCounts = Record<string, number>;
  * and payments), document numbering, products (with their external links and
  * inventory adjustments), suppliers, companies and people (with their
  * memberships and external links), sales channel connections (and the
- * credentials they hold), its settings (including the workspace profile), and
- * its plan usage ledger.
+ * credentials they hold), its settings (including the workspace profile), its
+ * plan usage ledger, and its last known plan.
  *
  * The records are the workspace's own, kept on its behalf, so they go with it.
  * One transaction, ordered so no row is left pointing at a deleted one: a
@@ -51,6 +52,7 @@ export const deleteOrganizationData = async (
       ["channelConnections", channelConnectionTable],
       ["organizationSettings", organizationSettingsTable],
       ["usageEvents", usageEventTable],
+      ["entitlementSnapshots", entitlementSnapshotTable],
     ] as const;
 
     for (const [name, table] of steps) {
