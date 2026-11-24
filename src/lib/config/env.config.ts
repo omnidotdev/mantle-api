@@ -32,15 +32,33 @@ export const {
   // Shared secret Vortex signs Gatekeeper identity events (workspace deletion)
   // with, for POST /webhooks/idp
   IDP_WEBHOOK_SECRET,
-  // Self-host with a non-Omni OpenID Connect provider: give a caller whose
-  // token carries no workspace claims a personal workspace ("true" to enable)
-  PERSONAL_WORKSPACE_FALLBACK,
 } = process.env;
 
-export const personalWorkspaceFallback = PERSONAL_WORKSPACE_FALLBACK === "true";
+/**
+ * Self-host with a non-Omni OpenID Connect provider: give a caller whose token
+ * carries no workspace claims a personal workspace ("true" to enable)
+ */
+export const personalWorkspaceFallback =
+  process.env.PERSONAL_WORKSPACE_FALLBACK === "true";
 
 export const isDevEnv = NODE_ENV === "development",
   isProdEnv = NODE_ENV === "production";
+
+// TLS certificate verification stays on outside development. A local stack
+// with self-signed certificates opts out explicitly with
+// NODE_TLS_REJECT_UNAUTHORIZED=0 in .env.local; production never honors it
+if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === "0") {
+  if (isDevEnv) {
+    console.warn(
+      "NODE_TLS_REJECT_UNAUTHORIZED=0, TLS certificate verification disabled (development only)",
+    );
+  } else {
+    delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    console.warn(
+      "NODE_TLS_REJECT_UNAUTHORIZED=0 ignored outside development, TLS certificate verification stays on",
+    );
+  }
+}
 
 // Startup warnings for optional integrations
 if (!BILLING_BASE_URL)

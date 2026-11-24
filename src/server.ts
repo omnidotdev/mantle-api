@@ -1,6 +1,3 @@
-// TODO remove after Tilt env reload
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 import { readFileSync } from "node:fs";
 
 import { cors } from "@elysiajs/cors";

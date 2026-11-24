@@ -4081,8 +4081,6 @@ Represents an update to a `InventoryAdjustment`. Fields that are set will be upd
 """
 input InventoryAdjustmentPatch {
   rowId: UUID
-  productId: UUID
-  quantityChange: Int
   reason: String
   referenceId: UUID
   createdAt: Datetime
