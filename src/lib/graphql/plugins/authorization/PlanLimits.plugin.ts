@@ -28,9 +28,25 @@ type Query = (
   values: unknown[],
 ) => Promise<readonly Record<string, number>[]>;
 
+/** The request's database pool, which autocommits each statement */
+interface Db {
+  $client: {
+    query: (
+      text: string,
+      values: unknown[],
+    ) => Promise<{ rows: Record<string, number>[] }>;
+  };
+}
+
 /** One limited count: how to measure it, and how to undo an over-limit write */
 interface LimitedCount {
   key: LimitKey;
+  /**
+   * Advisory lock that serializes writes to this count in one workspace. Every
+   * path that adds to the count takes the same lock (convertQuoteToInvoice
+   * takes the invoice one), so no two of them re-count at once
+   */
+  lockKey: (organizationId: string) => string;
   /** Current usage, before the write */
   count: (query: Query, organizationId: string) => Promise<number>;
   /** Usage after the write, recording it where the count needs a record */
@@ -52,6 +68,7 @@ const MONTH_START =
  */
 const CONTACTS: LimitedCount = {
   key: "max_contacts",
+  lockKey: (organizationId) => `contact_created:${organizationId}`,
   count: async (query, organizationId) =>
     (
       await query(
@@ -98,6 +115,7 @@ export const usedInvoices = async (query: Query, organizationId: string) => {
 
 const MONTHLY_INVOICES: LimitedCount = {
   key: "max_invoices_per_month",
+  lockKey: (organizationId) => `invoice_created:${organizationId}`,
   count: usedInvoices,
   record: async (query, organizationId) => {
     await query(
@@ -140,14 +158,7 @@ export const limitReached = (key: LimitKey, limit: number) => {
  */
 const precheck = async (
   limited: LimitedCount,
-  db: {
-    $client: {
-      query: (
-        text: string,
-        values: unknown[],
-      ) => Promise<{ rows: Record<string, number>[] }>;
-    };
-  },
+  db: Db,
   organizationIds: unknown,
   organizationId: unknown,
 ): Promise<number | null> => {
@@ -172,38 +183,58 @@ const precheck = async (
 };
 
 /**
- * After the write: record it and re-count. Two concurrent writes can both pass
- * the precheck; whichever pushes the count over the limit is undone, so the
- * limit holds under concurrency
+ * After the write: record it and re-count. Concurrent writes can all pass the
+ * precheck (each counts before any of them inserts), so the re-count is what
+ * holds the limit.
+ *
+ * The insert has already committed in its own transaction; this runs in
+ * another. A per-workspace, per-limit advisory lock serializes the re-counts,
+ * so each sees every row committed before it, and a write whose re-count
+ * exceeds the limit is undone in this same transaction. The callback returns
+ * the refused limit instead of throwing: a throw here rolls this transaction
+ * back, undo included, leaving the over-limit row in place. `refuse` reports
+ * it afterwards. Under contention this can refuse a write that would have
+ * fit, never admit one that does not
  */
 const postcheck =
-  (limited: LimitedCount, isCreate: boolean) =>
+  (limited: LimitedCount) =>
   async (
     pgClient: PgClient,
     input: { rowId: unknown; organizationId: unknown; limit: unknown },
-  ): Promise<void> => {
+  ): Promise<number | null> => {
     const { rowId, organizationId, limit } = input;
-    if (typeof rowId !== "string" || typeof organizationId !== "string") return;
+    if (typeof rowId !== "string" || typeof organizationId !== "string")
+      return null;
 
     const query: Query = async (text, values) =>
       (await pgClient.query<Record<string, number>>({ text, values })).rows;
+    await query("SELECT pg_advisory_xact_lock(hashtext($1))", [
+      limited.lockKey(organizationId),
+    ]);
     const used = await limited.record(query, organizationId, rowId);
 
-    if (typeof limit === "number" && isCreate && used > limit) {
+    if (typeof limit === "number" && used > limit) {
       await limited.undo(query, organizationId, rowId);
-      throw limitReached(limited.key, limit);
+      return limit;
     }
+
+    return null;
+  };
+
+/** Fail the mutation when the post-check undid the write */
+const refuse =
+  (limited: LimitedCount) =>
+  (refusedLimit: unknown): void => {
+    if (typeof refusedLimit === "number")
+      throw limitReached(limited.key, refusedLimit);
   };
 
 /**
- * Wrap a create (or an update that can move a row into another workspace) so
- * the plan limit is checked before the write and, for a create, again after it
+ * Wrap a create so the plan limit is checked before the write and again after
+ * it. Updates never add to a count: a record's workspace cannot change
+ * (OrgMutationGuardPlugin)
  */
-const withLimit = (
-  limited: LimitedCount,
-  inputPath: string[],
-  op: "create" | "update",
-): PlanWrapperFn =>
+const withLimit = (limited: LimitedCount, inputPath: string[]): PlanWrapperFn =>
   EXPORTABLE(
     (
       context,
@@ -211,9 +242,9 @@ const withLimit = (
       sideEffectWithPgClient,
       precheck,
       postcheck,
+      refuse,
       limited,
       inputPath,
-      op,
     ): PlanWrapperFn =>
       (plan, _, fieldArgs: FieldArgs) => {
         const $values = fieldArgs.getRaw(inputPath);
@@ -225,25 +256,26 @@ const withLimit = (
           ([values, organizationIds, db]) =>
             precheck(
               limited,
-              db as unknown as Parameters<typeof precheck>[1],
+              db as Db,
               organizationIds,
               (values as Record<string, unknown> | null)?.organizationId,
             ),
         );
 
         const $payload = plan();
-        if (!$payload || op === "update") return $payload;
+        if (!$payload) return $payload;
         const $mutation = ($payload as unknown as PayloadStep).get("result");
 
-        sideEffectWithPgClient(
+        const $refused = sideEffectWithPgClient(
           $mutation.resource.executor,
           {
             rowId: $mutation.get("id"),
             organizationId: $mutation.get("organization_id"),
             limit: $limit,
           },
-          postcheck(limited, true),
+          postcheck(limited),
         );
+        sideEffect($refused, refuse(limited));
 
         return $payload;
       },
@@ -253,9 +285,9 @@ const withLimit = (
       sideEffectWithPgClient,
       precheck,
       postcheck,
+      refuse,
       limited,
       inputPath,
-      op,
     ],
   );
 
@@ -263,7 +295,7 @@ const withLimit = (
  * Enforce the Mantle plan limits from Aether (see lib/entitlements) on every
  * GraphQL path that adds to a limited count:
  *
- * - `max_contacts`: creating a person, or moving one into another workspace
+ * - `max_contacts`: creating a person
  * - `max_invoices_per_month`: creating an invoice (converting a quote into an
  *   invoice counts too; convertQuoteToInvoice checks it in its own transaction)
  *
@@ -274,9 +306,8 @@ const withLimit = (
  */
 const PlanLimitsPlugin = wrapPlans({
   Mutation: {
-    createPerson: withLimit(CONTACTS, ["input", "person"], "create"),
-    updatePerson: withLimit(CONTACTS, ["input", "patch"], "update"),
-    createInvoice: withLimit(MONTHLY_INVOICES, ["input", "invoice"], "create"),
+    createPerson: withLimit(CONTACTS, ["input", "person"]),
+    createInvoice: withLimit(MONTHLY_INVOICES, ["input", "invoice"]),
   },
 });
 

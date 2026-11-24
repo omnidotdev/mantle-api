@@ -29,7 +29,7 @@ const InvoicePdfPlugin = makeExtendSchemaPlugin({
             args: { invoiceId: string },
             context: GraphQLContext,
           ) => {
-            const { eq, asc } = await import("drizzle-orm");
+            const { and, eq, asc } = await import("drizzle-orm");
             const { dbPool } = await import("lib/db/db");
             const {
               invoiceTable,
@@ -77,7 +77,14 @@ const InvoicePdfPlugin = makeExtendSchemaPlugin({
                   await dbPool
                     .select()
                     .from(companyTable)
-                    .where(eq(companyTable.id, invoice.companyId))
+                    // Only the invoice's own workspace: a stale link to
+                    // another workspace's company must not render it
+                    .where(
+                      and(
+                        eq(companyTable.id, invoice.companyId),
+                        eq(companyTable.organizationId, invoice.organizationId),
+                      ),
+                    )
                 )[0] ?? null)
               : null;
 
@@ -86,7 +93,12 @@ const InvoicePdfPlugin = makeExtendSchemaPlugin({
                   await dbPool
                     .select()
                     .from(personTable)
-                    .where(eq(personTable.id, invoice.contactId))
+                    .where(
+                      and(
+                        eq(personTable.id, invoice.contactId),
+                        eq(personTable.organizationId, invoice.organizationId),
+                      ),
+                    )
                 )[0] ?? null)
               : null;
 

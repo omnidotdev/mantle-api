@@ -10,6 +10,8 @@ import {
 } from "lib/auth/workspaceClaims";
 import { adminOrganizationIds, withHydratedRoles } from "lib/authz";
 import {
+  AUTH_AUDIENCE,
+  AUTH_ISSUER,
   AUTH_JWKS_URL,
   AUTH_USERINFO_URL,
   SERVICE_KEY,
@@ -67,6 +69,20 @@ const claimedRoles = (raw: unknown, ids: string[]): OrganizationClaim[] => {
 };
 
 const jwks = AUTH_JWKS_URL ? createRemoteJWKSet(new URL(AUTH_JWKS_URL)) : null;
+
+/**
+ * Pin the token's audience (and issuer) when configured: the identity provider
+ * signs tokens for every product's API with the same keys, so without a pinned
+ * audience a token minted for another product, or another client, would act
+ * here with the caller's full workspace access
+ */
+const audiences = AUTH_AUDIENCE?.split(",")
+  .map((aud) => aud.trim())
+  .filter(Boolean);
+const verifyOptions = {
+  ...(audiences?.length ? { audience: audiences } : {}),
+  ...(AUTH_ISSUER ? { issuer: AUTH_ISSUER } : {}),
+};
 
 /**
  * Access tokens carry workspace ids only (Gatekeeper slims the claim), so the
@@ -131,7 +147,7 @@ const resolveUser: ResolveUserFn<Observer, GraphQLContext> = async (ctx) => {
   }
 
   try {
-    const { payload } = await jwtVerify(accessToken, jwks);
+    const { payload } = await jwtVerify(accessToken, jwks, verifyOptions);
     const claims = payload as MantleJWTPayload;
 
     // Workspace ids the token grants (never the service wildcard)

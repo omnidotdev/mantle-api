@@ -73,9 +73,12 @@ const ADMIN_TABLES: ReadonlySet<string> = new Set([
 
 /**
  * Input fields that point at another organization-owned row. Every one a
- * caller sets (on create or in a patch) must resolve to an organization the
- * caller belongs to, so a row can never be attached to another workspace's
- * company, invoice, product or contact
+ * caller sets (on create or in a patch) must resolve to the workspace the
+ * written row belongs to, so a row can never be attached to another
+ * workspace's company, invoice, product or contact. Membership alone is not
+ * enough: a caller in two workspaces could otherwise link one to the other,
+ * exposing the linked row to members of only the first (e.g. on the invoice
+ * document)
  */
 const REFERENCES: Record<string, string> = {
   companyId: "company",
@@ -175,12 +178,13 @@ const authorizeWrite = async ({
           : undefined) ?? {})
       : ((input.patch as Record<string, unknown> | undefined) ?? {});
 
+  let current: string | null = null;
   if (op !== "create") {
     // Only the primary-key variants are allowed: the node-id and unique-key
     // variants have no rowId to resolve
     const rowId = input.rowId;
     if (typeof rowId !== "string") throw denied();
-    const current = await orgOfRow(db, table, rowId);
+    current = await orgOfRow(db, table, rowId);
     // A missing row falls through to the mutation's own not-found result
     if (current !== null && !member(current)) throw denied();
     if (current) touched.add(current);
@@ -193,9 +197,9 @@ const authorizeWrite = async ({
     ) {
       throw denied();
     }
-    if (op === "update" && values.organizationId !== undefined) {
-      if (!member(values.organizationId as string)) throw denied();
-    }
+    // A record's workspace is set once (the patch type has no
+    // organizationId; this holds even if one were exposed again)
+    if (op === "update" && values.organizationId !== undefined) throw denied();
     if (typeof values.organizationId === "string")
       touched.add(values.organizationId);
   } else if (
@@ -205,11 +209,27 @@ const authorizeWrite = async ({
     throw denied();
   }
 
+  // The workspace the row belongs to after this write: its own (new)
+  // organizationId, else its (new) parent's, else where it already is
+  const parentRef =
+    ownership.kind === "child" ? values[ownership.parentKey] : undefined;
+  const target =
+    ownership.kind === "org"
+      ? typeof values.organizationId === "string"
+        ? values.organizationId
+        : current
+      : typeof parentRef === "string"
+        ? await orgOfRow(db, ownership.parentTable, parentRef)
+        : current;
+
+  // Nor can a child record move to a parent in another workspace
+  if (op === "update" && current !== null && target !== current) throw denied();
+
   for (const [key, refTable] of Object.entries(REFERENCES)) {
     const ref = values[key];
     if (typeof ref !== "string") continue;
     const refOrg = await orgOfRow(db, refTable, ref);
-    if (!member(refOrg)) throw denied();
+    if (!member(refOrg) || refOrg !== target) throw denied();
     if (refOrg) touched.add(refOrg);
   }
 

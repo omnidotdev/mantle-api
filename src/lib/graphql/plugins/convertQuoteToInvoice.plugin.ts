@@ -169,16 +169,22 @@ const ConvertQuoteToInvoicePlugin = makeExtendSchemaPlugin({
                   .max_invoices_per_month;
 
             const outcome = await withTransaction(async (query) => {
+              // The client and products are taken only from the quote's own
+              // workspace, so a stale link to another workspace's record is
+              // never copied onto (or printed on) the invoice
               const [quote] = await query<QuoteRow>(
                 `SELECT q.id, q.organization_id, q.status, q.converted_invoice_id,
-                        q.company_id, q.contact_id, q.client_name, q.client_email,
+                        c.id AS company_id, p.id AS contact_id,
+                        q.client_name, q.client_email,
                         q.notes, q.currency, q.tax_rate,
                         c.name AS company_name,
                         p.first_name AS contact_first_name,
                         p.last_name AS contact_last_name
                    FROM quote q
-                   LEFT JOIN company c ON c.id = q.company_id
-                   LEFT JOIN person p ON p.id = q.contact_id
+                   LEFT JOIN company c
+                     ON c.id = q.company_id AND c.organization_id = q.organization_id
+                   LEFT JOIN person p
+                     ON p.id = q.contact_id AND p.organization_id = q.organization_id
                   WHERE q.id = $1::uuid
                     FOR UPDATE OF q`,
                 [quoteId],
@@ -225,12 +231,15 @@ const ConvertQuoteToInvoicePlugin = makeExtendSchemaPlugin({
               );
 
               const lines = await query<QuoteLineRow>(
-                `SELECT id, description, quantity, unit_price, amount, pricing_type,
-                        hourly_rate, estimated_hours, product_id
-                   FROM quote_line_item
-                  WHERE quote_id = $1::uuid
-                  ORDER BY sort_order NULLS LAST, id`,
-                [quoteId],
+                `SELECT l.id, l.description, l.quantity, l.unit_price, l.amount,
+                        l.pricing_type, l.hourly_rate, l.estimated_hours,
+                        pr.id AS product_id
+                   FROM quote_line_item l
+                   LEFT JOIN product pr
+                     ON pr.id = l.product_id AND pr.organization_id = $2
+                  WHERE l.quote_id = $1::uuid
+                  ORDER BY l.sort_order NULLS LAST, l.id`,
+                [quoteId, organizationId],
               );
               const { lineItems, skipped } = quoteLinesToInvoiceLines(
                 lines.map((line) => ({
