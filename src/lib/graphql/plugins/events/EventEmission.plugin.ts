@@ -1,268 +1,273 @@
 import { EXPORTABLE } from "graphile-export";
-import { sideEffect } from "postgraphile/grafast";
+import { sideEffectWithPgClient } from "postgraphile/@dataplan/pg";
+import { object } from "postgraphile/grafast";
 import { wrapPlans } from "postgraphile/utils";
 
+import type { PgClient, PgExecutor } from "postgraphile/@dataplan/pg";
+import type { Step } from "postgraphile/grafast";
 import type { PlanWrapperFn } from "postgraphile/utils";
 
 /**
- * Emit a domain event. Lazily loads the provider to avoid capturing
- * a class instance in EXPORTABLE closures.
+ * Minimal shape of the CRUD mutation payload plan (`object({ result: $mutation })`)
+ * and the insert/update/delete step the written row's columns are read from
  */
-const emitEvent = EXPORTABLE(
-  () => (type: string, data: Record<string, unknown>, subject: string) => {
-    // Lazy import avoids EXPORTABLE serialization of class instances
-    import("lib/providers").then(({ events }) => {
-      void events.emit({ type, data, subject });
-    });
+interface MutationStep {
+  resource: { executor: PgExecutor };
+  get: (attr: string) => Step;
+}
+interface PayloadStep {
+  get: (key: "result") => MutationStep;
+}
+
+type Action = "created" | "updated" | "deleted";
+type Row = Record<string, unknown>;
+
+/**
+ * Event payload fields per entity: `[payload key, column]`. Values come from
+ * the mutation's RETURNING row, decoded (numerics and dates as strings).
+ * `id` and `organizationId` lead every payload; a payment row has no workspace
+ * of its own, so its `organizationId` and `currency` are read from its invoice
+ * (see {@link enrichPayment})
+ */
+const EVENT_FIELDS = {
+  company: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+  ],
+  person: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+  ],
+  documentNumberingConfig: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+  ],
+  // Fields MyFi needs to book invoices as journal entries
+  invoice: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+    ["companyId", "company_id"],
+    ["contactId", "contact_id"],
+    ["invoiceNumber", "invoice_number"],
+    ["status", "status"],
+    ["total", "total"],
+    ["currency", "currency"],
+    ["issueDate", "issue_date"],
+    ["dueDate", "due_date"],
+    ["paidAt", "paid_at"],
+    ["paymentReference", "payment_reference"],
+  ],
+  quote: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+    ["companyId", "company_id"],
+    ["contactId", "contact_id"],
+    ["quoteNumber", "quote_number"],
+    ["status", "status"],
+    ["total", "total"],
+    ["currency", "currency"],
+    ["validUntil", "valid_until"],
+    ["convertedInvoiceId", "converted_invoice_id"],
+  ],
+  // Per-payment facts so MyFi books partial and per-payment cash, not the
+  // whole invoice at once
+  payment: [
+    ["id", "id"],
+    ["invoiceId", "invoice_id"],
+    ["amount", "amount"],
+    ["paidAt", "paid_at"],
+    ["reference", "reference"],
+    ["method", "method"],
+  ],
+  // Catalog fields so Halo can build its commerce projection
+  product: [
+    ["id", "id"],
+    ["organizationId", "organization_id"],
+    ["sku", "sku"],
+    ["upc", "upc"],
+    ["name", "name"],
+    ["description", "description"],
+    ["costPrice", "cost_price"],
+    ["retailPrice", "retail_price"],
+    ["unitPrice", "unit_price"],
+    ["fulfillmentType", "fulfillment_type"],
+    ["supplierId", "supplier_id"],
+    ["supplierSku", "supplier_sku"],
+    ["weight", "weight"],
+    ["category1", "category1"],
+    ["category2", "category2"],
+    ["imageUrl", "image_url"],
+    ["imageUrl2", "image_url_2"],
+    ["imageUrl3", "image_url_3"],
+    ["isActive", "is_active"],
+    ["isRestricted", "is_restricted"],
+    ["currentQuantity", "current_quantity"],
+    ["channels", "channels"],
+  ],
+} as const satisfies Record<string, readonly (readonly [string, string])[]>;
+
+type Entity = keyof typeof EVENT_FIELDS;
+
+/**
+ * A payment row carries no workspace or currency; read them from its invoice
+ * (MyFi resolves the book by `organizationId`, so without it the payment cannot
+ * be booked)
+ */
+const enrichPayment = EXPORTABLE(
+  () =>
+    async (pgClient: PgClient, row: Row): Promise<Row> => {
+      if (typeof row.invoiceId !== "string") return row;
+
+      const { rows } = await pgClient.query<{
+        organization_id: string;
+        currency: string | null;
+      }>({
+        text: "SELECT organization_id, currency FROM invoice WHERE id = $1",
+        values: [row.invoiceId],
+      });
+
+      return {
+        ...row,
+        organizationId: rows[0]?.organization_id,
+        currency: rows[0]?.currency ?? undefined,
+      };
+    },
+  [],
+);
+
+/**
+ * Re-read a created or updated invoice so the event carries its final state:
+ * totals are recomputed by a later step in the same transaction (see
+ * RecomputeInvoiceTotalsPlugin), after the RETURNING row was produced
+ */
+const refreshInvoice = EXPORTABLE(
+  () =>
+    async (pgClient: PgClient, row: Row): Promise<Row> => {
+      const { rows } = await pgClient.query<{ total: string | null }>({
+        text: "SELECT total::text FROM invoice WHERE id = $1",
+        values: [row.id],
+      });
+
+      return rows[0] ? { ...row, total: rows[0].total } : row;
+    },
+  [],
+);
+
+/**
+ * Publish one domain event. Emission never fails the mutation that produced it
+ */
+const publish = EXPORTABLE(
+  () => (type: string, data: Row) => {
+    // Lazy import keeps the provider instance out of the plan closures
+    void import("lib/providers")
+      .then(({ events }) =>
+        events.emit({ type, data, subject: String(data.id) }),
+      )
+      .catch(() => {});
   },
   [],
 );
 
 /**
- * Emit a domain event after a mutation succeeds.
- */
-const emitOnMutate = (
-  entity: string,
-  action: "created" | "updated" | "deleted",
-): PlanWrapperFn =>
-  EXPORTABLE(
-    (sideEffect, emitEvent, entity, action): PlanWrapperFn =>
-      (plan, $record) => {
-        sideEffect([$record], ([record]) => {
-          if (!record?.id) return;
-
-          emitEvent(`mantle.${entity}.${action}`, { id: record.id }, record.id);
-        });
-
-        return plan();
-      },
-    [sideEffect, emitEvent, entity, action],
-  );
-
-/**
- * Emit an enriched product event with catalog-relevant fields.
- * Used for product mutations so Halo can build its commerce projection.
- */
-const emitProductEvent = (
-  action: "created" | "updated" | "deleted",
-): PlanWrapperFn =>
-  EXPORTABLE(
-    (sideEffect, emitEvent, action): PlanWrapperFn =>
-      (plan, $record) => {
-        sideEffect([$record], ([record]) => {
-          if (!record?.id) return;
-
-          emitEvent(
-            `mantle.product.${action}`,
-            {
-              id: record.id,
-              organizationId: record.organizationId,
-              sku: record.sku,
-              upc: record.upc,
-              name: record.name,
-              description: record.description,
-              costPrice: record.costPrice,
-              retailPrice: record.retailPrice,
-              unitPrice: record.unitPrice,
-              fulfillmentType: record.fulfillmentType,
-              supplierId: record.supplierId,
-              supplierSku: record.supplierSku,
-              weight: record.weight,
-              category1: record.category1,
-              category2: record.category2,
-              imageUrl: record.imageUrl,
-              imageUrl2: record.imageUrl2,
-              imageUrl3: record.imageUrl3,
-              isActive: record.isActive,
-              isRestricted: record.isRestricted,
-              currentQuantity: record.currentQuantity,
-              channels: record.channels,
-            },
-            record.id,
-          );
-        });
-
-        return plan();
-      },
-    [sideEffect, emitEvent, action],
-  );
-
-/**
- * Emit an enriched invoice event with fields needed by MyFi for journal entries.
- */
-const emitInvoiceEvent = (
-  action: "created" | "updated" | "deleted",
-): PlanWrapperFn =>
-  EXPORTABLE(
-    (sideEffect, emitEvent, action): PlanWrapperFn =>
-      (plan, $record) => {
-        sideEffect([$record], ([record]) => {
-          if (!record?.id) return;
-
-          emitEvent(
-            `mantle.invoice.${action}`,
-            {
-              id: record.id,
-              organizationId: record.organizationId,
-              companyId: record.companyId,
-              contactId: record.contactId,
-              invoiceNumber: record.invoiceNumber,
-              status: record.status,
-              total: record.total,
-              currency: record.currency,
-              issueDate: record.issueDate,
-              dueDate: record.dueDate,
-              paidAt: record.paidAt,
-              paymentReference: record.paymentReference,
-            },
-            record.id,
-          );
-        });
-
-        return plan();
-      },
-    [sideEffect, emitEvent, action],
-  );
-
-/**
- * Emit an enriched payment event with fields needed by MyFi to book per-payment
- * facts. The payment row carries no workspace or currency of its own, so this
- * reads them from the parent invoice and includes `organizationId` + `currency`
- * (MyFi resolves the book by `organizationId`); without them MyFi cannot book
- * the payment.
+ * Emit `mantle.<entity>.<action>` with the written row once the mutation
+ * succeeds.
  *
- * Closes the Mantle to MyFi payment gap: without this, MyFi only ever sees an
- * invoice flip to `paid` and books the whole total at once, never the partial
- * or per-payment detail. The `<entity>.<action>` shape (`payment.created` etc.)
- * is the stable cross-product contract; the `mantle.` prefix is provenance.
+ * The row is read from the mutation result (`$payload.get("result")`), not the
+ * wrapper's `$source`, which for a root Mutation field is the root value and
+ * carries no row. The side effect is created after `plan()`, so grafast
+ * sequences it after every side effect the inner wrappers planned (plan limit
+ * re-count, totals recompute, overpayment credit): if any of them fails, the
+ * mutation fails and nothing is emitted. EventEmissionPlugin is listed last in
+ * the preset so it wraps every other mutation plugin
  */
-const emitPaymentEvent = (
-  action: "created" | "updated" | "deleted",
-): PlanWrapperFn =>
+const emitOnMutate = (entity: Entity, action: Action): PlanWrapperFn =>
   EXPORTABLE(
-    (sideEffect, action): PlanWrapperFn =>
-      (plan, $record) => {
-        sideEffect([$record], ([record]) => {
-          if (!record?.id) return;
+    (
+      object,
+      sideEffectWithPgClient,
+      EVENT_FIELDS,
+      enrichPayment,
+      refreshInvoice,
+      publish,
+      entity,
+      action,
+    ): PlanWrapperFn =>
+      (plan) => {
+        const $payload = plan();
+        if (!$payload) return $payload;
+        const $mutation = ($payload as unknown as PayloadStep).get("result");
 
-          // Resolve the invoice's workspace + currency (absent on the payment
-          // row) and emit after the mutation. Fire-and-forget with errors
-          // swallowed so emission never fails the payment that produced it
-          void (async () => {
+        const $row = object(
+          Object.fromEntries(
+            EVENT_FIELDS[entity].map(([key, column]) => [
+              key,
+              $mutation.get(column),
+            ]),
+          ),
+        );
+
+        sideEffectWithPgClient(
+          $mutation.resource.executor,
+          $row,
+          async (pgClient: PgClient, written: Row) => {
+            if (!written?.id) return;
+
+            let data = written;
             try {
-              const { events } = await import("lib/providers");
-              const { dbPool } = await import("lib/db/db");
-              const { sql } = await import("drizzle-orm");
+              if (entity === "payment")
+                data = await enrichPayment(pgClient, data);
+              else if (entity === "invoice" && action !== "deleted")
+                data = await refreshInvoice(pgClient, data);
+            } catch {
+              // Emit what the mutation returned rather than nothing
+            }
 
-              let organizationId: string | undefined;
-              let currency: string | undefined;
-              if (record.invoiceId) {
-                const result = await dbPool.execute(
-                  sql`SELECT organization_id, currency FROM invoice WHERE id = ${record.invoiceId}::uuid`,
-                );
-                const row = result.rows[0] as
-                  | { organization_id: string; currency: string | null }
-                  | undefined;
-                organizationId = row?.organization_id;
-                currency = row?.currency ?? undefined;
-              }
+            publish(`mantle.${entity}.${action}`, data);
+          },
+        );
 
-              await events.emit({
-                type: `mantle.payment.${action}`,
-                data: {
-                  id: record.id,
-                  invoiceId: record.invoiceId,
-                  organizationId,
-                  currency,
-                  amount: record.amount,
-                  paidAt: record.paidAt,
-                  reference: record.reference,
-                  method: record.method,
-                },
-                subject: record.id,
-              });
-            } catch {}
-          })();
-        });
-
-        return plan();
+        return $payload;
       },
-    [sideEffect, action],
+    [
+      object,
+      sideEffectWithPgClient,
+      EVENT_FIELDS,
+      enrichPayment,
+      refreshInvoice,
+      publish,
+      entity,
+      action,
+    ],
   );
 
-/**
- * Emit an enriched quote event with fields needed by MyFi for journal entries.
- */
-const emitQuoteEvent = (
-  action: "created" | "updated" | "deleted",
-): PlanWrapperFn =>
-  EXPORTABLE(
-    (sideEffect, emitEvent, action): PlanWrapperFn =>
-      (plan, $record) => {
-        sideEffect([$record], ([record]) => {
-          if (!record?.id) return;
-
-          emitEvent(
-            `mantle.quote.${action}`,
-            {
-              id: record.id,
-              organizationId: record.organizationId,
-              companyId: record.companyId,
-              contactId: record.contactId,
-              quoteNumber: record.quoteNumber,
-              status: record.status,
-              total: record.total,
-              currency: record.currency,
-              validUntil: record.validUntil,
-              convertedInvoiceId: record.convertedInvoiceId,
-            },
-            record.id,
-          );
-        });
-
-        return plan();
-      },
-    [sideEffect, emitEvent, action],
-  );
+/** The generated CRUD mutations that emit, as `[entity, action, field]` */
+export const EMITTING_MUTATIONS: readonly (readonly [
+  Entity,
+  Action,
+  string,
+])[] = (Object.keys(EVENT_FIELDS) as Entity[]).flatMap((entity) => {
+  const type = entity.charAt(0).toUpperCase() + entity.slice(1);
+  return [
+    [entity, "created", `create${type}`],
+    [entity, "updated", `update${type}`],
+    [entity, "deleted", `delete${type}`],
+  ] as const;
+});
 
 /**
  * Event emission plugin for Mantle mutations.
  *
- * Emits CloudEvents to Vortex for company, invoice, payment, quote, product, and person lifecycle.
+ * Emits CloudEvents to Vortex for company, person, document numbering, invoice,
+ * quote, payment, and product lifecycle. MyFi books invoices, payments, and
+ * credits from them; Halo projects the product catalog
  */
 const EventEmissionPlugin = wrapPlans({
-  Mutation: {
-    createCompany: emitOnMutate("company", "created"),
-    updateCompany: emitOnMutate("company", "updated"),
-    deleteCompany: emitOnMutate("company", "deleted"),
-    createInvoice: emitInvoiceEvent("created"),
-    updateInvoice: emitInvoiceEvent("updated"),
-    deleteInvoice: emitInvoiceEvent("deleted"),
-    createQuote: emitQuoteEvent("created"),
-    updateQuote: emitQuoteEvent("updated"),
-    deleteQuote: emitQuoteEvent("deleted"),
-    createPayment: emitPaymentEvent("created"),
-    updatePayment: emitPaymentEvent("updated"),
-    deletePayment: emitPaymentEvent("deleted"),
-    createProduct: emitProductEvent("created"),
-    updateProduct: emitProductEvent("updated"),
-    deleteProduct: emitOnMutate("product", "deleted"),
-    createPerson: emitOnMutate("person", "created"),
-    updatePerson: emitOnMutate("person", "updated"),
-    deletePerson: emitOnMutate("person", "deleted"),
-    createDocumentNumberingConfig: emitOnMutate(
-      "documentNumberingConfig",
-      "created",
-    ),
-    updateDocumentNumberingConfig: emitOnMutate(
-      "documentNumberingConfig",
-      "updated",
-    ),
-    deleteDocumentNumberingConfig: emitOnMutate(
-      "documentNumberingConfig",
-      "deleted",
-    ),
-  },
+  Mutation: Object.fromEntries(
+    EMITTING_MUTATIONS.map(([entity, action, field]) => [
+      field,
+      emitOnMutate(entity, action),
+    ]),
+  ),
 });
 
 export default EventEmissionPlugin;
