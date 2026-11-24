@@ -3,12 +3,38 @@
 // The issue is marked resolved but still hangs with Bun as of testcontainers v11.11.0
 
 const CONTAINER_LABEL = "mantle-api-test";
-const CONTAINER_NAME = "mantle-api-test-postgres";
+// One container per test process, so concurrent runs (several worktrees, CI
+// and a local run) never share, or tear down, each other's database
+const CONTAINER_NAME = `mantle-api-test-postgres-${process.pid}`;
 const POSTGRES_IMAGE = "postgres:16-alpine";
 const POSTGRES_USER = "test";
 const POSTGRES_PASSWORD = "test";
 const POSTGRES_DB = "mantle_api_test";
-const POSTGRES_PORT = "54321"; // Use non-standard port to avoid conflicts
+
+/** A free local port (host networking), unless TEST_POSTGRES_PORT pins one */
+const pickPort = (): string => {
+	if (process.env.TEST_POSTGRES_PORT) return process.env.TEST_POSTGRES_PORT;
+	const probe = Bun.listen({
+		hostname: "127.0.0.1",
+		port: 0,
+		socket: { data() {} },
+	});
+	const { port } = probe;
+	probe.stop(true);
+	return String(port);
+};
+
+const POSTGRES_PORT = pickPort();
+
+/** Whether a process id is still running */
+const isAlive = (pid: number): boolean => {
+	try {
+		process.kill(pid, 0);
+		return true;
+	} catch {
+		return false;
+	}
+};
 
 interface PostgresContainer {
 	getConnectionUri: () => string;
@@ -81,19 +107,31 @@ const waitForPostgres = async (
 };
 
 /**
- * Clean up any orphaned test containers from previous runs.
+ * Clean up test containers left behind by runs whose process has exited. A
+ * container whose run is still going (another worktree, CI) is left alone
  */
 export const cleanupOrphanedContainers = async (): Promise<void> => {
 	try {
 		const result = Bun.spawnSync({
-			cmd: ["docker", "ps", "-aq", "--filter", `label=${CONTAINER_LABEL}`],
+			cmd: [
+				"docker",
+				"ps",
+				"-a",
+				"--filter",
+				`label=${CONTAINER_LABEL}`,
+				"--format",
+				`{{.ID}} {{.Label "${CONTAINER_LABEL}.pid"}}`,
+			],
 		});
 
 		const containerIds = result.stdout
 			.toString()
 			.trim()
 			.split("\n")
-			.filter(Boolean);
+			.filter(Boolean)
+			.map((line) => line.split(" "))
+			.filter(([, pid]) => !!pid && !isAlive(Number(pid)))
+			.map(([id]) => id as string);
 
 		if (containerIds.length > 0) {
 			console.log(
@@ -123,6 +161,8 @@ export const startPostgresContainer = async (): Promise<PostgresContainer> => {
 			CONTAINER_NAME,
 			"--label",
 			`${CONTAINER_LABEL}=true`,
+			"--label",
+			`${CONTAINER_LABEL}.pid=${process.pid}`,
 			"--network",
 			"host",
 			"-e",
