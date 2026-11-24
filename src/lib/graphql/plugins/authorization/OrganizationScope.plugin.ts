@@ -21,9 +21,10 @@ const scopeCollection = (): PlanWrapperFn =>
     (sql): PlanWrapperFn =>
       (plan) => {
         const $connection = plan();
+        if (!$connection) return $connection;
 
         const $select = (
-          $connection as {
+          $connection as unknown as {
             getSubplan: () => { where: (spec: unknown) => void };
           }
         ).getSubplan();
@@ -56,9 +57,10 @@ const scopeChildCollection = (
     (sql, parentTable, fkColumn, parentPk): PlanWrapperFn =>
       (plan) => {
         const $connection = plan();
+        if (!$connection) return $connection;
 
         const $select = (
-          $connection as {
+          $connection as unknown as {
             getSubplan: () => { where: (spec: unknown) => void };
           }
         ).getSubplan();
@@ -88,6 +90,7 @@ const scopeSingleItem = (): PlanWrapperFn =>
     (SafeError, context, sideEffect): PlanWrapperFn =>
       (plan) => {
         const $item = plan();
+        if (!$item) return $item;
         const $observer = context().get("observer");
         const $organizationIds = context().get("organizationIds");
 
@@ -133,6 +136,7 @@ const scopeChildSingleItem = (
     (SafeError, context, sideEffect, parentTable, fkField): PlanWrapperFn =>
       (plan) => {
         const $item = plan();
+        if (!$item) return $item;
         const $observer = context().get("observer");
         const $db = context().get("db");
         const $organizationIds = context().get("organizationIds");
@@ -332,6 +336,7 @@ export const OrganizationScopeNestedPlugin = wrapPlans<PlanWrapperFn>(
 
     return (plan) => {
       const $plan = plan();
+      if (!$plan) return $plan;
       const step = $plan as unknown as {
         getClassStep?: () => PgWhere;
         getSubplan?: () => PgWhere;

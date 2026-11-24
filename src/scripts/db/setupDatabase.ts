@@ -8,6 +8,6 @@ import { DATABASE_URL } from "lib/config/env.config";
 
 const databaseName = DATABASE_URL?.split("/").pop()?.split("?")[0];
 
-console.log(`Creating ${databaseName} database...`);
+console.info(`Creating ${databaseName} database...`);
 await $`createdb -U postgres ${databaseName}`;
-console.log("Database created");
+console.info("Database created");

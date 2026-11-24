@@ -1,8 +1,9 @@
 /**
  * Environment variables.
  */
+const { NODE_ENV } = process.env;
+
 export const {
-  NODE_ENV,
   PORT = 4000,
   DATABASE_URL,
   CORS_ALLOWED_ORIGINS,
