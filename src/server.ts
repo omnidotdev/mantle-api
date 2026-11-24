@@ -1,6 +1,3 @@
-// TODO remove after Tilt env reload
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 import { readFileSync } from "node:fs";
 
 import { cors } from "@elysiajs/cors";
@@ -91,9 +88,11 @@ app.use(
       ...armorPlugin,
       authenticationPlugin,
       isProdEnv && useDisableIntrospection(),
+      // Variables and results carry customer records (contacts, invoices,
+      // the workspace profile), so they stay out of traces
       useOpenTelemetry({
-        variables: true,
-        result: true,
+        variables: false,
+        result: false,
       }),
       useParserCache(),
       useValidationCache(),

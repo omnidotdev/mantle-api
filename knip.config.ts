@@ -3,13 +3,14 @@ import type { KnipConfig } from "knip";
 const config: KnipConfig = {
   entry: [
     "src/instrumentation.ts",
-    "src/lib/config/drizzle.config.ts",
     "src/scripts/**/*.ts",
     "src/__tests__/**/*.ts",
     "src/test/**/*.ts",
   ],
   project: ["src/**/*.ts"],
-  ignore: ["src/generated/**"],
+  // The drizzle-kit config requires DATABASE_URL at load time; the schema it
+  // points at is reached through lib/db anyway
+  drizzle: false,
   ignoreDependencies: [
     // Used by PostGraphile plugins
     "@graphile/pg-aggregates",

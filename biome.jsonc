@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -43,6 +43,10 @@
       "!!src/test",
       "!!src/__tests__"
     ]
+  },
+  // keep Markdown out of the formatter: it rewrites changeset frontmatter
+  "markdown": {
+    "formatter": { "enabled": false }
   },
   "formatter": {
     "indentStyle": "space",

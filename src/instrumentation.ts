@@ -15,7 +15,9 @@ const resource = resourceFromAttributes({
 const sdk = new NodeSDK({
   resource,
   traceExporter: new OTLPTraceExporter(),
-  logRecordProcessor: new BatchLogRecordProcessor(new OTLPLogExporter()),
+  logRecordProcessors: [
+    new BatchLogRecordProcessor({ exporter: new OTLPLogExporter() }),
+  ],
   instrumentations: [getNodeAutoInstrumentations()],
 });
 

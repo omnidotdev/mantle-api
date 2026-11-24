@@ -3,6 +3,7 @@ import { createWithPgClient } from "postgraphile/adaptors/pg";
 import { dbPool, pgPool } from "lib/db/db";
 
 import type { YogaInitialContext } from "graphql-yoga";
+import type { OrganizationClaim } from "lib/authz";
 import type { Observer } from "lib/graphql/plugins/authentication.plugin";
 import type { WithPgClient } from "postgraphile/@dataplan/pg";
 import type {
@@ -27,6 +28,8 @@ export interface GraphQLContext {
   pgSubscriber: PgSubscriber | null;
   /** Organization IDs the authenticated user belongs to. */
   organizationIds: string[];
+  /** The caller's workspaces with their roles, from the JWT claims. */
+  organizations: OrganizationClaim[];
 }
 
 /**
@@ -38,7 +41,11 @@ const createGraphqlContext = async ({
 }: Omit<YogaInitialContext, "waitUntil">): Promise<
   Omit<
     GraphQLContext,
-    "observer" | "organizationIds" | "pgSettings" | "pgSubscriber"
+    | "observer"
+    | "organizationIds"
+    | "organizations"
+    | "pgSettings"
+    | "pgSubscriber"
   >
 > => ({
   request,

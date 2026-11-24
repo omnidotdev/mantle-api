@@ -1,5 +1,7 @@
 import { afterEach, beforeEach } from "bun:test";
 
+import { clearLimitsCache } from "lib/entitlements";
+import { providers } from "lib/providers";
 import { createTestGraphQLClient } from "test/util/graphqlClient";
 
 import { mswServer } from "./mswServer";
@@ -14,7 +16,11 @@ export interface TestContext {
 	db: TestDatabase["db"];
 	pool: Pool;
 	graphql: GraphQLTestClient;
-	graphqlAs: (observer: Observer, organizationIds?: string[]) => GraphQLTestClient;
+	graphqlAs: (
+		observer: Observer,
+		organizationIds?: string[],
+		roles?: string[],
+	) => GraphQLTestClient;
 }
 
 export const setupTestContext = (): TestContext => {
@@ -27,13 +33,19 @@ export const setupTestContext = (): TestContext => {
 		return globalThis.__TEST_DATABASE__;
 	};
 
+	const initialProviders = { ...providers };
+
 	beforeEach(async () => {
 		const { db } = getTestDb();
 		await resetDatabase(db);
+		clearLimitsCache();
 	});
 
 	afterEach(() => {
 		mswServer.resetHandlers();
+		Object.assign(providers, initialProviders);
+		delete process.env.BILLING_BYPASS_ORG_IDS;
+		delete process.env.WARDEN_ENFORCE;
 	});
 
 	return new Proxy({} as TestContext, {
@@ -44,8 +56,18 @@ export const setupTestContext = (): TestContext => {
 			if (prop === "pool") return pool;
 			if (prop === "graphql") return createTestGraphQLClient({ pool, db });
 			if (prop === "graphqlAs") {
-				return (observer: Observer, organizationIds?: string[]) =>
-					createTestGraphQLClient({ pool, db, observer, organizationIds });
+				return (
+					observer: Observer,
+					organizationIds?: string[],
+					roles?: string[],
+				) =>
+					createTestGraphQLClient({
+						pool,
+						db,
+						observer,
+						organizationIds,
+						roles,
+					});
 			}
 
 			return undefined;

@@ -12,6 +12,7 @@ import {
   productTable,
   quoteTable,
   supplierTable,
+  usageEventTable,
 } from "lib/db/schema";
 
 /** Rows deleted per table */
@@ -23,7 +24,8 @@ type OrganizationDeletionCounts = Record<string, number>;
  * and payments), document numbering, products (with their external links and
  * inventory adjustments), suppliers, companies and people (with their
  * memberships and external links), sales channel connections (and the
- * credentials they hold), and its settings.
+ * credentials they hold), its settings (including the workspace profile), and
+ * its plan usage ledger.
  *
  * The records are the workspace's own, kept on its behalf, so they go with it.
  * One transaction, ordered so no row is left pointing at a deleted one: a
@@ -48,6 +50,7 @@ export const deleteOrganizationData = async (
       ["people", personTable],
       ["channelConnections", channelConnectionTable],
       ["organizationSettings", organizationSettingsTable],
+      ["usageEvents", usageEventTable],
     ] as const;
 
     for (const [name, table] of steps) {
