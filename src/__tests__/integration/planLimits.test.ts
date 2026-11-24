@@ -3,6 +3,7 @@ import { HttpResponse, http } from "msw";
 
 import { createBillingProvider } from "@omnidotdev/providers/billing";
 
+import { clearLimitsCache } from "lib/entitlements";
 import { APP_ID, providers } from "lib/providers";
 import { mswServer } from "test/setup/mswServer";
 import { setupTestContext } from "test/setup/testContext";
@@ -217,6 +218,43 @@ describe("plan limits", () => {
     useAether();
     fail(ORG);
     expect(limitCode(await createPerson())?.code).toBe("PLAN_LIMIT_REACHED");
+  });
+
+  test("a restart during an Aether outage keeps the persisted plan", async () => {
+    useAether();
+    answer(ORG, { tier: "free", max_contacts: "1" });
+    expect((await createPerson()).errors).toBeUndefined();
+
+    const snapshot = await ctx.pool.query(
+      "select tier, limits from entitlement_snapshot where organization_id = $1",
+      [ORG],
+    );
+    expect(snapshot.rows[0]?.tier).toBe("free");
+    expect(snapshot.rows[0]?.limits.max_contacts).toBe(1);
+
+    // A restart forgets everything held in memory
+    clearLimitsCache();
+    useAether();
+    fail(ORG);
+    expect(limitCode(await createPerson())?.code).toBe("PLAN_LIMIT_REACHED");
+    expect(await count("person")).toBe(1);
+  });
+
+  test("a workspace without a billing account drops its persisted plan", async () => {
+    useAether();
+    answer(ORG, { tier: "pro" });
+    expect((await createPerson()).errors).toBeUndefined();
+    expect(await count("entitlement_snapshot")).toBe(1);
+
+    clearLimitsCache();
+    useAether();
+    mswServer.use(
+      http.get(entitlementsUrl(ORG), () =>
+        HttpResponse.json({ error: "not found" }, { status: 404 }),
+      ),
+    );
+    expect((await createPerson()).errors).toBeUndefined();
+    expect(await count("entitlement_snapshot")).toBe(0);
   });
 
   test("an Aether outage with no known plan fails open", async () => {

@@ -5,6 +5,8 @@ import { jsonPgSmartTags } from "postgraphile/utils";
  * - `usage_event`: the plan usage ledger (invoices created per period). It is
  *   written and counted by the plan limit plugin only; the app reads usage
  *   through `workspacePlan`
+ * - `entitlement_snapshot`: each workspace's last known plan, the billing
+ *   outage fallback read by lib/entitlements only
  * - `channel_connection.credentials`: a sales channel's stored OAuth tokens.
  *   Only the sync scripts read them, straight from the database; no GraphQL
  *   caller, not even a workspace owner, gets them back
@@ -23,6 +25,7 @@ const HideInternalDataPlugin = jsonPgSmartTags(
     config: {
       class: {
         usage_event: { tags: HIDDEN },
+        entitlement_snapshot: { tags: HIDDEN },
       },
       attribute: {
         "channel_connection.credentials": { tags: HIDDEN },

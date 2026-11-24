@@ -78,7 +78,7 @@ const CONTACTS: LimitedCount = {
  * Every create is recorded, limited or not, so usage stays accurate across an
  * upgrade or downgrade
  */
-const usedInvoices = async (query: Query, organizationId: string) => {
+export const usedInvoices = async (query: Query, organizationId: string) => {
   const row = (
     await query(
       `SELECT
@@ -120,7 +120,7 @@ const MONTHLY_INVOICES: LimitedCount = {
   },
 };
 
-const limitReached = (key: LimitKey, limit: number) => {
+export const limitReached = (key: LimitKey, limit: number) => {
   const messages: Partial<Record<LimitKey, string>> = {
     max_contacts: `Your plan includes up to ${limit} contacts. Upgrade your plan to add more`,
     max_invoices_per_month: `Your plan includes ${limit} invoices per month. Upgrade your plan to create more`,
@@ -264,7 +264,8 @@ const withLimit = (
  * GraphQL path that adds to a limited count:
  *
  * - `max_contacts`: creating a person, or moving one into another workspace
- * - `max_invoices_per_month`: creating an invoice
+ * - `max_invoices_per_month`: creating an invoice (converting a quote into an
+ *   invoice counts too; convertQuoteToInvoice checks it in its own transaction)
  *
  * Limits only ever gate new records: edits within a workspace, deletes and
  * reads are never blocked by a plan or a billing outage. `max_team_members`

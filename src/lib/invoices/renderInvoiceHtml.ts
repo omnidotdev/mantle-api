@@ -1,3 +1,5 @@
+import { isSafePaymentLink } from "lib/invoices/paymentLink";
+
 import type { SelectCompany } from "lib/db/schema/company.table";
 import type { SelectInvoice } from "lib/db/schema/invoice.table";
 import type { SelectInvoiceLineItem } from "lib/db/schema/invoiceLineItem.table";
@@ -195,10 +197,11 @@ const renderInvoiceHtml = (data: InvoicePdfData): string => {
     }
 
     ${
-      invoice.paymentLinkUrl
+      // Only an https link is ever rendered, whatever is stored
+      isSafePaymentLink(invoice.paymentLinkUrl)
         ? `<!-- Payment link -->
     <div style="margin-top: 24px; text-align: center;">
-      <a href="${esc(invoice.paymentLinkUrl)}" style="display: inline-block; padding: 12px 32px; background: ${esc(accentColor)}; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Pay Now</a>
+      <a href="${esc(invoice.paymentLinkUrl.trim())}" style="display: inline-block; padding: 12px 32px; background: ${esc(accentColor)}; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Pay now</a>
     </div>`
         : ""
     }

@@ -55,8 +55,10 @@ export const quoteTable = pgTable(
     taxAmount: numeric("tax_amount", { precision: 12, scale: 2 }).default("0"),
     total: numeric({ precision: 12, scale: 2 }).default("0"),
     currency: varchar({ length: 3 }).default("USD"),
+    // Deleting the invoice unlinks the quote rather than blocking the delete
     convertedInvoiceId: uuid("converted_invoice_id").references(
       () => invoiceTable.id,
+      { onDelete: "set null" },
     ),
     createdAt: generateDefaultDate(),
     updatedAt: generateDefaultDate(),

@@ -11,6 +11,7 @@ import {
   PlanLimitsPlugin,
   RemoveQueryNodePlugin,
 } from "lib/graphql/plugins/authorization";
+import ConvertQuoteToInvoicePlugin from "lib/graphql/plugins/convertQuoteToInvoice.plugin";
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
 import HideInternalDataPlugin from "lib/graphql/plugins/hideInternalData.plugin";
@@ -19,6 +20,8 @@ import InvoicePdfPlugin from "lib/graphql/plugins/invoicePdf.plugin";
 import IssueCreditPlugin from "lib/graphql/plugins/issueCredit.plugin";
 import RecomputeInvoiceTotalsPlugin from "lib/graphql/plugins/recomputeInvoiceTotals.plugin";
 import RecordOverpaymentCreditPlugin from "lib/graphql/plugins/recordOverpaymentCredit.plugin";
+import ReleaseConvertedQuotePlugin from "lib/graphql/plugins/releaseConvertedQuote.plugin";
+import ValidatePaymentLinkPlugin from "lib/graphql/plugins/validatePaymentLink.plugin";
 import WorkspacePlanPlugin from "lib/graphql/plugins/workspacePlan.plugin";
 import { DATABASE_URL, isDevEnv } from "./env.config";
 
@@ -40,14 +43,17 @@ const graphilePreset: GraphileConfig.Preset = {
     RemoveQueryNodePlugin,
     OrgMutationGuardPlugin,
     PlanLimitsPlugin,
+    ValidatePaymentLinkPlugin,
     EventEmissionPlugin,
     GenerateDocumentNumberPlugin,
     InvoicePdfPlugin,
     InventoryAdjustmentPlugin,
     RecomputeInvoiceTotalsPlugin,
+    ReleaseConvertedQuotePlugin,
     RecordOverpaymentCreditPlugin,
     ApplyInvoiceCreditPlugin,
     IssueCreditPlugin,
+    ConvertQuoteToInvoicePlugin,
     WorkspacePlanPlugin,
   ],
   schema: {
