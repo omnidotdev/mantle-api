@@ -204,7 +204,8 @@ describe("plan limits", () => {
       ),
     );
 
-    for (let i = 0; i < 5; i++)
+    // the catalog free tier allows 10 invoices a month
+    for (let i = 0; i < 10; i++)
       expect((await createInvoice()).errors).toBeUndefined();
     expect(limitCode(await createInvoice())?.code).toBe("PLAN_LIMIT_REACHED");
   });
@@ -360,10 +361,11 @@ describe("plan limits", () => {
     });
     expect(byKey.max_invoices_per_month).toEqual({
       key: "max_invoices_per_month",
-      limit: 5,
+      limit: 10,
       used: 1,
     });
-    expect(byKey.max_team_members?.used).toBeNull();
+    // seats are unlimited on every tier, so they are not a reported limit
+    expect(byKey.max_team_members).toBeUndefined();
 
     const outsider = await ctx
       .graphqlAs({ id: "x", name: "X" }, ["elsewhere"])

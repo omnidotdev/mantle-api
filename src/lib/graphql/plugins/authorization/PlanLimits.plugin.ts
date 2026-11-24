@@ -300,9 +300,8 @@ const withLimit = (limited: LimitedCount, inputPath: string[]): PlanWrapperFn =>
  *   invoice counts too; convertQuoteToInvoice checks it in its own transaction)
  *
  * Limits only ever gate new records: edits within a workspace, deletes and
- * reads are never blocked by a plan or a billing outage. `max_team_members`
- * counts workspace seats, which are managed in the Omni account hub rather
- * than in Mantle, so it is reported (workspacePlan) but not enforced here
+ * reads are never blocked by a plan or a billing outage. Workspace seats are
+ * unlimited on every tier (members are managed in the Omni account hub)
  */
 const PlanLimitsPlugin = wrapPlans({
   Mutation: {

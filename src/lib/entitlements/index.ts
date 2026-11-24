@@ -26,14 +26,12 @@ import type {
   EntitlementsResult,
 } from "@omnidotdev/providers/billing";
 
-/** Plan limit keys Mantle enforces or reports (catalog `operationalLimits`) */
-export const LIMIT_KEYS = [
-  "max_team_members",
-  "max_contacts",
-  "max_invoices_per_month",
-  "advanced_workflows",
-  "custom_templates",
-] as const;
+/**
+ * Plan limit keys Mantle enforces (catalog `operationalLimits`). Workspace seats
+ * are not a Mantle limit: every tier has unlimited team members, managed in the
+ * Omni account hub
+ */
+export const LIMIT_KEYS = ["max_contacts", "max_invoices_per_month"] as const;
 
 export type LimitKey = (typeof LIMIT_KEYS)[number];
 
@@ -48,27 +46,9 @@ const UNLIMITED = -1;
  * source of truth: edit the catalog first, then this
  */
 const TIER_LIMITS: Record<string, PlanLimits> = {
-  free: {
-    max_team_members: 1,
-    max_contacts: 50,
-    max_invoices_per_month: 5,
-    advanced_workflows: 0,
-    custom_templates: 0,
-  },
-  pro: {
-    max_team_members: UNLIMITED,
-    max_contacts: UNLIMITED,
-    max_invoices_per_month: UNLIMITED,
-    advanced_workflows: 0,
-    custom_templates: 0,
-  },
-  team: {
-    max_team_members: UNLIMITED,
-    max_contacts: UNLIMITED,
-    max_invoices_per_month: UNLIMITED,
-    advanced_workflows: 1,
-    custom_templates: 1,
-  },
+  free: { max_contacts: 100, max_invoices_per_month: 10 },
+  pro: { max_contacts: UNLIMITED, max_invoices_per_month: UNLIMITED },
+  team: { max_contacts: UNLIMITED, max_invoices_per_month: UNLIMITED },
 };
 
 const FREE_LIMITS: PlanLimits = TIER_LIMITS.free!;

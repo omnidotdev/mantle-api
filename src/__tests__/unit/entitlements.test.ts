@@ -32,9 +32,8 @@ describe("entitlementsToLimits", () => {
     const { limits } = entitlementsToLimits(
       response({ tier: "free", max_contacts: "lots" }),
     );
-    expect(limits.max_contacts).toBe(50);
-    expect(limits.max_invoices_per_month).toBe(5);
-    expect(limits.max_team_members).toBe(1);
+    expect(limits.max_contacts).toBe(100);
+    expect(limits.max_invoices_per_month).toBe(10);
   });
 
   test("paid tiers default to unlimited contacts and invoices", () => {
@@ -56,6 +55,6 @@ describe("entitlementsToLimits", () => {
   test("no tier means the free tier", () => {
     const { tier, limits } = entitlementsToLimits(response({}));
     expect(tier).toBe("free");
-    expect(limits.max_contacts).toBe(50);
+    expect(limits.max_contacts).toBe(100);
   });
 });
