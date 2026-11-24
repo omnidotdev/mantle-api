@@ -205,4 +205,176 @@ describe("organization settings", () => {
 
 		expect(result.errors).toBeDefined();
 	});
+
+	const PROFILE_FIELDS = /* GraphQL */ `
+		rowId
+		organizationId
+		accentColor
+		companyName
+		contactName
+		contactTitle
+		email
+		phone
+		website
+		addressLine1
+		addressLine2
+		city
+		state
+		postalCode
+		country
+		logoUrl
+		registrationState
+	`;
+
+	const FULL_PROFILE = {
+		companyName: "Acme Studio",
+		contactName: "Ada Lovelace",
+		contactTitle: "Founder",
+		email: "ada@acme.test",
+		phone: "+1 555 0100",
+		website: "https://acme.test",
+		addressLine1: "1 Main St",
+		addressLine2: "Suite 2",
+		city: "Springfield",
+		state: "IL",
+		postalCode: "62701",
+		country: "US",
+		logoUrl: "https://acme.test/logo.png",
+		registrationState: "Delaware",
+		accentColor: "#123456",
+	};
+
+	test("stores and reads back the workspace profile", async () => {
+		const owner = ctx.graphqlAs({ id: "owner", name: "O" }, ["profile-org"]);
+
+		const created = await owner.execute<{
+			createOrganizationSetting: {
+				organizationSetting: Record<string, string | null>;
+			};
+		}>(
+			`mutation ($input: CreateOrganizationSettingInput!) {
+				createOrganizationSetting(input: $input) {
+					organizationSetting { ${PROFILE_FIELDS} }
+				}
+			}`,
+			{
+				input: {
+					organizationSetting: {
+						organizationId: "profile-org",
+						...FULL_PROFILE,
+					},
+				},
+			},
+		);
+		expect(created.errors).toBeUndefined();
+
+		const read = await owner.execute<{
+			organizationSettings: { nodes: Array<Record<string, string | null>> };
+		}>(
+			`query ($organizationId: String!) {
+				organizationSettings(condition: { organizationId: $organizationId }) {
+					nodes { ${PROFILE_FIELDS} }
+				}
+			}`,
+			{ organizationId: "profile-org" },
+		);
+		expect(read.errors).toBeUndefined();
+		expect(read.data?.organizationSettings.nodes).toHaveLength(1);
+		expect(read.data?.organizationSettings.nodes[0]).toMatchObject(
+			FULL_PROFILE,
+		);
+	});
+
+	test("a profile starts empty and a patch changes only the fields it names", async () => {
+		const owner = ctx.graphqlAs({ id: "owner", name: "O" }, ["patch-org"]);
+
+		const created = await owner.execute<{
+			createOrganizationSetting: {
+				organizationSetting: Record<string, string | null>;
+			};
+		}>(
+			`mutation ($input: CreateOrganizationSettingInput!) {
+				createOrganizationSetting(input: $input) {
+					organizationSetting { ${PROFILE_FIELDS} }
+				}
+			}`,
+			{
+				input: {
+					organizationSetting: {
+						organizationId: "patch-org",
+						companyName: "Before",
+						city: "Old Town",
+					},
+				},
+			},
+		);
+		const settings = created.data?.createOrganizationSetting.organizationSetting;
+		expect(settings?.email).toBeNull();
+		expect(settings?.logoUrl).toBeNull();
+
+		const updated = await owner.execute<{
+			updateOrganizationSetting: {
+				organizationSetting: Record<string, string | null>;
+			};
+		}>(
+			`mutation ($input: UpdateOrganizationSettingInput!) {
+				updateOrganizationSetting(input: $input) {
+					organizationSetting { ${PROFILE_FIELDS} }
+				}
+			}`,
+			{
+				input: {
+					rowId: settings?.rowId,
+					patch: { companyName: "After", city: null },
+				},
+			},
+		);
+		expect(updated.errors).toBeUndefined();
+		expect(
+			updated.data?.updateOrganizationSetting.organizationSetting,
+		).toMatchObject({
+			companyName: "After",
+			city: null,
+			accentColor: "#0d9488",
+		});
+	});
+
+	test("only the workspace's owners and admins can write its profile", async () => {
+		const member = ctx.graphqlAs({ id: "member", name: "M" }, ["role-org"], [
+			"member",
+		]);
+
+		const result = await member.execute(CREATE_MUTATION, {
+			input: {
+				organizationSetting: {
+					organizationId: "role-org",
+					companyName: "Not allowed",
+				},
+			},
+		});
+		expect(result.errors).toBeDefined();
+
+		const { rows } = await ctx.pool.query(
+			"select count(*)::int as n from organization_settings where organization_id = 'role-org'",
+		);
+		expect(rows[0]?.n).toBe(0);
+	});
+
+	test("another workspace cannot read the profile", async () => {
+		await ctx.graphqlAs(SERVICE_OBSERVER).execute(CREATE_MUTATION, {
+			input: {
+				organizationSetting: {
+					organizationId: "private-org",
+					companyName: "Private",
+				},
+			},
+		});
+
+		const outsider = await ctx
+			.graphqlAs({ id: "outsider", name: "X" }, ["elsewhere"])
+			.execute<OrganizationSettingsData>(QUERY, {
+				organizationId: "private-org",
+			});
+		expect(outsider.data?.organizationSettings?.nodes).toEqual([]);
+	});
 });

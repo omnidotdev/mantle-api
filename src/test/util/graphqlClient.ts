@@ -28,13 +28,31 @@ export interface CreateTestGraphQLClientOptions {
 	 * tests pass the caller's real memberships
 	 */
 	organizationIds?: string[];
+	/**
+	 * The caller's role in each of its organizations, as the JWT claims carry
+	 * it. Defaults to `owner`
+	 */
+	roles?: string[];
 }
 
 export const createTestGraphQLClient = (
 	options: CreateTestGraphQLClientOptions,
 ): GraphQLTestClient => {
-	const { pool, db, observer = null, organizationIds = ["*"] } = options;
+	const {
+		pool,
+		db,
+		observer = null,
+		organizationIds = ["*"],
+		roles = ["owner"],
+	} = options;
 	const isService = organizationIds.includes("*");
+	const organizations =
+		observer && !isService
+			? organizationIds.map((id) => ({ id, roles }))
+			: [];
+	const adminIds = roles.some((role) => role === "owner" || role === "admin")
+		? organizationIds
+		: [];
 
 	const withPgClient = createWithPgClient({ pool });
 
@@ -46,6 +64,7 @@ export const createTestGraphQLClient = (
 			db,
 			observer,
 			organizationIds: observer ? organizationIds : [],
+			organizations,
 			withPgClient,
 			pgSettings: observer
 				? isService
@@ -53,8 +72,13 @@ export const createTestGraphQLClient = (
 					: {
 							"app.service_auth": "false",
 							"app.organization_ids": toPgTextArray(organizationIds),
+							"app.admin_organization_ids": toPgTextArray(adminIds),
 						}
-				: { "app.organization_ids": "{}" },
+				: {
+						"app.service_auth": "false",
+						"app.organization_ids": "{}",
+						"app.admin_organization_ids": "{}",
+					},
 			pgSubscriber: null,
 			request: new Request("http://localhost:4001/graphql"),
 		}),

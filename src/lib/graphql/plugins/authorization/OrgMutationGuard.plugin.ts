@@ -2,6 +2,9 @@ import { sql } from "drizzle-orm";
 import { SafeError, context, sideEffect } from "postgraphile/grafast";
 import { wrapPlans } from "postgraphile/utils";
 
+import { assertWorkspaceAdmin, isDeniedByWarden } from "lib/authz";
+
+import type { OrganizationClaim } from "lib/authz";
 import type { PlanWrapperFn } from "postgraphile/utils";
 
 /**
@@ -58,6 +61,17 @@ export const TABLE_OWNERSHIP: Record<string, Ownership> = {
 };
 
 /**
+ * Tables only a workspace owner or admin may write: workspace-wide settings and
+ * sales channel connections. `channel_connection` reads are admin-only too
+ * (OrganizationScopePlugin)
+ */
+const ADMIN_TABLES: ReadonlySet<string> = new Set([
+  "channel_connection",
+  "document_numbering_config",
+  "organization_settings",
+]);
+
+/**
  * Input fields that point at another organization-owned row. Every one a
  * caller sets (on create or in a patch) must resolve to an organization the
  * caller belongs to, so a row can never be attached to another workspace's
@@ -74,10 +88,6 @@ const REFERENCES: Record<string, string> = {
   quoteId: "quote",
   supplierId: "supplier",
 };
-
-/** GraphQL input key holding the new row on a create (`createPayment` → `payment`) */
-const camel = (table: string) =>
-  table.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 
 type Db = {
   execute: (
@@ -124,6 +134,7 @@ const authorizeWrite = async ({
   db,
   observer,
   organizationIds,
+  organizations,
   table,
   op,
   input,
@@ -131,6 +142,7 @@ const authorizeWrite = async ({
   db: Db;
   observer: unknown;
   organizationIds: unknown;
+  organizations: unknown;
   table: string;
   op: "create" | "update" | "delete";
   input: Record<string, unknown> | null | undefined;
@@ -148,11 +160,19 @@ const authorizeWrite = async ({
 
   const member = (org: string | null | undefined) =>
     !!org && orgs.includes(org);
+  // Every workspace this write touches, for the role and Warden checks below
+  const touched = new Set<string>();
 
   // The row a create inserts, or the fields an update changes
+  // A create's input holds the new row under one key named for the table
+  // (singularized by the inflector, e.g. `organizationSetting` for
+  // organization_settings), beside the optional clientMutationId
+  const recordKey = Object.keys(input).find((k) => k !== "clientMutationId");
   const values =
     op === "create"
-      ? ((input[camel(table)] as Record<string, unknown> | undefined) ?? {})
+      ? ((recordKey
+          ? (input[recordKey] as Record<string, unknown> | undefined)
+          : undefined) ?? {})
       : ((input.patch as Record<string, unknown> | undefined) ?? {});
 
   if (op !== "create") {
@@ -163,6 +183,7 @@ const authorizeWrite = async ({
     const current = await orgOfRow(db, table, rowId);
     // A missing row falls through to the mutation's own not-found result
     if (current !== null && !member(current)) throw denied();
+    if (current) touched.add(current);
   }
 
   if (ownership.kind === "org") {
@@ -175,6 +196,8 @@ const authorizeWrite = async ({
     if (op === "update" && values.organizationId !== undefined) {
       if (!member(values.organizationId as string)) throw denied();
     }
+    if (typeof values.organizationId === "string")
+      touched.add(values.organizationId);
   } else if (
     op === "create" &&
     typeof values[ownership.parentKey] !== "string"
@@ -185,7 +208,30 @@ const authorizeWrite = async ({
   for (const [key, refTable] of Object.entries(REFERENCES)) {
     const ref = values[key];
     if (typeof ref !== "string") continue;
-    if (!member(await orgOfRow(db, refTable, ref))) throw denied();
+    const refOrg = await orgOfRow(db, refTable, ref);
+    if (!member(refOrg)) throw denied();
+    if (refOrg) touched.add(refOrg);
+  }
+
+  const claims = {
+    observer: observer as { id?: string },
+    organizationIds: orgs,
+    organizations: (organizations ?? []) as OrganizationClaim[],
+  };
+  const userId = (observer as { id?: string } | null)?.id;
+
+  for (const org of touched) {
+    if (ADMIN_TABLES.has(table)) {
+      await assertWorkspaceAdmin(claims, org);
+    } else if (
+      await isDeniedByWarden({
+        userId,
+        organizationId: org,
+        relation: "member",
+      })
+    ) {
+      throw denied();
+    }
   }
 };
 
@@ -226,15 +272,17 @@ const OrgMutationGuardPlugin = wrapPlans<PlanWrapperFn>(
       const $input = fieldArgs.getRaw("input");
       const $observer = context().get("observer");
       const $organizationIds = context().get("organizationIds");
+      const $organizations = context().get("organizations");
       const $db = context().get("db");
 
       sideEffect(
-        [$input, $observer, $organizationIds, $db],
-        ([input, observer, organizationIds, db]) =>
+        [$input, $observer, $organizationIds, $organizations, $db],
+        ([input, observer, organizationIds, organizations, db]) =>
           authorizeWrite({
             db: db as Db,
             observer,
             organizationIds,
+            organizations,
             table,
             op,
             input: input as Record<string, unknown> | null,

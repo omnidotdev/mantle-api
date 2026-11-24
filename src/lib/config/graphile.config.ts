@@ -5,20 +5,21 @@ import { PostGraphileConnectionFilterPreset } from "postgraphile-plugin-connecti
 
 import ApplyInvoiceCreditPlugin from "lib/graphql/plugins/applyInvoiceCredit.plugin";
 import {
-  CompanyMemberPlugin,
-  InvoicePlugin,
   OrgMutationGuardPlugin,
   OrganizationScopeNestedPlugin,
   OrganizationScopePlugin,
-  PersonPlugin,
+  PlanLimitsPlugin,
   RemoveQueryNodePlugin,
 } from "lib/graphql/plugins/authorization";
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
+import HideInternalDataPlugin from "lib/graphql/plugins/hideInternalData.plugin";
+import InventoryAdjustmentPlugin from "lib/graphql/plugins/inventoryAdjustment.plugin";
 import InvoicePdfPlugin from "lib/graphql/plugins/invoicePdf.plugin";
 import IssueCreditPlugin from "lib/graphql/plugins/issueCredit.plugin";
 import RecomputeInvoiceTotalsPlugin from "lib/graphql/plugins/recomputeInvoiceTotals.plugin";
 import RecordOverpaymentCreditPlugin from "lib/graphql/plugins/recordOverpaymentCredit.plugin";
+import WorkspacePlanPlugin from "lib/graphql/plugins/workspacePlan.plugin";
 import { DATABASE_URL, isDevEnv } from "./env.config";
 
 /**
@@ -33,20 +34,21 @@ const graphilePreset: GraphileConfig.Preset = {
   pgServices: [makePgService({ connectionString: DATABASE_URL })],
   grafast: { explain: isDevEnv },
   plugins: [
+    HideInternalDataPlugin,
     OrganizationScopePlugin,
     OrganizationScopeNestedPlugin,
     RemoveQueryNodePlugin,
     OrgMutationGuardPlugin,
-    CompanyMemberPlugin,
-    InvoicePlugin,
-    PersonPlugin,
+    PlanLimitsPlugin,
     EventEmissionPlugin,
     GenerateDocumentNumberPlugin,
     InvoicePdfPlugin,
+    InventoryAdjustmentPlugin,
     RecomputeInvoiceTotalsPlugin,
     RecordOverpaymentCreditPlugin,
     ApplyInvoiceCreditPlugin,
     IssueCreditPlugin,
+    WorkspacePlanPlugin,
   ],
   schema: {
     // Relay node-id update/delete variants have no rowId for the mutation

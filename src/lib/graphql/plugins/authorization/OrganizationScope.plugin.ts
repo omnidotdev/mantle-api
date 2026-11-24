@@ -1,5 +1,4 @@
 import { EXPORTABLE } from "graphile-export";
-import { SafeError, context, sideEffect } from "postgraphile/grafast";
 import { sql } from "postgraphile/pg-sql2";
 import { wrapPlans } from "postgraphile/utils";
 
@@ -8,267 +7,172 @@ import { TABLE_OWNERSHIP } from "./OrgMutationGuard.plugin";
 import type { SQL } from "postgraphile/pg-sql2";
 import type { PlanWrapperFn } from "postgraphile/utils";
 
+/** Session setting holding the workspaces a filter admits */
+type ScopeSetting = "app.organization_ids" | "app.admin_organization_ids";
+
+type PgWhere = { where: (spec: unknown) => void };
+
 /**
- * Add organization scoping to a collection (connection) query.
- *
- * Injects a `WHERE organization_id = ANY(...)` condition into the
- * underlying PgSelectStep via the pgSettings session variable set
- * by the authentication plugin. This ensures users can only read
- * data belonging to their organizations.
+ * The PgSelectStep behind a root field's plan: a connection's subplan, or the
+ * class step of a single-row lookup
  */
-const scopeCollection = (): PlanWrapperFn =>
+const selectOf = (step: unknown): PgWhere | null => {
+  const s = step as {
+    getSubplan?: () => PgWhere;
+    getClassStep?: () => PgWhere;
+  };
+  if (typeof s.getSubplan === "function") return s.getSubplan();
+  if (typeof s.getClassStep === "function") return s.getClassStep();
+  return null;
+};
+
+/**
+ * Scope a table with its own `organization_id` to the workspaces in a session
+ * setting (set per request by the authentication plugin). Applied in SQL to
+ * collections and single-row lookups alike, so a row outside the caller's
+ * workspaces is simply not found, whatever fields the query selects
+ */
+const scopeOrg = (
+  setting: ScopeSetting = "app.organization_ids",
+): PlanWrapperFn =>
   EXPORTABLE(
-    (sql): PlanWrapperFn =>
+    (sql, selectOf, setting): PlanWrapperFn =>
       (plan) => {
-        const $connection = plan();
-        if (!$connection) return $connection;
+        const $plan = plan();
+        if (!$plan) return $plan;
 
-        const $select = (
-          $connection as unknown as {
-            getSubplan: () => { where: (spec: unknown) => void };
-          }
-        ).getSubplan();
-
-        $select.where({
+        selectOf($plan)?.where({
           type: "attribute",
           attribute: "organization_id",
           callback(expression: SQL) {
-            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} = ANY(coalesce(nullif(current_setting('app.organization_ids', true), ''), '{}')::text[]))`;
+            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} = ANY(coalesce(nullif(current_setting(${sql.literal(setting)}, true), ''), '{}')::text[]))`;
           },
         });
 
-        return $connection;
+        return $plan;
       },
-    [sql],
+    [sql, selectOf, setting],
   );
 
 /**
- * Scope a child collection via EXISTS subquery on a parent table.
- *
- * Used for tables without their own `organization_id` that reference
- * an org-scoped parent (e.g. invoice_line_item -> invoice).
+ * Scope a child table (no `organization_id` of its own) through its parent
+ * row's workspace, e.g. invoice_line_item -> invoice
  */
-const scopeChildCollection = (
-  parentTable: string,
-  fkColumn: string,
-  parentPk: string = "id",
-): PlanWrapperFn =>
+const scopeChild = (parentTable: string, fkColumn: string): PlanWrapperFn =>
   EXPORTABLE(
-    (sql, parentTable, fkColumn, parentPk): PlanWrapperFn =>
+    (sql, selectOf, parentTable, fkColumn): PlanWrapperFn =>
       (plan) => {
-        const $connection = plan();
-        if (!$connection) return $connection;
+        const $plan = plan();
+        if (!$plan) return $plan;
 
-        const $select = (
-          $connection as unknown as {
-            getSubplan: () => { where: (spec: unknown) => void };
-          }
-        ).getSubplan();
-
-        $select.where({
+        selectOf($plan)?.where({
           type: "attribute",
           attribute: fkColumn,
           callback(expression: SQL) {
-            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} IN (SELECT ${sql.identifier(parentPk)} FROM ${sql.identifier(parentTable)} WHERE organization_id = ANY(coalesce(nullif(current_setting('app.organization_ids', true), ''), '{}')::text[])))`;
+            return sql`(coalesce(current_setting('app.service_auth', true), '') = 'true' OR ${expression} IN (SELECT id FROM ${sql.identifier(parentTable)} WHERE organization_id = ANY(coalesce(nullif(current_setting('app.organization_ids', true), ''), '{}')::text[])))`;
           },
         });
 
-        return $connection;
+        return $plan;
       },
-    [sql, parentTable, fkColumn, parentPk],
-  );
-
-/**
- * Add organization scoping to a single-item query.
- *
- * Verifies the resolved item belongs to one of the authenticated
- * user's organizations. Throws "Not found" if unauthorized, making
- * cross-org items invisible rather than returning a 403.
- */
-const scopeSingleItem = (): PlanWrapperFn =>
-  EXPORTABLE(
-    (SafeError, context, sideEffect): PlanWrapperFn =>
-      (plan) => {
-        const $item = plan();
-        if (!$item) return $item;
-        const $observer = context().get("observer");
-        const $organizationIds = context().get("organizationIds");
-
-        sideEffect(
-          [$item, $observer, $organizationIds],
-          async ([item, observer, organizationIds]) => {
-            if (!item) return;
-            // An anonymous caller belongs to no organization; returning the
-            // row here let any rowId be read without a token
-            if (!observer) throw new SafeError("Not found");
-
-            // Service key auth bypasses org scoping
-            if (Array.isArray(organizationIds) && organizationIds.includes("*"))
-              return;
-
-            if (typeof item !== "object" || !("organizationId" in item)) return;
-
-            const itemOrgId = (item as { organizationId: string })
-              .organizationId;
-
-            if (
-              !Array.isArray(organizationIds) ||
-              !organizationIds.includes(itemOrgId)
-            ) {
-              throw new SafeError("Not found");
-            }
-          },
-        );
-
-        return $item;
-      },
-    [SafeError, context, sideEffect],
-  );
-
-/**
- * Scope a single child item by resolving its parent's org ownership.
- */
-const scopeChildSingleItem = (
-  parentTable: string,
-  fkField: string,
-): PlanWrapperFn =>
-  EXPORTABLE(
-    (SafeError, context, sideEffect, parentTable, fkField): PlanWrapperFn =>
-      (plan) => {
-        const $item = plan();
-        if (!$item) return $item;
-        const $observer = context().get("observer");
-        const $db = context().get("db");
-        const $organizationIds = context().get("organizationIds");
-
-        sideEffect(
-          [$item, $observer, $db, $organizationIds],
-          async ([item, observer, db, organizationIds]) => {
-            if (!item) return;
-            if (!observer) throw new SafeError("Not found");
-
-            // Service key auth bypasses org scoping
-            if (Array.isArray(organizationIds) && organizationIds.includes("*"))
-              return;
-
-            if (typeof item !== "object" || !(fkField in item)) return;
-
-            const fkValue = (item as Record<string, string>)[fkField];
-            if (!fkValue) return;
-
-            const parentTableRef =
-              db.query[`${parentTable}Table` as keyof typeof db.query];
-            if (!parentTableRef) return;
-
-            const parent =
-              await // biome-ignore lint/complexity/noBannedTypes: dynamic Drizzle query interface
-              (parentTableRef as { findFirst: Function }).findFirst({
-                where: (
-                  table: Record<string, unknown>,
-                  // biome-ignore lint/complexity/noBannedTypes: dynamic Drizzle query interface
-                  { eq }: { eq: Function },
-                ) => eq(table.id, fkValue),
-              });
-
-            if (!parent?.organizationId) {
-              throw new SafeError("Not found");
-            }
-
-            if (
-              !Array.isArray(organizationIds) ||
-              !organizationIds.includes(parent.organizationId)
-            ) {
-              throw new SafeError("Not found");
-            }
-          },
-        );
-
-        return $item;
-      },
-    [SafeError, context, sideEffect, parentTable, fkField],
+    [sql, selectOf, parentTable, fkColumn],
   );
 
 /**
  * Organization scoping plugin for Mantle GraphQL queries.
  *
- * Ensures read operations on org-scoped tables return only data belonging
- * to the authenticated user's organizations:
+ * Every root read of a table (collection, single row by rowId, single row by
+ * Relay id) is filtered in SQL to the caller's workspaces, read from the
+ * `app.organization_ids` session setting; anonymous callers have none.
+ * `channel_connection` is narrower: only workspaces the caller owns or
+ * administers (`app.admin_organization_ids`).
  *
- * - **Collection queries**: filtered at the SQL level via a WHERE clause
- *   using `current_setting('app.organization_ids')` (set via pgSettings)
- * - **Single-item queries**: verified post-resolution against the user's
- *   organization membership from the Grafast context
- *
- * Tables with direct `organization_id`:
- *   channel_connection, company, person, product, invoice, quote,
- *   supplier, document_numbering_config, organization_settings
- *
- * Child tables scoped via parent FK:
+ * Child tables are scoped through their parent:
  *   company_member -> company, invoice_line_item -> invoice,
- *   quote_line_item -> quote, inventory_adjustment -> product,
- *   person_external_link -> person, product_external_link -> product
+ *   payment -> invoice, quote_line_item -> quote,
+ *   inventory_adjustment -> product, person_external_link -> person,
+ *   product_external_link -> product
  */
+const ORG_TABLES: Record<string, ScopeSetting> = {
+  channelConnection: "app.admin_organization_ids",
+  company: "app.organization_ids",
+  creditTransaction: "app.organization_ids",
+  documentNumberingConfig: "app.organization_ids",
+  invoice: "app.organization_ids",
+  organizationSetting: "app.organization_ids",
+  person: "app.organization_ids",
+  product: "app.organization_ids",
+  quote: "app.organization_ids",
+  supplier: "app.organization_ids",
+};
+
+const ORG_COLLECTIONS: Record<string, string> = {
+  channelConnection: "channelConnections",
+  company: "companies",
+  creditTransaction: "creditTransactions",
+  documentNumberingConfig: "documentNumberingConfigs",
+  invoice: "invoices",
+  organizationSetting: "organizationSettings",
+  person: "people",
+  product: "products",
+  quote: "quotes",
+  supplier: "suppliers",
+};
+
+const CHILD_TABLES: Record<
+  string,
+  { collection: string; parent: string; fk: string }
+> = {
+  companyMember: {
+    collection: "companyMembers",
+    parent: "company",
+    fk: "company_id",
+  },
+  inventoryAdjustment: {
+    collection: "inventoryAdjustments",
+    parent: "product",
+    fk: "product_id",
+  },
+  invoiceLineItem: {
+    collection: "invoiceLineItems",
+    parent: "invoice",
+    fk: "invoice_id",
+  },
+  payment: { collection: "payments", parent: "invoice", fk: "invoice_id" },
+  personExternalLink: {
+    collection: "personExternalLinks",
+    parent: "person",
+    fk: "person_id",
+  },
+  productExternalLink: {
+    collection: "productExternalLinks",
+    parent: "product",
+    fk: "product_id",
+  },
+  quoteLineItem: {
+    collection: "quoteLineItems",
+    parent: "quote",
+    fk: "quote_id",
+  },
+};
+
 const QUERY_RULES: Record<string, PlanWrapperFn> = {
-  // Collection queries - SQL-level WHERE organization_id filtering
-  channelConnections: scopeCollection(),
-  companies: scopeCollection(),
-  people: scopeCollection(),
-  products: scopeCollection(),
-  invoices: scopeCollection(),
-  creditTransactions: scopeCollection(),
-  quotes: scopeCollection(),
-  suppliers: scopeCollection(),
-  documentNumberingConfigs: scopeCollection(),
-  organizationSettings: scopeCollection(),
-
-  // Child table collections - scoped via parent FK joins
-  companyMembers: scopeChildCollection("company", "company_id"),
-  invoiceLineItems: scopeChildCollection("invoice", "invoice_id"),
-  payments: scopeChildCollection("invoice", "invoice_id"),
-  quoteLineItems: scopeChildCollection("quote", "quote_id"),
-  inventoryAdjustments: scopeChildCollection("product", "product_id"),
-  personExternalLinks: scopeChildCollection("person", "person_id"),
-  productExternalLinks: scopeChildCollection("product", "product_id"),
-
-  // Single-item queries (by rowId) - post-resolution org membership check
-  channelConnection: scopeSingleItem(),
-  company: scopeSingleItem(),
-  person: scopeSingleItem(),
-  product: scopeSingleItem(),
-  invoice: scopeSingleItem(),
-  creditTransaction: scopeSingleItem(),
-  creditTransactionById: scopeSingleItem(),
-  organizationSettingById: scopeSingleItem(),
-  supplierById: scopeSingleItem(),
-  documentNumberingConfigById: scopeSingleItem(),
-  quote: scopeSingleItem(),
-  supplier: scopeSingleItem(),
-  documentNumberingConfig: scopeSingleItem(),
-  organizationSetting: scopeSingleItem(),
-
-  // Child table single-item queries - scoped via parent FK lookup
-  companyMember: scopeChildSingleItem("company", "companyId"),
-  invoiceLineItem: scopeChildSingleItem("invoice", "invoiceId"),
-  payment: scopeChildSingleItem("invoice", "invoiceId"),
-  paymentById: scopeChildSingleItem("invoice", "invoiceId"),
-  quoteLineItem: scopeChildSingleItem("quote", "quoteId"),
-  inventoryAdjustment: scopeChildSingleItem("product", "productId"),
-  personExternalLink: scopeChildSingleItem("person", "personId"),
-  productExternalLink: scopeChildSingleItem("product", "productId"),
-
-  // Single-item queries (by Relay global ID)
-  channelConnectionById: scopeSingleItem(),
-  companyById: scopeSingleItem(),
-  personById: scopeSingleItem(),
-  productById: scopeSingleItem(),
-  invoiceById: scopeSingleItem(),
-  quoteById: scopeSingleItem(),
-  companyMemberById: scopeChildSingleItem("company", "companyId"),
-  invoiceLineItemById: scopeChildSingleItem("invoice", "invoiceId"),
-  quoteLineItemById: scopeChildSingleItem("quote", "quoteId"),
-  inventoryAdjustmentById: scopeChildSingleItem("product", "productId"),
-  personExternalLinkById: scopeChildSingleItem("person", "personId"),
-  productExternalLinkById: scopeChildSingleItem("product", "productId"),
+  ...Object.fromEntries(
+    Object.entries(ORG_TABLES).flatMap(([single, setting]) => [
+      [single, scopeOrg(setting)],
+      [`${single}ById`, scopeOrg(setting)],
+      [ORG_COLLECTIONS[single] as string, scopeOrg(setting)],
+    ]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(CHILD_TABLES).flatMap(
+      ([single, { collection, parent, fk }]) => [
+        [single, scopeChild(parent, fk)],
+        [`${single}ById`, scopeChild(parent, fk)],
+        [collection, scopeChild(parent, fk)],
+      ],
+    ),
+  ),
 };
 
 const OrganizationScopePlugin = wrapPlans({ Query: QUERY_RULES });
@@ -360,8 +264,6 @@ export const OrganizationScopeNestedPlugin = wrapPlans<PlanWrapperFn>(
   (wrapper) => wrapper,
   { name: "OrganizationScopeNestedPlugin" },
 );
-
-type PgWhere = { where: (spec: unknown) => void };
 
 /**
  * Drop the Relay root `node(id)` lookup: it reads any row of any table by

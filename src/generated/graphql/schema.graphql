@@ -16,7 +16,6 @@ type ChannelConnection implements Node {
   provider: String!
   status: String!
   externalShopId: String
-  credentials: JSON!
   scopes: [String]
   syncConfig: JSON!
   lastSyncedAt: Datetime
@@ -2423,6 +2422,20 @@ type OrganizationSetting implements Node {
   accentColor: String
   createdAt: Datetime
   updatedAt: Datetime
+  companyName: String
+  contactName: String
+  contactTitle: String
+  email: String
+  phone: String
+  website: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  logoUrl: String
+  registrationState: String
 }
 
 """A connection to a list of `ChannelConnection` values."""
@@ -2905,7 +2918,6 @@ input ChannelConnectionInput {
   provider: String!
   status: String
   externalShopId: String
-  credentials: JSON
   scopes: [String]
   syncConfig: JSON
   lastSyncedAt: Datetime
@@ -3307,6 +3319,20 @@ input OrganizationSettingInput {
   accentColor: String
   createdAt: Datetime
   updatedAt: Datetime
+  companyName: String
+  contactName: String
+  contactTitle: String
+  email: String
+  phone: String
+  website: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  logoUrl: String
+  registrationState: String
 }
 
 """The output of our create `Payment` mutation."""
@@ -3784,7 +3810,6 @@ input ChannelConnectionPatch {
   provider: String
   status: String
   externalShopId: String
-  credentials: JSON
   scopes: [String]
   syncConfig: JSON
   lastSyncedAt: Datetime
@@ -4226,6 +4251,20 @@ input OrganizationSettingPatch {
   accentColor: String
   createdAt: Datetime
   updatedAt: Datetime
+  companyName: String
+  contactName: String
+  contactTitle: String
+  email: String
+  phone: String
+  website: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  logoUrl: String
+  registrationState: String
 }
 
 """The output of our update `Payment` mutation."""
@@ -5304,6 +5343,21 @@ type ApplyInvoiceCreditPayload {
   invoiceOutstanding: String!
 }
 
+input IssueCreditInput {
+  organizationId: String!
+  amount: String!
+  currency: String
+  kind: String
+  invoiceId: UUID
+  note: String
+}
+
+type IssueCreditPayload {
+  creditTransactionId: UUID!
+  amountIssued: String!
+  balance: String!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query implements Node {
   """
@@ -6081,6 +6135,7 @@ type Query implements Node {
   access to the invoice's organization.
   """
   invoiceHtml(invoiceId: UUID!): InvoiceHtmlPayload
+  workspacePlan(organizationId: String!): WorkspacePlan
 }
 
 """
@@ -6516,17 +6571,26 @@ type Mutation {
   ): IssueCreditPayload
 }
 
-input IssueCreditInput {
-  organizationId: String!
-  amount: String!
-  currency: String
-  kind: String
-  invoiceId: UUID
-  note: String
+type WorkspacePlanLimit {
+  """Catalog limit key, e.g. max_contacts"""
+  key: String!
+
+  """The limit; -1 means unlimited"""
+  limit: Int!
+
+  """Current usage, when Mantle counts it"""
+  used: Int
 }
 
-type IssueCreditPayload {
-  creditTransactionId: UUID!
-  amountIssued: String!
-  balance: String!
+type WorkspacePlan {
+  organizationId: String!
+  tier: String!
+
+  """
+  How the tier was resolved: plan, cached (billing unreachable, last
+  known plan), free, unavailable (billing unreachable, free tier), or
+  bypass
+  """
+  source: String!
+  limits: [WorkspacePlanLimit!]!
 }

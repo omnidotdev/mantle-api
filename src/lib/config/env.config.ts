@@ -14,8 +14,18 @@ export const {
   VORTEX_API_URL,
   VORTEX_API_KEY,
   SERVICE_KEY,
+  // Billing/entitlements (Aether). Optional: when unset (self-hosting) no plan
+  // limits apply
   BILLING_BASE_URL,
+  // Service API key Aether requires on entitlement reads
   BILLING_SERVICE_API_KEY,
+  // Comma-separated organization IDs exempt from plan limits (e.g. Omni's own)
+  BILLING_BYPASS_ORG_IDS,
+  // Authorization (Warden PDP). Optional: when unset Warden is not consulted
+  // and the verified JWT organization claims are the only gate
+  AUTHZ_API_URL,
+  // Service key Warden requires on every /check call (X-Service-Key)
+  AUTHZ_SERVICE_KEY,
   // Shared secret Vortex signs Gatekeeper identity events (workspace deletion)
   // with, for POST /webhooks/idp
   IDP_WEBHOOK_SECRET,
@@ -31,7 +41,25 @@ export const isDevEnv = NODE_ENV === "development",
 
 // Startup warnings for optional integrations
 if (!BILLING_BASE_URL)
-  console.warn("BILLING_BASE_URL not set, billing disabled");
+  console.warn(
+    "BILLING_BASE_URL not set, billing disabled (no plan limits apply)",
+  );
+if (BILLING_BASE_URL && !BILLING_SERVICE_API_KEY)
+  console.warn(
+    "BILLING_SERVICE_API_KEY not set, entitlement reads will be rejected and fall back to the last known plan (or no limits)",
+  );
+if (!AUTHZ_API_URL)
+  console.warn(
+    "AUTHZ_API_URL not set, Warden role checks disabled (JWT workspace claims only)",
+  );
+if (AUTHZ_API_URL && !AUTHZ_SERVICE_KEY)
+  console.warn(
+    "AUTHZ_SERVICE_KEY not set, Warden checks will be rejected and fall back to JWT workspace claims",
+  );
+if (AUTHZ_API_URL && process.env.WARDEN_ENFORCE !== "true")
+  console.warn(
+    "WARDEN_ENFORCE not set, Warden runs in shadow mode (denials logged, not enforced)",
+  );
 if (!VORTEX_API_URL)
   console.warn("VORTEX_API_URL not set, event streaming disabled");
 if (!IDP_WEBHOOK_SECRET)

@@ -40,6 +40,7 @@ const POLICY: SchemaSurfacePolicy = {
     mantleRegionFromCountry: "pure function over its arguments (no data)",
     mantleNormalizePhone: "pure function over its arguments (no data)",
     invoiceHtml: "invoice's workspace membership (invoicePdf plugin)",
+    workspacePlan: "member of the workspace (assertWorkspaceAccess)",
   },
   Mutation: {
     ...Object.fromEntries(

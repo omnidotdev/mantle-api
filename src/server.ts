@@ -91,9 +91,11 @@ app.use(
       ...armorPlugin,
       authenticationPlugin,
       isProdEnv && useDisableIntrospection(),
+      // Variables and results carry customer records (contacts, invoices,
+      // the workspace profile), so they stay out of traces
       useOpenTelemetry({
-        variables: true,
-        result: true,
+        variables: false,
+        result: false,
       }),
       useParserCache(),
       useValidationCache(),

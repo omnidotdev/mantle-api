@@ -1,3 +1,4 @@
+import type { OrganizationClaim } from "lib/authz";
 import type { dbPool } from "lib/db/db";
 import type { Observer } from "lib/graphql/plugins/authentication.plugin";
 
@@ -10,6 +11,8 @@ declare global {
       db: typeof dbPool;
       /** Organization IDs the authenticated user belongs to. */
       organizationIds: string[];
+      /** The caller's workspaces with their roles, from the JWT claims. */
+      organizations: OrganizationClaim[];
     }
   }
 }

@@ -15,3 +15,4 @@ export * from "./productExternalLink.table";
 export * from "./quote.table";
 export * from "./quoteLineItem.table";
 export * from "./supplier.table";
+export * from "./usageEvent.table";
