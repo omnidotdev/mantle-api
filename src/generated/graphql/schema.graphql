@@ -63,6 +63,7 @@ type Company implements Node {
   notes: String
   createdAt: Datetime
   updatedAt: Datetime
+  customFields: JSON!
 
   """Reads and enables pagination through a set of `CompanyMember`."""
   companyMembers(
@@ -221,6 +222,7 @@ type Person implements Node {
   emails: [String]
   internal: Boolean!
   emailConsent: Boolean!
+  customFields: JSON!
 
   """Reads and enables pagination through a set of `CompanyMember`."""
   companyMembers(
@@ -2386,6 +2388,22 @@ enum QuoteOrderBy {
   STATUS_DESC
 }
 
+type CustomField implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: UUID!
+  organizationId: String!
+  entity: String!
+  label: String!
+  type: String!
+  options: JSON!
+  position: Int!
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
 type DocumentNumberingConfig implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
@@ -2563,6 +2581,91 @@ enum CompanyOrderBy {
   ROW_ID_DESC
   ORGANIZATION_ID_ASC
   ORGANIZATION_ID_DESC
+}
+
+"""A connection to a list of `CustomField` values."""
+type CustomFieldConnection {
+  """A list of `CustomField` objects."""
+  nodes: [CustomField]!
+
+  """
+  A list of edges which contains the `CustomField` and cursor to aid in pagination.
+  """
+  edges: [CustomFieldEdge]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `CustomField` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `CustomField` edge in the connection."""
+type CustomFieldEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `CustomField` at the end of the edge."""
+  node: CustomField
+}
+
+"""
+A condition to be used against `CustomField` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input CustomFieldCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: UUID
+
+  """Checks for equality with the object’s `organizationId` field."""
+  organizationId: String
+
+  """Checks for equality with the object’s `entity` field."""
+  entity: String
+
+  """Checks for equality with the object’s `label` field."""
+  label: String
+}
+
+"""
+A filter to be used against `CustomField` object types. All fields are combined with a logical ‘and.’
+"""
+input CustomFieldFilter {
+  """Filter by the object’s `rowId` field."""
+  rowId: UUIDFilter
+
+  """Filter by the object’s `organizationId` field."""
+  organizationId: StringFilter
+
+  """Filter by the object’s `entity` field."""
+  entity: StringFilter
+
+  """Filter by the object’s `label` field."""
+  label: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [CustomFieldFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [CustomFieldFilter!]
+
+  """Negates the expression."""
+  not: CustomFieldFilter
+}
+
+"""Methods to use when ordering `CustomField`."""
+enum CustomFieldOrderBy {
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  ROW_ID_ASC
+  ROW_ID_DESC
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+  ENTITY_ASC
+  ENTITY_DESC
+  LABEL_ASC
+  LABEL_DESC
 }
 
 """A connection to a list of `DocumentNumberingConfig` values."""
@@ -2978,6 +3081,7 @@ input CompanyInput {
   notes: String
   createdAt: Datetime
   updatedAt: Datetime
+  customFields: JSON
 }
 
 """The output of our create `CompanyMember` mutation."""
@@ -3023,6 +3127,54 @@ input CompanyMemberInput {
   title: String
   isPrimary: Boolean
   createdAt: Datetime
+}
+
+"""The output of our create `CustomField` mutation."""
+type CreateCustomFieldPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `CustomField` that was created by this mutation."""
+  customField: CustomField
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `CustomField`. May be used by Relay 1."""
+  customFieldEdge(
+    """The method to use when ordering `CustomField`."""
+    orderBy: [CustomFieldOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): CustomFieldEdge
+}
+
+"""All input for the create `CustomField` mutation."""
+input CreateCustomFieldInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `CustomField` to be created by this mutation."""
+  customField: CustomFieldInput!
+}
+
+"""An input for mutations affecting `CustomField`"""
+input CustomFieldInput {
+  rowId: UUID
+  organizationId: String!
+  entity: String!
+  label: String!
+  type: String!
+  options: JSON
+  position: Int
+  createdAt: Datetime
+  updatedAt: Datetime
 }
 
 """The output of our create `DocumentNumberingConfig` mutation."""
@@ -3382,6 +3534,7 @@ input PersonInput {
   emails: [String]
   internal: Boolean
   emailConsent: Boolean
+  customFields: JSON
 }
 
 """The output of our create `PersonExternalLink` mutation."""
@@ -3825,6 +3978,7 @@ input CompanyPatch {
   notes: String
   createdAt: Datetime
   updatedAt: Datetime
+  customFields: JSON
 }
 
 """The output of our update `CompanyMember` mutation."""
@@ -3875,6 +4029,56 @@ input CompanyMemberPatch {
   title: String
   isPrimary: Boolean
   createdAt: Datetime
+}
+
+"""The output of our update `CustomField` mutation."""
+type UpdateCustomFieldPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `CustomField` that was updated by this mutation."""
+  customField: CustomField
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `CustomField`. May be used by Relay 1."""
+  customFieldEdge(
+    """The method to use when ordering `CustomField`."""
+    orderBy: [CustomFieldOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): CustomFieldEdge
+}
+
+"""All input for the `updateCustomField` mutation."""
+input UpdateCustomFieldInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+
+  """
+  An object where the defined keys will be set on the `CustomField` being updated.
+  """
+  patch: CustomFieldPatch!
+}
+
+"""
+Represents an update to a `CustomField`. Fields that are set will be updated.
+"""
+input CustomFieldPatch {
+  rowId: UUID
+  label: String
+  options: JSON
+  position: Int
+  createdAt: Datetime
+  updatedAt: Datetime
 }
 
 """The output of our update `DocumentNumberingConfig` mutation."""
@@ -4263,6 +4467,7 @@ input PersonPatch {
   emails: [String]
   internal: Boolean
   emailConsent: Boolean
+  customFields: JSON
 }
 
 """The output of our update `PersonExternalLink` mutation."""
@@ -4717,6 +4922,40 @@ type DeleteCompanyMemberPayload {
 
 """All input for the `deleteCompanyMember` mutation."""
 input DeleteCompanyMemberInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: UUID!
+}
+
+"""The output of our delete `CustomField` mutation."""
+type DeleteCustomFieldPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `CustomField` that was deleted by this mutation."""
+  customField: CustomField
+  deletedCustomFieldId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `CustomField`. May be used by Relay 1."""
+  customFieldEdge(
+    """The method to use when ordering `CustomField`."""
+    orderBy: [CustomFieldOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): CustomFieldEdge
+}
+
+"""All input for the `deleteCustomField` mutation."""
+input DeleteCustomFieldInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -5255,6 +5494,9 @@ type Query implements Node {
   """Get a single `CreditTransaction`."""
   creditTransaction(rowId: UUID!): CreditTransaction
 
+  """Get a single `CustomField`."""
+  customField(rowId: UUID!): CustomField
+
   """Get a single `DocumentNumberingConfig`."""
   documentNumberingConfig(rowId: UUID!): DocumentNumberingConfig
 
@@ -5326,6 +5568,14 @@ type Query implements Node {
     """
     id: ID!
   ): CreditTransaction
+
+  """Reads a single `CustomField` using its globally unique `ID`."""
+  customFieldById(
+    """
+    The globally unique `ID` to be used in selecting a single `CustomField`.
+    """
+    id: ID!
+  ): CustomField
 
   """
   Reads a single `DocumentNumberingConfig` using its globally unique `ID`.
@@ -5556,6 +5806,40 @@ type Query implements Node {
     """The method to use when ordering `CreditTransaction`."""
     orderBy: [CreditTransactionOrderBy!] = [PRIMARY_KEY_ASC]
   ): CreditTransactionConnection
+
+  """Reads and enables pagination through a set of `CustomField`."""
+  customFields(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CustomFieldCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: CustomFieldFilter
+
+    """The method to use when ordering `CustomField`."""
+    orderBy: [CustomFieldOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CustomFieldConnection
 
   """
   Reads and enables pagination through a set of `DocumentNumberingConfig`.
@@ -6038,6 +6322,14 @@ type Mutation {
     input: CreateCompanyMemberInput!
   ): CreateCompanyMemberPayload
 
+  """Creates a single `CustomField`."""
+  createCustomField(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateCustomFieldInput!
+  ): CreateCustomFieldPayload
+
   """Creates a single `DocumentNumberingConfig`."""
   createDocumentNumberingConfig(
     """
@@ -6165,6 +6457,14 @@ type Mutation {
     """
     input: UpdateCompanyMemberInput!
   ): UpdateCompanyMemberPayload
+
+  """Updates a single `CustomField` using a unique key and a patch."""
+  updateCustomField(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCustomFieldInput!
+  ): UpdateCustomFieldPayload
 
   """
   Updates a single `DocumentNumberingConfig` using a unique key and a patch.
@@ -6295,6 +6595,14 @@ type Mutation {
     """
     input: DeleteCompanyMemberInput!
   ): DeleteCompanyMemberPayload
+
+  """Deletes a single `CustomField` using a unique key."""
+  deleteCustomField(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCustomFieldInput!
+  ): DeleteCustomFieldPayload
 
   """Deletes a single `DocumentNumberingConfig` using a unique key."""
   deleteDocumentNumberingConfig(

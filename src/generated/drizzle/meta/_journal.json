@@ -225,6 +225,13 @@
       "when": 1795505542153,
       "tag": "0031_bright_forgotten_one",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795574582879,
+      "tag": "0032_optimal_infant_terrible",
+      "breakpoints": true
     }
   ]
 }

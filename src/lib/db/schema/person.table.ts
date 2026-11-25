@@ -1,6 +1,7 @@
 import {
   boolean,
   index,
+  jsonb,
   pgTable,
   text,
   uniqueIndex,
@@ -24,6 +25,11 @@ export const personTable = pgTable(
     avatarUrl: text("avatar_url"),
     tags: text().array(),
     notes: text(),
+    /** Values of the workspace's custom fields, keyed by field id */
+    customFields: jsonb("custom_fields")
+      .$type<Record<string, unknown>>()
+      .default({})
+      .notNull(),
     createdAt: generateDefaultDate(),
     updatedAt: generateDefaultDate(),
   },

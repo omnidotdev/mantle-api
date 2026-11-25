@@ -20,6 +20,7 @@ export const TABLE_OWNERSHIP: Record<string, Ownership> = {
   channel_connection: { kind: "org" },
   company: { kind: "org" },
   credit_transaction: { kind: "org" },
+  custom_field: { kind: "org" },
   document_numbering_config: { kind: "org" },
   invoice: { kind: "org" },
   organization_settings: { kind: "org" },
@@ -61,12 +62,13 @@ export const TABLE_OWNERSHIP: Record<string, Ownership> = {
 };
 
 /**
- * Tables only a workspace owner or admin may write: workspace-wide settings and
- * sales channel connections. `channel_connection` reads are admin-only too
+ * Tables only a workspace owner or admin may write: workspace-wide settings,
+ * custom field definitions and sales channel connections. `channel_connection` reads are admin-only too
  * (OrganizationScopePlugin)
  */
 const ADMIN_TABLES: ReadonlySet<string> = new Set([
   "channel_connection",
+  "custom_field",
   "document_numbering_config",
   "organization_settings",
 ]);

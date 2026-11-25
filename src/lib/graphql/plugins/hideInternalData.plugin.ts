@@ -26,6 +26,10 @@ import { jsonPgSmartTags } from "postgraphile/utils";
  * the adjustment already moved that product's stock, so editing either would
  * leave the log and the on-hand quantity disagreeing. Delete and re-record
  * instead
+ *
+ * A custom field's entity and type are set once (`-update`): records already
+ * hold values shaped for that type on that record kind. Delete and re-create
+ * the field instead
  */
 const HIDDEN = { behavior: "-*" } as const;
 const CREATE_ONLY = { behavior: "-attribute:update" } as const;
@@ -36,6 +40,7 @@ const WORKSPACE_TABLES = [
   "channel_connection",
   "company",
   "credit_transaction",
+  "custom_field",
   "document_numbering_config",
   "invoice",
   "organization_settings",
@@ -62,6 +67,8 @@ const HideInternalDataPlugin = jsonPgSmartTags(
           ]),
         ),
         "channel_connection.credentials": { tags: HIDDEN },
+        "custom_field.entity": { tags: CREATE_ONLY },
+        "custom_field.type": { tags: CREATE_ONLY },
         "inventory_adjustment.product_id": { tags: CREATE_ONLY },
         "inventory_adjustment.quantity_change": { tags: CREATE_ONLY },
       },
