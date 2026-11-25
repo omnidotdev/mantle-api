@@ -1,5 +1,15 @@
 # @omnidotdev/mantle-api
 
+## 0.2.0
+
+### Minor Changes
+
+- [#46](https://github.com/omnidotdev/mantle-api/pull/46) [`3cbae9d`](https://github.com/omnidotdev/mantle-api/commit/3cbae9d71e8ffa01870b2545a6f20ac47415c5d5) Thanks [@coopbri](https://github.com/coopbri)! - Workspaces can add custom fields to people and companies: text, number, date, checkbox, select, and multi-select. Workspace owners and admins define the fields; any member fills them in. Values are checked against the field's type and options on every save. Removing an option or deleting a field clears it from the records that used it.
+
+### Patch Changes
+
+- [#48](https://github.com/omnidotdev/mantle-api/pull/48) [`42494d2`](https://github.com/omnidotdev/mantle-api/commit/42494d26f9ca366347a9cde57a51a46da1af0796) Thanks [@coopbri](https://github.com/coopbri)! - The production build now runs in production mode, so API errors no longer include internal details and GraphQL runs without development overhead
+
 ## 0.1.0
 
 ### Minor Changes
