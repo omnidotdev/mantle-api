@@ -5,6 +5,7 @@ import {
   channelConnectionTable,
   companyTable,
   creditTransactionTable,
+  customFieldTable,
   documentNumberingConfigTable,
   entitlementSnapshotTable,
   invoiceTable,
@@ -24,7 +25,7 @@ type OrganizationDeletionCounts = Record<string, number>;
  * organization): its credit ledger, quotes, invoices (with their line items
  * and payments), document numbering, products (with their external links and
  * inventory adjustments), suppliers, companies and people (with their
- * memberships and external links), sales channel connections (and the
+ * memberships and external links), custom field definitions, sales channel connections (and the
  * credentials they hold), its settings (including the workspace profile), its
  * plan usage ledger, and its last known plan.
  *
@@ -49,6 +50,7 @@ export const deleteOrganizationData = async (
       ["suppliers", supplierTable],
       ["companies", companyTable],
       ["people", personTable],
+      ["customFields", customFieldTable],
       ["channelConnections", channelConnectionTable],
       ["organizationSettings", organizationSettingsTable],
       ["usageEvents", usageEventTable],

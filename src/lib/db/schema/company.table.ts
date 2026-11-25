@@ -1,4 +1,4 @@
-import { index, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 
 import { generateDefaultDate, generateDefaultId } from "lib/db/util";
 
@@ -21,6 +21,11 @@ export const companyTable = pgTable(
     postalCode: text("postal_code"),
     country: text(),
     notes: text(),
+    /** Values of the workspace's custom fields, keyed by field id */
+    customFields: jsonb("custom_fields")
+      .$type<Record<string, unknown>>()
+      .default({})
+      .notNull(),
     createdAt: generateDefaultDate(),
     updatedAt: generateDefaultDate(),
   },

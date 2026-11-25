@@ -12,6 +12,7 @@ import {
   RemoveQueryNodePlugin,
 } from "lib/graphql/plugins/authorization";
 import ConvertQuoteToInvoicePlugin from "lib/graphql/plugins/convertQuoteToInvoice.plugin";
+import CustomFieldsPlugin from "lib/graphql/plugins/customFields.plugin";
 import { EventEmissionPlugin } from "lib/graphql/plugins/events";
 import GenerateDocumentNumberPlugin from "lib/graphql/plugins/generateDocumentNumber.plugin";
 import HideInternalDataPlugin from "lib/graphql/plugins/hideInternalData.plugin";
@@ -44,6 +45,7 @@ const graphilePreset: GraphileConfig.Preset = {
     OrgMutationGuardPlugin,
     PlanLimitsPlugin,
     ValidatePaymentLinkPlugin,
+    CustomFieldsPlugin,
     GenerateDocumentNumberPlugin,
     InvoicePdfPlugin,
     InventoryAdjustmentPlugin,
